@@ -108,7 +108,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
       onCancel={onCancel}
       onOk={handleSubmit}
       confirmLoading={createMutation.isPending || updateMutation.isPending}
-      destroyOnClose
+      destroyOnHidden
       width={560}
       okText={isEdit ? "Lưu thay đổi" : "Tạo mới"}
       cancelText="Hủy"

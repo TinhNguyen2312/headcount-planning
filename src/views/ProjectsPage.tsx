@@ -1,17 +1,10 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { Button, Popconfirm, Tabs, Tag, Tooltip } from "antd"
+import { Button, Popconfirm, Tag, Tooltip } from "antd"
 import dayjs from "dayjs"
-import {
-  Building2,
-  Calendar,
-  ExternalLink,
-  MapPin,
-  Pencil,
-  Trash2,
-} from "lucide-react"
-import { useMemo, useState } from "react"
+import { Calendar, ExternalLink, MapPin, Pencil, Trash2 } from "lucide-react"
+import { useMemo } from "react"
 
 import {
   type ButtonConfig,
@@ -20,7 +13,6 @@ import {
 } from "@/components/Common/Management"
 import AddProject from "@/components/Projects/AddProject"
 import ProjectCard from "@/components/Projects/ProjectCard"
-import SectorRegionManager from "@/components/Projects/SectorRegionManager"
 import { projectQueries } from "@/hooks/server/projects"
 import { regionQueries } from "@/hooks/server/regions"
 import { sectorQueries } from "@/hooks/server/sectors"
@@ -58,10 +50,6 @@ const statusDotClass: Record<ProjectStatus, string> = {
 export default function ProjectsPage() {
   const router = useRouter()
   const deleteMutation = projectQueries.useDelete()
-
-  const [activeTab, setActiveTab] = useState<"projects" | "sectors_regions">(
-    "projects",
-  )
 
   const { data: dbSectors = [] } = sectorQueries.useList()
   const { data: dbRegions = [] } = regionQueries.useList()
@@ -276,64 +264,34 @@ export default function ProjectsPage() {
     )
   }
 
-  const tabItems = [
-    {
-      key: "projects",
-      icon: <Building2 className="size-4" />,
-      label: "Dự án",
-      children: (
-        <div className="flex flex-col gap-4">
-          <SearchBar
-            {...searchBarProps}
-            searchPlaceholder="Tìm kiếm dự án theo tên..."
-            filters={filters}
-            onResetFilters={resetFilters}
-          />
-
-          <CollectionView<ProjectResponse>
-            viewMode={viewMode}
-            items={projects}
-            renderCustomCard={(project) => <ProjectCard project={project} />}
-            buttons={buttons}
-            renderTitle={renderProjectTitle}
-            emptyDescription="Không tìm thấy dự án"
-            emptyHelperText="Thử thay đổi từ khóa tìm kiếm hoặc bỏ bớt các bộ lọc đang áp dụng."
-            pagination={{
-              page,
-              total: meta?.totalElements ?? projects.length,
-              pageSize: meta?.size ?? limit,
-              onChange: setPage,
-              itemLabel: "dự án",
-            }}
-            getImageSrc={(x) => getFileUrl(x.thumbnail)}
-          />
-        </div>
-      ),
-    },
-    {
-      key: "sectors_regions",
-      icon: <MapPin className="size-4" />,
-      label: "Khu vực & Vùng",
-      children: (
-        <div className="pt-2">
-          <SectorRegionManager />
-        </div>
-      ),
-    },
-  ]
-
   return (
-    <ManagementPageLayout
-      title="Quản lý Dự án, Khu vực & Vùng"
-      headerActions={activeTab === "projects" ? <AddProject /> : null}
-    >
-      <Tabs
-        activeKey={activeTab}
-        onChange={(k) => setActiveTab(k as "projects" | "sectors_regions")}
-        items={tabItems}
-        tabBarGutter={24}
-        className="w-full"
-      />
+    <ManagementPageLayout title="Quản lý Dự án" headerActions={<AddProject />}>
+      <div className="flex flex-col gap-4">
+        <SearchBar
+          {...searchBarProps}
+          searchPlaceholder="Tìm kiếm dự án theo tên..."
+          filters={filters}
+          onResetFilters={resetFilters}
+        />
+
+        <CollectionView<ProjectResponse>
+          viewMode={viewMode}
+          items={projects}
+          renderCustomCard={(project) => <ProjectCard project={project} />}
+          buttons={buttons}
+          renderTitle={renderProjectTitle}
+          emptyDescription="Không tìm thấy dự án"
+          emptyHelperText="Thử thay đổi từ khóa tìm kiếm hoặc bỏ bớt các bộ lọc đang áp dụng."
+          pagination={{
+            page,
+            total: meta?.totalElements ?? projects.length,
+            pageSize: meta?.size ?? limit,
+            onChange: setPage,
+            itemLabel: "dự án",
+          }}
+          getImageSrc={(x) => getFileUrl(x.thumbnail)}
+        />
+      </div>
     </ManagementPageLayout>
   )
 }

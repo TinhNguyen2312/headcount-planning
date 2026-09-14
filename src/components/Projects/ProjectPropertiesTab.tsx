@@ -11,7 +11,7 @@ import {
   Skeleton,
   Switch,
 } from "antd"
-import { Layers, Save, SlidersHorizontal } from "lucide-react"
+import { Save, SlidersHorizontal } from "lucide-react"
 import React, { useEffect } from "react"
 
 import { propertyQueries } from "@/hooks/server/properties"
@@ -35,7 +35,6 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
   const properties: PropertyResponse[] = matrixData?.result?.properties || []
   const values: PropertyValueItem[] = matrixData?.result?.values || []
 
-  // Map existing values into form fields
   useEffect(() => {
     if (!properties || properties.length === 0) return
 
@@ -165,7 +164,7 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
   }
 
   return (
-    <div className="space-y-6 w-full max-w-4xl pb-10">
+    <div className="space-y-6 w-full pb-10">
       <Form form={form} layout="vertical" className="space-y-6">
         <Card
           title={
@@ -176,7 +175,7 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
           }
           className="shadow-xs border-border/80"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+          <div className="flex flex-wrap gap-5">
             {properties.map((prop) => (
               <Form.Item
                 key={prop.id}
