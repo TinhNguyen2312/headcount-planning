@@ -1,0 +1,23 @@
+export const ROLE_GROUP_BY_SHORT_CODE: Record<string, string> = {
+  "GĐ/PGĐ QLXD,AT&MT": "PROJECT_ADMIN",
+  "TP QLXD,AT&MT": "ZONE_ADMIN",
+  "TBP QLXD": "TASK_INSPECTOR",
+  "TBP QLMEP": "TASK_INSPECTOR",
+  "TBP QLHTKT": "TASK_INSPECTOR",
+  "KSCC GSXD": "TASK_EXECUTOR",
+  "KSCC GSMEP": "TASK_EXECUTOR",
+  "KSCC GSHTKT": "TASK_EXECUTOR",
+  "KTSCC CT": "TASK_EXECUTOR",
+  "KSCC KSCL&TĐ": "TASK_EXECUTOR",
+  "KSCC KSTĐ": "TASK_EXECUTOR",
+  "KSCC KSATLĐ": "TASK_EXECUTOR",
+  "KSCC KS CX": "TASK_EXECUTOR",
+  TKCT: "VIEWER",
+}
+
+export const DEFAULT_PERMISSION_GROUP = "TASK_EXECUTOR"
+
+export function resolvePermissionGroup(shortCode?: string | null): string {
+  if (!shortCode) return DEFAULT_PERMISSION_GROUP
+  return ROLE_GROUP_BY_SHORT_CODE[shortCode] || DEFAULT_PERMISSION_GROUP
+}
