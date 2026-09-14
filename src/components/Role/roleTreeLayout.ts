@@ -73,6 +73,16 @@ export const layoutDepartmentGroupedTree = (
     return { positions, groups, edges: [] }
   }
 
+  const sortedEntries = [...entries].sort((a, b) => {
+    const la = a.role.level ?? 99
+    const lb = b.role.level ?? 99
+    if (la !== lb) return la - lb
+    const da = a.role.departmentId ?? 0
+    const db = b.role.departmentId ?? 0
+    if (da !== db) return da - db
+    return Number(a.id) - Number(b.id)
+  })
+
   const W = ROLE_NODE_WIDTH
   const H = ROLE_NODE_HEIGHT
 
@@ -90,7 +100,7 @@ export const layoutDepartmentGroupedTree = (
     }
   >()
 
-  for (const entry of entries) {
+  for (const entry of sortedEntries) {
     const deptId = entry.role.departmentId
     if (deptId) {
       if (!deptMap.has(deptId)) {
@@ -123,17 +133,17 @@ export const layoutDepartmentGroupedTree = (
     g.setNode(`dept_${deptId}`, { label: dept.name })
   }
 
-  for (const entry of entries) {
+  for (const entry of sortedEntries) {
     g.setNode(entry.id, { width: W, height: H })
     if (entry.role.departmentId && deptMap.has(entry.role.departmentId)) {
       g.setParent(entry.id, `dept_${entry.role.departmentId}`)
     }
   }
 
-  const visibleIds = new Set(entries.map((e) => e.id))
+  const visibleIds = new Set(sortedEntries.map((e) => e.id))
   const siblingGroups = new Map<string, FlatEntry[]>()
 
-  for (const entry of entries) {
+  for (const entry of sortedEntries) {
     if (entry.parentId && entry.role.departmentId) {
       const key = `${entry.parentId}_dept_${entry.role.departmentId}`
       if (!siblingGroups.has(key)) siblingGroups.set(key, [])
@@ -158,7 +168,7 @@ export const layoutDepartmentGroupedTree = (
         const la = a.role.level ?? 99
         const lb = b.role.level ?? 99
         if (la !== lb) return la - lb
-        return a.id.localeCompare(b.id)
+        return Number(a.id) - Number(b.id)
       })
 
       g.setEdge(sorted[0].parentId!, sorted[0].id)
@@ -177,7 +187,7 @@ export const layoutDepartmentGroupedTree = (
     }
   }
 
-  for (const entry of entries) {
+  for (const entry of sortedEntries) {
     if (entry.parentId && visibleIds.has(entry.parentId)) {
       if (!verticalChainedIds.has(entry.id)) {
         g.setEdge(entry.parentId, entry.id)
@@ -192,7 +202,7 @@ export const layoutDepartmentGroupedTree = (
 
   dagre.layout(g)
 
-  for (const entry of entries) {
+  for (const entry of sortedEntries) {
     const node = g.node(entry.id)
     if (node) {
       positions.set(entry.id, {
@@ -231,7 +241,6 @@ export const layoutDepartmentGroupedTree = (
       const minTitleWidth =
         titleLen * 8.5 + (codeLen > 0 ? codeLen * 8.5 + 28 : 0) + 48
       const groupWidth = Math.max(cardSpanWidth, minTitleWidth)
-      const extraX = (groupWidth - cardSpanWidth) / 2
 
       let customColor: string | null = null
       if (dept.metadata && typeof dept.metadata === "object") {
@@ -272,7 +281,7 @@ export const layoutDepartmentGroupedTree = (
         code: dept.code,
         type: dept.type,
         roleCount: dept.entries.length,
-        x: minX - PAD_LEFT - extraX,
+        x: minX - PAD_LEFT,
         y: minY - PAD_TOP - HEADER_H,
         width: groupWidth,
         height: maxY - minY + PAD_TOP + PAD_BOTTOM + HEADER_H,

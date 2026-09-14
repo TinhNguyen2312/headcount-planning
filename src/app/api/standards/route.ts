@@ -100,17 +100,14 @@ function formatStandard(standard: any): HeadcountStandardResponse {
     updatedAt: c.updatedAt,
   }))
 
-  const monthlyFactorsList = (standard.headcountMonthlyFactors || []).map(
-    (f: any) => ({
-      id: f.id,
-      standardId: f.standardId,
-      durationMonths: f.durationMonths,
-      monthNo: f.monthNo,
-      factor: Number(f.factor),
-      createdAt: f.createdAt,
-      updatedAt: f.updatedAt,
-    }),
-  )
+  const durationMonths = standard.durationMonths
+    ? Number(standard.durationMonths)
+    : 12
+  const rawFactors = Array.isArray(standard.monthlyFactors)
+    ? standard.monthlyFactors.map((f: any) => Number(f))
+    : []
+  const monthlyFactorsList =
+    rawFactors.length > 0 ? rawFactors : Array(durationMonths).fill(1.0)
 
   return {
     id: standard.id,
@@ -126,10 +123,10 @@ function formatStandard(standard: any): HeadcountStandardResponse {
     headcountMax:
       standard.headcountMax !== null ? Number(standard.headcountMax) : null,
     note: standard.note ?? null,
-    criteriaCount: criteriaList.length,
-    monthlyFactorCount: monthlyFactorsList.length,
-    criteria: criteriaList,
+    durationMonths,
     monthlyFactors: monthlyFactorsList,
+    criteriaCount: criteriaList.length,
+    criteria: criteriaList,
     createdAt: standard.createdAt,
     updatedAt: standard.updatedAt,
   }
@@ -189,7 +186,6 @@ export async function GET(req: NextRequest) {
             property: true,
           },
         },
-        headcountMonthlyFactors: true,
       },
       orderBy:
         order === "asc"
@@ -289,42 +285,49 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Validate monthly factors constraints
-    if (body.monthlyFactors && body.monthlyFactors.length > 0) {
-      for (const f of body.monthlyFactors) {
-        if (!f.durationMonths || f.durationMonths < 6) {
-          return apiError(
-            `Thời lượng phân bổ tối thiểu phải từ 6 tháng trở lên (phát hiện ${f.durationMonths} tháng)`,
-            400,
-            400,
-          )
-        }
-        if (f.durationMonths > 60) {
-          return apiError(
-            `Thời lượng phân bổ tối đa không vượt quá 60 tháng (phát hiện ${f.durationMonths} tháng)`,
-            400,
-            400,
-          )
-        }
-        if (!f.monthNo || f.monthNo < 1 || f.monthNo > f.durationMonths) {
-          return apiError(
-            `Mốc tháng T${f.monthNo} không hợp lệ trong chu kỳ ${f.durationMonths} tháng (phải từ T1 đến T${f.durationMonths})`,
-            400,
-            400,
-          )
-        }
-        if (
-          f.factor === undefined ||
-          f.factor === null ||
-          f.factor < 0 ||
-          f.factor > 10
-        ) {
-          return apiError(
-            `Hệ số phân bổ của tháng T${f.monthNo} phải nằm trong khoảng từ 0.0 đến 10.0`,
-            400,
-            400,
-          )
-        }
+    // Validate & normalize durationMonths and monthlyFactors
+    const durationMonths = body.durationMonths
+      ? Number(body.durationMonths)
+      : 12
+    if (durationMonths < 6 || durationMonths > 60) {
+      return apiError(
+        `Thời lượng chu kỳ phân bổ phải từ 6 đến 60 tháng (nhận ${durationMonths} tháng)`,
+        400,
+        400,
+      )
+    }
+
+    let normalizedFactors: number[] = []
+    if (Array.isArray(body.monthlyFactors) && body.monthlyFactors.length > 0) {
+      if (typeof body.monthlyFactors[0] === "number") {
+        normalizedFactors = body.monthlyFactors.map((f: any) => Number(f))
+      } else if (
+        typeof body.monthlyFactors[0] === "object" &&
+        body.monthlyFactors[0] !== null
+      ) {
+        normalizedFactors = body.monthlyFactors.map((f: any) =>
+          Number(f.factor ?? 1.0),
+        )
+      }
+    }
+
+    // Pad or trim to durationMonths
+    if (normalizedFactors.length < durationMonths) {
+      while (normalizedFactors.length < durationMonths) {
+        normalizedFactors.push(1.0)
+      }
+    } else if (normalizedFactors.length > durationMonths) {
+      normalizedFactors = normalizedFactors.slice(0, durationMonths)
+    }
+
+    for (let i = 0; i < normalizedFactors.length; i++) {
+      const f = normalizedFactors[i]
+      if (isNaN(f) || f < 0 || f > 10) {
+        return apiError(
+          `Hệ số phân bổ của tháng T${i + 1} phải nằm trong khoảng từ 0.0 đến 10.0`,
+          400,
+          400,
+        )
       }
     }
 
@@ -346,6 +349,8 @@ export async function POST(req: NextRequest) {
               ? String(body.headcountMax)
               : null,
           note: body.note?.trim() || null,
+          durationMonths,
+          monthlyFactors: normalizedFactors,
         })
         .returning({ id: headcountStandards.id })
 
@@ -373,19 +378,6 @@ export async function POST(req: NextRequest) {
         await tx.insert(headcountCriteria).values(criteriaToInsert)
       }
 
-      // Insert monthly factors if provided
-      if (body.monthlyFactors && body.monthlyFactors.length > 0) {
-        const factorsToInsert = body.monthlyFactors.map(
-          (f: HeadcountMonthlyFactorInput) => ({
-            standardId,
-            durationMonths: f.durationMonths,
-            monthNo: f.monthNo,
-            factor: String(f.factor),
-          }),
-        )
-        await tx.insert(headcountMonthlyFactors).values(factorsToInsert)
-      }
-
       return standardId
     })
 
@@ -405,7 +397,6 @@ export async function POST(req: NextRequest) {
             property: true,
           },
         },
-        headcountMonthlyFactors: true,
       },
     })
 

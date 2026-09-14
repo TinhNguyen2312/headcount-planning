@@ -81,7 +81,6 @@ export async function POST(req: NextRequest) {
             property: true,
           },
         },
-        headcountMonthlyFactors: true,
       },
     })
 
@@ -232,7 +231,6 @@ export async function POST(req: NextRequest) {
               std.headcountMax !== null ? Number(std.headcountMax) : null,
             note: std.note,
             criteriaCount: criteriaList.length,
-            monthlyFactorCount: std.headcountMonthlyFactors?.length || 0,
             criteria: criteriaList.map((c: any) => ({
               id: c.id,
               standardId: c.standardId,
@@ -244,15 +242,14 @@ export async function POST(req: NextRequest) {
               note: c.note,
               property: c.property,
             })),
-            monthlyFactors: (std.headcountMonthlyFactors || []).map(
-              (f: any) => ({
-                id: f.id,
-                standardId: f.standardId,
-                durationMonths: f.durationMonths,
-                monthNo: f.monthNo,
-                factor: Number(f.factor),
-              }),
-            ),
+            durationMonths: std.durationMonths
+              ? Number(std.durationMonths)
+              : 12,
+            monthlyFactors: Array.isArray(std.monthlyFactors)
+              ? std.monthlyFactors.map(Number)
+              : Array(
+                  std.durationMonths ? Number(std.durationMonths) : 12,
+                ).fill(1.0),
             createdAt: std.createdAt,
             updatedAt: std.updatedAt,
           }

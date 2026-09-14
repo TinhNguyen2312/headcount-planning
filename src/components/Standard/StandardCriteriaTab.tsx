@@ -1,6 +1,15 @@
 "use client"
 
-import { Button, Card, Form, type FormInstance, Input, Select, Tag } from "antd"
+import {
+  Alert,
+  Button,
+  Card,
+  Form,
+  type FormInstance,
+  Input,
+  Select,
+  Tag,
+} from "antd"
 import { Plus, Trash2 } from "lucide-react"
 import React, { useMemo } from "react"
 import type { PropertyResponse } from "@/types"
@@ -36,13 +45,13 @@ export const StandardCriteriaTab: React.FC<StandardCriteriaTabProps> = ({
 
   return (
     <div className="pt-2">
-      <div className="bg-blue-50/50 dark:bg-blue-950/20 p-3 rounded-lg border border-blue-200/60 mb-4 text-xs text-blue-900 dark:text-blue-200">
-        <strong>Quy tắc lọc AND:</strong> Định biên này sẽ được áp dụng cho dự
-        án nếu dự án thỏa mãn <em>tất cả</em> các điều kiện bên dưới. Hệ thống
-        sẽ tự động giới hạn các phép toán so sánh và kiểu nhập liệu tương thích
-        với từng Cơ sở định biên (ví dụ: kiểu Số hỗ trợ dải khoảng BETWEEN, kiểu
-        Danh sách chọn chỉ hỗ trợ chọn giá trị bằng).
-      </div>
+      <Alert
+        type="info"
+        showIcon
+        className="mb-3 text-xs"
+        message="Quy tắc lọc AND"
+        description="Định biên này sẽ được áp dụng cho dự án nếu thỏa mãn tất cả các điều kiện bên dưới. Phép toán so sánh và kiểu giá trị tự động điều chỉnh theo Cơ sở định biên."
+      />
 
       <Form.List name="criteria">
         {(fields, { add, remove }) => (

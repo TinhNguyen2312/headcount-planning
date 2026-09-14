@@ -168,6 +168,8 @@ export const headcountStandards = pgTable("headcount_standards", {
 	headcountMin: numeric("headcount_min", { precision: 10, scale:  4 }),
 	headcountMax: numeric("headcount_max", { precision: 10, scale:  4 }),
 	note: text(),
+	durationMonths: integer("duration_months").default(12).notNull(),
+	monthlyFactors: jsonb("monthly_factors").$type<number[]>().default([]).notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [

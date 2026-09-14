@@ -91,10 +91,10 @@ export interface HeadcountStandardResponse {
   headcountMin: number | null
   headcountMax: number | null
   note: string | null
+  durationMonths: number
+  monthlyFactors: number[]
   criteriaCount?: number
-  monthlyFactorCount?: number
   criteria?: HeadcountCriteriaResponse[]
-  monthlyFactors?: HeadcountMonthlyFactorItem[]
   createdAt: string
   updatedAt: string
 }
@@ -107,8 +107,9 @@ export interface HeadcountStandardCreatePayload {
   headcountMin?: number | null
   headcountMax?: number | null
   note?: string | null
+  durationMonths?: number
+  monthlyFactors?: number[]
   criteria?: HeadcountCriteriaInput[]
-  monthlyFactors?: HeadcountMonthlyFactorInput[]
 }
 
 export interface HeadcountStandardUpdatePayload {
@@ -119,8 +120,9 @@ export interface HeadcountStandardUpdatePayload {
   headcountMin?: number | null
   headcountMax?: number | null
   note?: string | null
+  durationMonths?: number
+  monthlyFactors?: number[]
   criteria?: HeadcountCriteriaInput[]
-  monthlyFactors?: HeadcountMonthlyFactorInput[]
 }
 
 export interface HeadcountStandardQueryParams {

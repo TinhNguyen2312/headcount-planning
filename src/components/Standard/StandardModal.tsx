@@ -70,6 +70,15 @@ export const StandardModal: React.FC<StandardModalProps> = ({
     if (open) {
       setActiveTab("general")
       if (standard) {
+        const dur = standard.durationMonths
+          ? Number(standard.durationMonths)
+          : 12
+        const rawFactors = Array.isArray(standard.monthlyFactors)
+          ? standard.monthlyFactors.map(Number)
+          : []
+        const factors =
+          rawFactors.length > 0 ? rawFactors : Array(dur).fill(1.0)
+
         form.setFieldsValue({
           roleId: standard.roleId,
           fromMilestoneId: standard.fromMilestoneId,
@@ -78,6 +87,8 @@ export const StandardModal: React.FC<StandardModalProps> = ({
           headcountMin: standard.headcountMin,
           headcountMax: standard.headcountMax,
           note: standard.note ?? "",
+          durationMonths: dur,
+          monthlyFactors: factors,
           criteria: (standard.criteria || []).map((c) => ({
             propertyId: c.propertyId,
             conditionOperator: c.conditionOperator,
@@ -86,18 +97,14 @@ export const StandardModal: React.FC<StandardModalProps> = ({
             valueText: c.valueText ?? "",
             note: c.note ?? "",
           })),
-          monthlyFactors: (standard.monthlyFactors || []).map((f) => ({
-            durationMonths: f.durationMonths,
-            monthNo: f.monthNo,
-            factor: f.factor,
-          })),
         })
       } else {
         form.resetFields()
         form.setFieldsValue({
           headcount: 1.0,
+          durationMonths: 12,
+          monthlyFactors: Array(12).fill(1.0),
           criteria: [],
-          monthlyFactors: [],
         })
       }
     }
@@ -106,6 +113,17 @@ export const StandardModal: React.FC<StandardModalProps> = ({
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields()
+
+      const dur = Number(values.durationMonths ?? 12)
+      const rawFactors = Array.isArray(values.monthlyFactors)
+        ? values.monthlyFactors.map(Number)
+        : []
+      let factors = [...rawFactors]
+      if (factors.length < dur) {
+        while (factors.length < dur) factors.push(1.0)
+      } else if (factors.length > dur) {
+        factors = factors.slice(0, dur)
+      }
 
       const payload: HeadcountStandardCreatePayload = {
         roleId: values.roleId,
@@ -121,6 +139,8 @@ export const StandardModal: React.FC<StandardModalProps> = ({
             ? Number(values.headcountMax)
             : null,
         note: values.note?.trim() || null,
+        durationMonths: dur,
+        monthlyFactors: factors,
         criteria: (values.criteria || [])
           .filter((c: any) => c && c.propertyId)
           .map((c: any) => ({
@@ -136,13 +156,6 @@ export const StandardModal: React.FC<StandardModalProps> = ({
                 : null,
             valueText: c.valueText?.trim() || null,
             note: c.note?.trim() || null,
-          })),
-        monthlyFactors: (values.monthlyFactors || [])
-          .filter((f: any) => f && f.durationMonths && f.monthNo)
-          .map((f: any) => ({
-            durationMonths: Number(f.durationMonths),
-            monthNo: Number(f.monthNo),
-            factor: Number(f.factor ?? 1.0),
           })),
       }
 
@@ -178,7 +191,7 @@ export const StandardModal: React.FC<StandardModalProps> = ({
       onOk={handleSubmit}
       confirmLoading={createMutation.isPending || updateMutation.isPending}
       destroyOnHidden
-      width={800}
+      width={1000}
       okText={isEdit ? "Lưu thay đổi" : "Tạo mới"}
       cancelText="Hủy"
     >

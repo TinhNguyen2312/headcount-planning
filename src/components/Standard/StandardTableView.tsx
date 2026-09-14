@@ -175,7 +175,7 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
       ),
     },
     {
-      title: "Điều kiện lọc (Criteria)",
+      title: "Điều kiện lọc",
       key: "criteria",
       width: 260,
       render: (_, record) => {
@@ -219,30 +219,19 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
       },
     },
     {
-      title: "Phân bổ theo tháng",
-      key: "monthlyFactors",
-      width: 180,
+      title: "Thời lượng",
+      key: "durationMonths",
+      width: 170,
       render: (_, record) => {
+        const dur = record.durationMonths || 12
         const factors = record.monthlyFactors || []
-        if (factors.length === 0) {
-          return (
-            <Tag color="default" className="text-xs text-muted-foreground">
-              Mặc định (100%/tháng)
-            </Tag>
-          )
-        }
-
-        // Group by durationMonths
-        const durationSet = new Set(factors.map((f) => f.durationMonths))
         return (
-          <div className="flex flex-wrap gap-1">
-            {Array.from(durationSet).map((duration) => (
-              <Tag key={duration} color="purple" className="text-xs font-mono">
-                {duration} tháng (
-                {factors.filter((f) => f.durationMonths === duration).length}{" "}
-                mốc)
+          <div className="flex flex-col gap-0.5">
+            <div className="flex items-center gap-1.5">
+              <Tag color="blue" className="font-semibold text-xs m-0">
+                {dur} tháng
               </Tag>
-            ))}
+            </div>
           </div>
         )
       },
@@ -410,59 +399,62 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
               label: (
                 <span className="flex items-center gap-1.5 font-medium text-xs">
                   <Users className="size-3.5" />
-                  Hệ số phân bổ nhân sự theo tháng ({factorsList.length})
+                  Hệ số phân bổ nhân sự theo tháng (
+                  {record.durationMonths || 12} tháng)
                 </span>
               ),
-              children:
-                factorsList.length > 0 ? (
-                  <div className="space-y-3">
-                    {Array.from(
-                      new Set(factorsList.map((f) => f.durationMonths)),
-                    ).map((duration) => {
-                      const itemsInDuration = factorsList
-                        .filter((f) => f.durationMonths === duration)
-                        .sort((a, b) => a.monthNo - b.monthNo)
-                      return (
-                        <div
-                          key={duration}
-                          className="border border-border/70 rounded-md p-3 bg-card"
-                        >
-                          <div className="text-xs font-semibold text-foreground mb-2 flex items-center gap-2">
-                            <span>
-                              Khung thời gian tiến độ: {duration} tháng
-                            </span>
-                            <span className="text-muted-foreground font-normal">
-                              ({itemsInDuration.length} mốc tháng cấu hình)
-                            </span>
-                          </div>
-                          <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-12 gap-2">
-                            {itemsInDuration.map((f) => (
-                              <div
-                                key={f.monthNo}
-                                className="bg-slate-100 dark:bg-slate-800 rounded p-1.5 text-center border border-border"
-                              >
-                                <div className="text-[10px] text-muted-foreground font-medium">
-                                  T{f.monthNo}
-                                </div>
-                                <div className="text-xs font-bold text-primary mt-0.5">
-                                  {f.factor}
-                                </div>
-                                <div className="text-[9px] text-muted-foreground">
-                                  {(f.factor * 100).toFixed(0)}%
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                ) : (
-                  <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description="Chưa thiết lập hệ số theo tháng (Mặc định giữ nguyên hệ số 1.0 qua các tháng)"
+              children: (() => {
+                const dur = record.durationMonths || 12
+                const factors =
+                  record.monthlyFactors && record.monthlyFactors.length > 0
+                    ? record.monthlyFactors
+                    : Array(dur).fill(1.0)
+
+                const factorCols: ColumnsType<any> = [
+                  {
+                    title: "Thời lượng",
+                    key: "duration",
+                    fixed: "left",
+                    width: 110,
+                    render: () => (
+                      <Tag color="blue" className="font-semibold text-xs m-0">
+                        {dur} tháng
+                      </Tag>
+                    ),
+                  },
+                ]
+
+                for (let m = 1; m <= dur; m++) {
+                  const factor = factors[m - 1] ?? 1.0
+                  factorCols.push({
+                    title: `T${m}`,
+                    key: `m_${m}`,
+                    width: 65,
+                    align: "center",
+                    render: () => (
+                      <div className="flex flex-col items-center justify-center">
+                        <span className="font-mono text-xs font-semibold text-primary">
+                          {factor}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground font-mono">
+                          {Math.round(factor * 100)}%
+                        </span>
+                      </div>
+                    ),
+                  })
+                }
+
+                return (
+                  <Table
+                    size="small"
+                    bordered
+                    pagination={false}
+                    dataSource={[{ key: 1 }]}
+                    scroll={{ x: "max-content" }}
+                    columns={factorCols}
                   />
-                ),
+                )
+              })(),
             },
           ]}
         />

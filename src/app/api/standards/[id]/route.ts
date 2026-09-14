@@ -99,17 +99,14 @@ function formatStandard(standard: any): HeadcountStandardResponse {
     updatedAt: c.updatedAt,
   }))
 
-  const monthlyFactorsList = (standard.headcountMonthlyFactors || []).map(
-    (f: any) => ({
-      id: f.id,
-      standardId: f.standardId,
-      durationMonths: f.durationMonths,
-      monthNo: f.monthNo,
-      factor: Number(f.factor),
-      createdAt: f.createdAt,
-      updatedAt: f.updatedAt,
-    }),
-  )
+  const durationMonths = standard.durationMonths
+    ? Number(standard.durationMonths)
+    : 12
+  const rawFactors = Array.isArray(standard.monthlyFactors)
+    ? standard.monthlyFactors.map((f: any) => Number(f))
+    : []
+  const monthlyFactorsList =
+    rawFactors.length > 0 ? rawFactors : Array(durationMonths).fill(1.0)
 
   return {
     id: standard.id,
@@ -125,10 +122,10 @@ function formatStandard(standard: any): HeadcountStandardResponse {
     headcountMax:
       standard.headcountMax !== null ? Number(standard.headcountMax) : null,
     note: standard.note ?? null,
-    criteriaCount: criteriaList.length,
-    monthlyFactorCount: monthlyFactorsList.length,
-    criteria: criteriaList,
+    durationMonths,
     monthlyFactors: monthlyFactorsList,
+    criteriaCount: criteriaList.length,
+    criteria: criteriaList,
     createdAt: standard.createdAt,
     updatedAt: standard.updatedAt,
   }
@@ -160,7 +157,6 @@ export async function GET(
             property: true,
           },
         },
-        headcountMonthlyFactors: true,
       },
     })
 
@@ -201,7 +197,10 @@ export async function PATCH(
     }
 
     const [existing] = await db
-      .select({ id: headcountStandards.id })
+      .select({
+        id: headcountStandards.id,
+        durationMonths: headcountStandards.durationMonths,
+      })
       .from(headcountStandards)
       .where(eq(headcountStandards.id, id))
       .limit(1)
@@ -247,43 +246,58 @@ export async function PATCH(
       }
     }
 
-    // Validate monthly factors constraints
-    if (body.monthlyFactors && body.monthlyFactors.length > 0) {
-      for (const f of body.monthlyFactors) {
-        if (!f.durationMonths || f.durationMonths < 6) {
-          return apiError(
-            `Thời lượng phân bổ tối thiểu phải từ 6 tháng trở lên (phát hiện ${f.durationMonths} tháng)`,
-            400,
-            400,
-          )
-        }
-        if (f.durationMonths > 60) {
-          return apiError(
-            `Thời lượng phân bổ tối đa không vượt quá 60 tháng (phát hiện ${f.durationMonths} tháng)`,
-            400,
-            400,
-          )
-        }
-        if (!f.monthNo || f.monthNo < 1 || f.monthNo > f.durationMonths) {
-          return apiError(
-            `Mốc tháng T${f.monthNo} không hợp lệ trong chu kỳ ${f.durationMonths} tháng (phải từ T1 đến T${f.durationMonths})`,
-            400,
-            400,
-          )
-        }
-        if (
-          f.factor === undefined ||
-          f.factor === null ||
-          f.factor < 0 ||
-          f.factor > 10
+    const currentDuration =
+      body.durationMonths !== undefined
+        ? Number(body.durationMonths)
+        : existing.durationMonths
+          ? Number(existing.durationMonths)
+          : 12
+
+    if (body.durationMonths !== undefined) {
+      if (currentDuration < 6 || currentDuration > 60) {
+        return apiError(
+          `Thời lượng chu kỳ phân bổ phải từ 6 đến 60 tháng (nhận ${currentDuration} tháng)`,
+          400,
+          400,
+        )
+      }
+    }
+
+    let normalizedFactors: number[] | undefined = undefined
+    if (body.monthlyFactors !== undefined) {
+      const raw = body.monthlyFactors
+      let factorsList: number[] = []
+      if (Array.isArray(raw)) {
+        if (raw.length > 0 && typeof raw[0] === "number") {
+          factorsList = raw.map(Number)
+        } else if (
+          raw.length > 0 &&
+          typeof raw[0] === "object" &&
+          raw[0] !== null
         ) {
+          factorsList = raw.map((f: any) => Number(f.factor ?? 1.0))
+        }
+      }
+
+      if (factorsList.length < currentDuration) {
+        while (factorsList.length < currentDuration) {
+          factorsList.push(1.0)
+        }
+      } else if (factorsList.length > currentDuration) {
+        factorsList = factorsList.slice(0, currentDuration)
+      }
+
+      for (let i = 0; i < factorsList.length; i++) {
+        const f = factorsList[i]
+        if (isNaN(f) || f < 0 || f > 10) {
           return apiError(
-            `Hệ số phân bổ của tháng T${f.monthNo} phải nằm trong khoảng từ 0.0 đến 10.0`,
+            `Hệ số phân bổ của tháng T${i + 1} phải nằm trong khoảng từ 0.0 đến 10.0`,
             400,
             400,
           )
         }
       }
+      normalizedFactors = factorsList
     }
 
     await db.transaction(async (tx) => {
@@ -306,6 +320,10 @@ export async function PATCH(
         updateValues.headcountMax =
           body.headcountMax !== null ? String(body.headcountMax) : null
       if (body.note !== undefined) updateValues.note = body.note?.trim() || null
+      if (body.durationMonths !== undefined)
+        updateValues.durationMonths = currentDuration
+      if (normalizedFactors !== undefined)
+        updateValues.monthlyFactors = normalizedFactors
 
       await tx
         .update(headcountStandards)
@@ -339,25 +357,6 @@ export async function PATCH(
           await tx.insert(headcountCriteria).values(criteriaToInsert)
         }
       }
-
-      // 3. Sync monthly factors if provided
-      if (body.monthlyFactors !== undefined) {
-        await tx
-          .delete(headcountMonthlyFactors)
-          .where(eq(headcountMonthlyFactors.standardId, id))
-
-        if (body.monthlyFactors && body.monthlyFactors.length > 0) {
-          const factorsToInsert = body.monthlyFactors.map(
-            (f: HeadcountMonthlyFactorInput) => ({
-              standardId: id,
-              durationMonths: f.durationMonths,
-              monthNo: f.monthNo,
-              factor: String(f.factor),
-            }),
-          )
-          await tx.insert(headcountMonthlyFactors).values(factorsToInsert)
-        }
-      }
     })
 
     // Fetch updated standard with relations
@@ -376,7 +375,6 @@ export async function PATCH(
             property: true,
           },
         },
-        headcountMonthlyFactors: true,
       },
     })
 
