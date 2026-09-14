@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export function buildTree<T extends { id: number; parentId?: number | null }>(
   items: T[],
 ): (T & { children: any[] })[] {

@@ -1,5 +1,5 @@
 import crypto from "crypto"
-import { eq, and, gt, lt } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import { db, sessions, users } from "@/db"
 
 const SESSION_EXPIRE_MINUTES = parseInt(
@@ -27,7 +27,6 @@ export async function createSession(userId: number) {
 export async function getValidSession(sessionId: string) {
   if (!sessionId) return null
 
-  const now = new Date().toISOString()
   const [session] = await db
     .select()
     .from(sessions)

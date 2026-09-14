@@ -24,7 +24,7 @@ const DepartmentFlowNode = ({ data }: NodeProps<DepartmentFlowNodeType>) => {
         type="target"
         id="top"
         position={Position.Top}
-        className="!opacity-0"
+        className="opacity-0!"
         isConnectable={false}
       />
       <DepartmentNode
@@ -38,7 +38,7 @@ const DepartmentFlowNode = ({ data }: NodeProps<DepartmentFlowNodeType>) => {
         type="source"
         id="bottom"
         position={Position.Bottom}
-        className="!opacity-0"
+        className="opacity-0!"
         isConnectable={false}
       />
     </div>

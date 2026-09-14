@@ -1,4 +1,4 @@
-import { Form, Input, InputNumber, Modal, Select } from "antd"
+import { Form, Input, Modal, Select } from "antd"
 import { useEffect, useMemo } from "react"
 import { departmentQueries } from "@/hooks/server/departments"
 import { applyApiFieldErrors } from "@/lib/errors"
@@ -234,7 +234,7 @@ const DepartmentModal = ({
           <Form.Item
             label="Mã phòng ban"
             name="code"
-            className="mb-0"
+            className="mb-0 col-span-2"
             rules={[
               { required: true, message: "Vui lòng nhập mã phòng ban" },
               { max: 50, message: "Tối đa 50 ký tự" },
@@ -251,22 +251,13 @@ const DepartmentModal = ({
           >
             <Select options={DEPARTMENT_TYPE_OPTIONS} />
           </Form.Item>
-
-          <Form.Item
-            label="Cấp bậc"
-            name="level"
-            className="mb-0"
-            rules={[{ required: true, message: "Vui lòng nhập cấp bậc" }]}
-          >
-            <InputNumber min={1} className="w-full" />
-          </Form.Item>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Form.Item
             label="Đơn vị cấp trên trực thuộc"
             name="parentId"
-            className="mb-0"
+            className="mb-0 col-span-2"
           >
             <Select
               placeholder="Chọn đơn vị trực thuộc (nếu có)"
@@ -298,7 +289,7 @@ const DepartmentModal = ({
         </div>
 
         <Form.Item
-          label="Màu chủ đề nhóm phòng ban (Metadata Color)"
+          label="Màu chủ đề nhóm phòng ban"
           name="color"
           className="mb-0"
         >

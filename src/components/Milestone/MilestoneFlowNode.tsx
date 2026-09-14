@@ -30,7 +30,7 @@ const MilestoneFlowNode: React.FC<NodeProps<MilestoneFlowNodeType>> = ({
         type="target"
         id="top"
         position={Position.Top}
-        className="size-2! bg-primary! border-2! border-background! !opacity-0"
+        className="size-2! bg-primary! border-2! border-background! opacity-0!"
         isConnectable={false}
       />
 
@@ -52,7 +52,7 @@ const MilestoneFlowNode: React.FC<NodeProps<MilestoneFlowNodeType>> = ({
         type="source"
         id="bottom"
         position={Position.Bottom}
-        className="size-2! bg-primary! border-2! border-background! !opacity-0"
+        className="size-2! bg-primary! border-2! border-background! opacity-0!"
         isConnectable={false}
       />
     </div>

@@ -47,7 +47,7 @@ export async function uploadToSupabaseStorage(
     // If bucket does not exist, try creating it automatically as public
     if (
       uploadError &&
-      ((uploadError as any).statusCode === "404" ||
+      (uploadError.statusCode === "404" ||
         uploadError.message?.toLowerCase().includes("not found"))
     ) {
       try {

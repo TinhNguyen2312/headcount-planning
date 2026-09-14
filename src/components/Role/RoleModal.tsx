@@ -211,7 +211,7 @@ const RoleModal = ({ open, onCancel, role }: RoleModalProps) => {
           <Input placeholder="ví dụ: KTS Công trường" />
         </Form.Item>
 
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Form.Item
             label="Mã chức vụ (Novator Hub)"
             name="code"
@@ -231,15 +231,6 @@ const RoleModal = ({ open, onCancel, role }: RoleModalProps) => {
             rules={[{ max: 50, message: "Tối đa 50 ký tự" }]}
           >
             <Input placeholder="ví dụ: KTS_CT" />
-          </Form.Item>
-
-          <Form.Item
-            label="Cấp bậc"
-            name="level"
-            className="mb-0"
-            rules={[{ required: true, message: "Vui lòng nhập cấp bậc" }]}
-          >
-            <InputNumber min={1} className="w-full" />
           </Form.Item>
         </div>
 

@@ -348,7 +348,7 @@ const ROUTE_METADATA: Record<
 }
 
 export const getApiDocs = async () => {
-  const spec: any = createSwaggerSpec({
+  const spec = createSwaggerSpec({
     apiFolder: "src/app/api",
     autoDoc: true,
     definition: {
@@ -392,7 +392,7 @@ export const getApiDocs = async () => {
   // Enrich each operation with tags, summaries, and descriptions
   for (const [path, methods] of Object.entries(spec.paths || {})) {
     const defaultTag = getTagForPath(path)
-    for (const [method, op] of Object.entries(methods as Record<string, any>)) {
+    for (const [method, op] of Object.entries(methods)) {
       if (typeof op === "object" && op !== null) {
         // Group by tag
         if (!op.tags || op.tags.length === 0) {

@@ -1,12 +1,19 @@
 "use client"
 
-import { Button, Upload } from "antd"
-import { SlidersHorizontal, UploadCloud, Users } from "lucide-react"
+import { Button, Tabs, Upload } from "antd"
+import {
+  Building2,
+  CalendarDays,
+  SlidersHorizontal,
+  UploadCloud,
+  Users,
+} from "lucide-react"
 import { useState } from "react"
 
 import PageContainer from "@/components/Common/PageContainer"
 import ProtectedButton from "@/components/Common/ProtectedButton"
 import ProjectEditForm from "@/components/Projects/ProjectEditForm"
+import { ProjectPlanManagement } from "@/components/Projects/Plan"
 import ProjectPropertiesDrawer from "@/components/Projects/ProjectPropertiesDrawer"
 import { projectQueries } from "@/hooks/server/projects"
 import { uploadMutations } from "@/hooks/server/uploads"
@@ -31,6 +38,7 @@ export default function ProjectEditPage({
   const updateMutation = projectQueries.useUpdate()
   const { message } = useUI()
   const [isPropertiesDrawerOpen, setIsPropertiesDrawerOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState<string>("general")
 
   const handleHeaderFileUpload = async (file: File) => {
     if (!file) return
@@ -59,6 +67,36 @@ export default function ProjectEditPage({
       }
     } catch {}
   }
+
+  const tabItems = [
+    {
+      key: "general",
+      label: (
+        <span className="flex items-center gap-1.5 font-medium">
+          <Building2 className="size-4" />
+          Thông tin chung
+        </span>
+      ),
+      children: <ProjectEditForm project={project!} viewOnly={!canEdit} />,
+    },
+    {
+      key: "plans",
+      label: (
+        <span className="flex items-center gap-1.5 font-medium">
+          <CalendarDays className="size-4" />
+          Kế hoạch tiến độ (Plans & Phases)
+        </span>
+      ),
+      children: (
+        <ProjectPlanManagement
+          projectId={projectId}
+          projectStartDate={project?.startDate}
+          projectEndDate={project?.endDate}
+          viewOnly={!canEdit}
+        />
+      ),
+    },
+  ]
 
   return (
     <PageContainer
@@ -100,8 +138,14 @@ export default function ProjectEditPage({
         </>
       }
     >
-      <div className="pt-2">
-        <ProjectEditForm project={project!} viewOnly={!canEdit} />
+      <div className="pt-1">
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          items={tabItems}
+          type="card"
+          className="project-edit-tabs"
+        />
       </div>
 
       <ProjectPropertiesDrawer

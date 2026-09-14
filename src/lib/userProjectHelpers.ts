@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm"
-import { db, userProjects, projects, roles, departments, users } from "@/db"
+import { db, departments, projects, roles, userProjects, users } from "@/db"
 import { resolvePermissionGroup } from "./permissionGroups"
 
 export async function getDetailedUserProjectRole(uprId: number) {

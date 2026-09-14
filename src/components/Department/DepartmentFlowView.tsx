@@ -29,7 +29,6 @@ interface DepartmentFlowViewProps {
 const DepartmentFlowView = ({ onEditDepartment }: DepartmentFlowViewProps) => {
   const { data: rawDepartments = [] } = departmentQueries.useSuspenseTree()
 
-  // Lọc chỉ hiển thị các phòng ban có status = ACTIVE (loại bỏ inactive)
   const departments = useMemo(() => {
     const filterActive = (
       nodes: typeof rawDepartments,

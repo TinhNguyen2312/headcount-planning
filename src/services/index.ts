@@ -1,6 +1,7 @@
 export { AuthAPI } from "./auth"
 export { DepartmentsAPI } from "./departments"
 export { MilestonesAPI } from "./milestones"
+export { PlansAPI } from "./plans"
 export { ProjectsAPI, ZonesAPI } from "./projects"
 export { PropertiesAPI } from "./properties"
 export { RegionsAPI } from "./regions"

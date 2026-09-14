@@ -1,5 +1,5 @@
-import { eq, and, inArray } from "drizzle-orm"
-import { db, userProjects, projects, roles, departments, users } from "@/db"
+import { and, eq } from "drizzle-orm"
+import { db, departments, projects, roles, userProjects, users } from "@/db"
 import { resolvePermissionGroup } from "./permissionGroups"
 
 export interface ProjectRoleSummary {

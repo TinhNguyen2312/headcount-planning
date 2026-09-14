@@ -9,7 +9,6 @@ import {
   TEXT_EXTENSIONS,
   VIDEO_EXTENSIONS,
 } from "@/constants/fileAdapter"
-import { getConfig } from "./config"
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs))
