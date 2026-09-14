@@ -1,12 +1,13 @@
 "use client"
 
-import { Button, Flex, Tabs, Upload } from "antd"
-import { FileText, SlidersHorizontal, UploadCloud, Users } from "lucide-react"
+import { Button, Upload } from "antd"
+import { SlidersHorizontal, UploadCloud, Users } from "lucide-react"
+import { useState } from "react"
 
 import PageContainer from "@/components/Common/PageContainer"
 import ProtectedButton from "@/components/Common/ProtectedButton"
 import ProjectEditForm from "@/components/Projects/ProjectEditForm"
-import ProjectPropertiesTab from "@/components/Projects/ProjectPropertiesTab"
+import ProjectPropertiesDrawer from "@/components/Projects/ProjectPropertiesDrawer"
 import { projectQueries } from "@/hooks/server/projects"
 import { uploadMutations } from "@/hooks/server/uploads"
 import { useProjectAuth } from "@/hooks/useProjectAuth"
@@ -29,6 +30,7 @@ export default function ProjectEditPage({
   const uploadMutation = uploadMutations.useUploadFile()
   const updateMutation = projectQueries.useUpdate()
   const { message } = useUI()
+  const [isPropertiesDrawerOpen, setIsPropertiesDrawerOpen] = useState(false)
 
   const handleHeaderFileUpload = async (file: File) => {
     if (!file) return
@@ -82,6 +84,12 @@ export default function ProjectEditPage({
               </Button>
             </Upload>
           )}
+          <Button
+            icon={<SlidersHorizontal className="size-4" />}
+            onClick={() => setIsPropertiesDrawerOpen(true)}
+          >
+            Quy mô & Cơ sở định biên
+          </Button>
           <ProtectedButton
             projectRoles={[]}
             onClick={onNavigateUsers}
@@ -92,41 +100,15 @@ export default function ProjectEditPage({
         </>
       }
     >
-      <Tabs
-        defaultActiveKey="info"
-        items={[
-          {
-            key: "info",
-            label: (
-              <span className="flex items-center gap-1.5">
-                <FileText className="size-4" />
-                Thông tin chung
-              </span>
-            ),
-            children: (
-              <Flex className="pt-2">
-                <ProjectEditForm project={project!} viewOnly={!canEdit} />
-              </Flex>
-            ),
-          },
-          {
-            key: "properties",
-            label: (
-              <span className="flex items-center gap-1.5">
-                <SlidersHorizontal className="size-4" />
-                Quy mô & Cơ sở định biên
-              </span>
-            ),
-            children: (
-              <div className="pt-2">
-                <ProjectPropertiesTab
-                  projectId={projectId}
-                  viewOnly={!canEdit}
-                />
-              </div>
-            ),
-          },
-        ]}
+      <div className="pt-2">
+        <ProjectEditForm project={project!} viewOnly={!canEdit} />
+      </div>
+
+      <ProjectPropertiesDrawer
+        projectId={projectId}
+        open={isPropertiesDrawerOpen}
+        onClose={() => setIsPropertiesDrawerOpen(false)}
+        viewOnly={!canEdit}
       />
     </PageContainer>
   )

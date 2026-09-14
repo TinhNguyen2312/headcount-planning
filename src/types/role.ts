@@ -30,6 +30,12 @@ export interface RoleResponse {
   level?: number
   parentRoleId: number | null
   departmentId: number | null
+  departmentName?: string | null
+  departmentCode?: string | null
+  departmentType?: string | null
+  departmentLevel?: number | null
+  departmentParentId?: number | null
+  departmentMetadata?: unknown
   planningMethod?: PlanningMethod | null
   leadTimeMonths?: number | null
   description: string | null

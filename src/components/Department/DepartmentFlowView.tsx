@@ -82,7 +82,7 @@ const DepartmentFlowView = ({ onEditDepartment }: DepartmentFlowViewProps) => {
     }
 
     const entries = flattenDepartmentTree(departments, collapsedIds)
-    const { positions, stackedChildIds } = layoutDepartmentTree(entries)
+    const positions = layoutDepartmentTree(entries)
 
     const flowNodes: DepartmentFlowNodeType[] = entries.map((entry) => ({
       id: entry.id,
@@ -103,18 +103,15 @@ const DepartmentFlowView = ({ onEditDepartment }: DepartmentFlowViewProps) => {
 
     const flowEdges: Edge[] = entries
       .filter((entry) => entry.parentId)
-      .map((entry) => {
-        const isStacked = stackedChildIds.has(entry.id)
-        return {
-          id: `dept-${entry.parentId}-${entry.id}`,
-          source: entry.parentId as string,
-          sourceHandle: "bottom",
-          target: entry.id,
-          targetHandle: isStacked ? "left" : "top",
-          type: "smoothstep",
-          style: { stroke: "var(--muted-foreground)", strokeWidth: 2 },
-        }
-      })
+      .map((entry) => ({
+        id: `dept-${entry.parentId}-${entry.id}`,
+        source: entry.parentId as string,
+        sourceHandle: "bottom",
+        target: entry.id,
+        targetHandle: "top",
+        type: "smoothstep",
+        style: { stroke: "var(--muted-foreground)", strokeWidth: 2 },
+      }))
 
     return { nodes: flowNodes, edges: flowEdges }
   }, [departments, collapsedIds, toggleCollapsed, onEditDepartment])

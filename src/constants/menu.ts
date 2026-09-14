@@ -4,6 +4,7 @@ import {
   type LucideIcon,
   MapPin,
   Milestone,
+  Scale,
   Settings,
   ShieldCheck,
   SlidersHorizontal,
@@ -81,7 +82,7 @@ export const MENU_ITEMS: MenuItemConfig[] = [
   {
     key: "milestones",
     icon: Milestone,
-    label: "Mốc tiến độ chuẩn",
+    label: "Mốc tiến độ",
     path: "/milestones",
     roles: ["SUPER_ADMIN"],
     position: "bottom",
@@ -96,6 +97,16 @@ export const MENU_ITEMS: MenuItemConfig[] = [
     roles: ["SUPER_ADMIN"],
     position: "bottom",
     shortcut: "mod+alt+s",
+    category: "Quản trị",
+  },
+  {
+    key: "standards",
+    icon: Scale,
+    label: "Khung định biên",
+    path: "/standards",
+    roles: ["SUPER_ADMIN"],
+    position: "bottom",
+    shortcut: "mod+alt+b",
     category: "Quản trị",
   },
   {

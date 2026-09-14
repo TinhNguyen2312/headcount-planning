@@ -34,48 +34,18 @@ export const flattenDepartmentTree = (
   return entries
 }
 
-const HORIZONTAL_NODE_SEP = 56
+const HORIZONTAL_NODE_SEP = 48
 const VERTICAL_NODE_SEP = 72
-const STACK_VERTICAL_GAP = 28
-const STACK_INDENT = 60 // Độ thụt lề sang phải của node con dạng stack
-
-export interface DepartmentLayoutResult {
-  positions: Map<string, { x: number; y: number }>
-  stackedChildIds: Set<string>
-}
 
 export const layoutDepartmentTree = (
   entries: DepartmentFlatEntry[],
-): DepartmentLayoutResult => {
+): Map<string, { x: number; y: number }> => {
   const positions = new Map<string, { x: number; y: number }>()
-  const stackedChildIds = new Set<string>()
 
   if (!entries || entries.length === 0) {
-    return { positions, stackedChildIds }
+    return positions
   }
 
-  // 1. Phân nhóm children theo parentId
-  const childrenMap = new Map<string, DepartmentFlatEntry[]>()
-  for (const entry of entries) {
-    if (entry.parentId) {
-      const list = childrenMap.get(entry.parentId) ?? []
-      list.push(entry)
-      childrenMap.set(entry.parentId, list)
-    }
-  }
-
-  // Xác định node cha nào có > 4 children ĐANG HIỂN THỊ -> chỉ các con này mới xếp dọc
-  const stackedParentMap = new Map<string, DepartmentFlatEntry[]>()
-  for (const [parentId, childList] of childrenMap.entries()) {
-    if (childList.length > 4) {
-      stackedParentMap.set(parentId, childList)
-      for (const child of childList) {
-        stackedChildIds.add(child.id)
-      }
-    }
-  }
-
-  // 2. Dựng Dagre graph cho các node chính (không bao gồm stacked children)
   const graph = new dagre.graphlib.Graph()
   graph.setDefaultEdgeLabel(() => ({}))
   graph.setGraph({
@@ -95,75 +65,25 @@ export const layoutDepartmentTree = (
   }
 
   for (const entry of entries) {
-    if (stackedChildIds.has(entry.id)) {
-      continue
-    }
-
-    if (stackedParentMap.has(entry.id)) {
-      const children = stackedParentMap.get(entry.id)!
-      const count = children.length
-      // Chiều rộng là kích thước node cha + khoảng thụt vào của node con
-      const groupWidth = DEPARTMENT_NODE_WIDTH + STACK_INDENT
-      // Chiều cao là node cha + khoảng cách + tất cả các node con xếp dọc bên dưới
-      const groupHeight =
-        DEPARTMENT_NODE_HEIGHT +
-        VERTICAL_NODE_SEP +
-        count * DEPARTMENT_NODE_HEIGHT +
-        (count - 1) * STACK_VERTICAL_GAP
-
-      graph.setNode(entry.id, {
-        width: groupWidth,
-        height: groupHeight,
-      })
-    } else {
-      graph.setNode(entry.id, {
-        width: DEPARTMENT_NODE_WIDTH,
-        height: DEPARTMENT_NODE_HEIGHT,
-      })
-    }
+    graph.setNode(entry.id, {
+      width: DEPARTMENT_NODE_WIDTH,
+      height: DEPARTMENT_NODE_HEIGHT,
+    })
   }
 
-  // Nối các cạnh trong Dagre (giữ nguyên liên kết giữa các cấp cha con thông thường)
   for (const entry of entries) {
-    if (stackedChildIds.has(entry.id)) {
-      continue
-    }
-
-    if (entry.parentId && !stackedChildIds.has(entry.parentId)) {
+    if (entry.parentId) {
       graph.setEdge(entry.parentId, entry.id)
-    } else if (!entry.parentId && useVirtualRoot) {
+    } else if (useVirtualRoot) {
       graph.setEdge(VIRTUAL_ROOT_ID, entry.id)
     }
   }
 
   dagre.layout(graph)
 
-  // 3. Tính toạ độ cụ thể cho từng node
   for (const entry of entries) {
-    if (stackedChildIds.has(entry.id)) {
-      continue
-    }
-
     const node = graph.node(entry.id)
-    if (!node) continue
-
-    if (stackedParentMap.has(entry.id)) {
-      // Đặt node cha ở bên trái của bounding box để thẳng hàng với đường trục dọc
-      const parentX = node.x - node.width / 2
-      const parentY = node.y - node.height / 2
-      positions.set(entry.id, { x: parentX, y: parentY })
-
-      // Các node con xếp 1 cột dọc bên dưới node cha
-      const children = stackedParentMap.get(entry.id)!
-      const startY = parentY + DEPARTMENT_NODE_HEIGHT + VERTICAL_NODE_SEP
-      const childX = parentX + STACK_INDENT
-
-      children.forEach((child, index) => {
-        const childY =
-          startY + index * (DEPARTMENT_NODE_HEIGHT + STACK_VERTICAL_GAP)
-        positions.set(child.id, { x: childX, y: childY })
-      })
-    } else {
+    if (node) {
       positions.set(entry.id, {
         x: node.x - DEPARTMENT_NODE_WIDTH / 2,
         y: node.y - DEPARTMENT_NODE_HEIGHT / 2,
@@ -171,5 +91,5 @@ export const layoutDepartmentTree = (
     }
   }
 
-  return { positions, stackedChildIds }
+  return positions
 }

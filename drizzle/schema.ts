@@ -220,6 +220,7 @@ export const headcountCriteria = pgTable("headcount_criteria", {
 	conditionOperator: varchar("condition_operator", { length: 20 }).default('BETWEEN').notNull(),
 	minValue: numeric("min_value", { precision: 15, scale:  4 }),
 	maxValue: numeric("max_value", { precision: 15, scale:  4 }),
+	valueText: text("value_text"),
 	note: text(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),

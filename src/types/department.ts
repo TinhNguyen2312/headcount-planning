@@ -33,6 +33,7 @@ export interface DepartmentResponse {
   startDate?: string | null
   endDate?: string | null
   path?: string | null
+  metadata?: unknown
   metadataJson?: unknown
   createdAt?: string
   updatedAt?: string | null
@@ -52,6 +53,8 @@ export interface DepartmentCreate {
   description?: string | null
   startDate?: string | null
   endDate?: string | null
+  metadata?: unknown
+  metadataJson?: unknown
 }
 
 export interface DepartmentUpdate extends Partial<DepartmentCreate> {}

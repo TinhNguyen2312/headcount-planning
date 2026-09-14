@@ -15,6 +15,17 @@ export interface DepartmentModalProps {
   department?: DepartmentResponse | null
 }
 
+const COLOR_PRESETS = [
+  { value: "#2563eb", label: "Xanh dương (Blue)" },
+  { value: "#059669", label: "Xanh lá (Emerald)" },
+  { value: "#7c3aed", label: "Tím (Violet)" },
+  { value: "#d97706", label: "Cam vàng (Amber)" },
+  { value: "#e11d48", label: "Đỏ hồng (Rose)" },
+  { value: "#0891b2", label: "Xanh ngọc (Cyan)" },
+  { value: "#4f46e5", label: "Chàm (Indigo)" },
+  { value: "#475569", label: "Xám đá (Slate)" },
+]
+
 interface DepartmentFormValues {
   name: string
   code: string
@@ -23,6 +34,7 @@ interface DepartmentFormValues {
   parentId?: number | null
   status: string
   description?: string | null
+  color?: string | null
 }
 
 const DepartmentModal = ({
@@ -80,6 +92,18 @@ const DepartmentModal = ({
   useEffect(() => {
     if (open) {
       if (department) {
+        let existingColor: string | null = null
+        if (department.metadata && typeof department.metadata === "object") {
+          const meta = department.metadata as Record<string, unknown>
+          if (typeof meta.color === "string") existingColor = meta.color
+        } else if (
+          department.metadataJson &&
+          typeof department.metadataJson === "object"
+        ) {
+          const meta = department.metadataJson as Record<string, unknown>
+          if (typeof meta.color === "string") existingColor = meta.color
+        }
+
         form.setFieldsValue({
           name: department.name,
           code: department.code,
@@ -88,6 +112,7 @@ const DepartmentModal = ({
           parentId: department.parentId ?? null,
           status: department.status || "ACTIVE",
           description: department.description,
+          color: existingColor,
         })
       } else {
         form.resetFields()
@@ -99,6 +124,7 @@ const DepartmentModal = ({
           parentId: null,
           status: "ACTIVE",
           description: null,
+          color: null,
         })
       }
     } else {
@@ -114,6 +140,14 @@ const DepartmentModal = ({
   }
 
   const onSubmit = (values: DepartmentFormValues) => {
+    const existingMeta =
+      department?.metadata && typeof department.metadata === "object"
+        ? (department.metadata as Record<string, unknown>)
+        : {}
+    const metadataPayload = values.color
+      ? { ...existingMeta, color: values.color }
+      : { ...existingMeta, color: null }
+
     if (isEdit && department) {
       const updatePayload: DepartmentUpdate = {
         name: values.name.trim(),
@@ -123,6 +157,7 @@ const DepartmentModal = ({
         parentId: values.parentId ?? null,
         status: values.status,
         description: values.description?.trim() || null,
+        metadata: metadataPayload,
       }
 
       updateMutation.mutate(
@@ -146,6 +181,7 @@ const DepartmentModal = ({
         parentId: values.parentId ?? null,
         status: values.status,
         description: values.description?.trim() || null,
+        metadata: metadataPayload,
       }
 
       createMutation.mutate(createPayload, {
@@ -260,6 +296,29 @@ const DepartmentModal = ({
             />
           </Form.Item>
         </div>
+
+        <Form.Item
+          label="Màu chủ đề nhóm phòng ban (Metadata Color)"
+          name="color"
+          className="mb-0"
+        >
+          <Select
+            placeholder="Mặc định theo hệ thống"
+            allowClear
+            options={COLOR_PRESETS.map((c) => ({
+              value: c.value,
+              label: (
+                <div className="flex items-center gap-2">
+                  <span
+                    className="size-3.5 rounded-full border border-black/10 shrink-0"
+                    style={{ backgroundColor: c.value }}
+                  />
+                  <span>{c.label}</span>
+                </div>
+              ),
+            }))}
+          />
+        </Form.Item>
 
         <Form.Item
           label="Mô tả chức năng nhiệm vụ"

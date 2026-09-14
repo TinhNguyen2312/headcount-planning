@@ -74,7 +74,17 @@ export async function POST(req: NextRequest) {
     if (!user) return apiError("Chưa đăng nhập", 401, 401)
 
     const body = await req.json()
-    const { name, code, type, level, parentId, status, description } = body
+    const {
+      name,
+      code,
+      type,
+      level,
+      parentId,
+      status,
+      description,
+      metadata,
+      metadataJson,
+    } = body
 
     if (!name || !name.trim())
       return apiError("Tên phòng ban không được để trống", 422)
@@ -97,6 +107,7 @@ export async function POST(req: NextRequest) {
         parentId: parentId || null,
         status: status || "ACTIVE",
         description: description || null,
+        metadata: metadata !== undefined ? metadata : metadataJson || null,
       })
       .returning()
 

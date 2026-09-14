@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server"
 import { asc, eq } from "drizzle-orm"
-import { db, roles } from "@/db"
+import { db, roles, departments } from "@/db"
 import { apiError, apiSuccess } from "@/lib/apiResponse"
 
 export async function GET(req: NextRequest) {
@@ -12,8 +12,27 @@ export async function GET(req: NextRequest) {
       : undefined
 
     const all = await db
-      .select()
+      .select({
+        id: roles.id,
+        code: roles.code,
+        shortCode: roles.shortCode,
+        name: roles.name,
+        level: roles.level,
+        parentRoleId: roles.parentRoleId,
+        departmentId: roles.departmentId,
+        departmentName: departments.name,
+        departmentCode: departments.code,
+        departmentType: departments.type,
+        departmentLevel: departments.level,
+        departmentParentId: departments.parentId,
+        departmentMetadata: departments.metadata,
+        planningMethod: roles.planningMethod,
+        leadTimeMonths: roles.leadTimeMonths,
+        description: roles.description,
+        createdAt: roles.createdAt,
+      })
       .from(roles)
+      .leftJoin(departments, eq(roles.departmentId, departments.id))
       .where(departmentId ? eq(roles.departmentId, departmentId) : undefined)
       .orderBy(asc(roles.level), asc(roles.name))
 

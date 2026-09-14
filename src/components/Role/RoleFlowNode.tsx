@@ -17,7 +17,7 @@ const RoleFlowNode = ({ data }: NodeProps<RoleFlowNodeType>) => {
   const { role, childCount, expanded, onToggleExpand, onEdit } = data
 
   return (
-    <div className="nodrag nopan">
+    <div className="nodrag nopan relative">
       <Handle
         type="target"
         id="top"
@@ -28,6 +28,13 @@ const RoleFlowNode = ({ data }: NodeProps<RoleFlowNodeType>) => {
       <Handle
         type="target"
         id="left"
+        position={Position.Left}
+        className="!opacity-0"
+        isConnectable={false}
+      />
+      <Handle
+        type="source"
+        id="source-left"
         position={Position.Left}
         className="!opacity-0"
         isConnectable={false}

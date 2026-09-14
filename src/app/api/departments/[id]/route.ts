@@ -48,6 +48,12 @@ export async function PATCH(
         status: body.status !== undefined ? body.status : undefined,
         description:
           body.description !== undefined ? body.description : undefined,
+        metadata:
+          body.metadata !== undefined
+            ? body.metadata
+            : body.metadataJson !== undefined
+              ? body.metadataJson
+              : undefined,
         updatedAt: new Date().toISOString(),
       })
       .where(eq(departments.id, deptId))
