@@ -2,16 +2,11 @@ import { relations } from "drizzle-orm/relations";
 import { roles, properties, regions, projects, headcountProjects, propertyValues, userProjects, users, milestones, milestoneDependencies, plans, headcountStandards, phases, headcountCriteria, headcountMonthlyFactors, departments, sectors, sessions } from "./schema";
 
 export const propertiesRelations = relations(properties, ({one, many}) => ({
-	role: one(roles, {
-		fields: [properties.roleId],
-		references: [roles.id]
-	}),
 	propertyValues: many(propertyValues),
 	headcountCriteria: many(headcountCriteria),
 }));
 
 export const rolesRelations = relations(roles, ({one, many}) => ({
-	properties: many(properties),
 	userProjects: many(userProjects),
 	headcountStandards: many(headcountStandards),
 	users: many(users),

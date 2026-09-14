@@ -180,56 +180,41 @@ export const resolveMediaUrl = (url?: string | null): string => {
     return trimmed
   }
 
-  const rawApiUrl = getConfig().apiUrl?.trim() || ""
-  const defaultBase =
-    typeof window !== "undefined" && window.location.hostname === "localhost"
-      ? "http://localhost:8080"
-      : ""
-  const base = (rawApiUrl || defaultBase).replace(/\/+$/, "")
-  const serverOrigin = base.replace(/\/api\/?$/, "")
-  const apiBase = base.endsWith("/api") ? base : `${base}/api`
+  const supabaseUrl =
+    (typeof process !== "undefined" && process.env.NEXT_PUBLIC_SUPABASE_URL) ||
+    "https://aqcznssfntdqnttmmjsl.supabase.co"
+  const bucketName =
+    (typeof process !== "undefined" &&
+      process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET) ||
+    "uploads"
 
-  // Absolute HTTP/HTTPS URL
+  // 1. If it's already an absolute URL
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-    try {
-      const urlObj = new URL(trimmed)
-      // Normalize localhost/127.0.0.1 to serverOrigin if configured
-      if (
-        (urlObj.hostname === "localhost" || urlObj.hostname === "127.0.0.1") &&
-        serverOrigin
-      ) {
-        const originObj = new URL(serverOrigin)
-        urlObj.protocol = originObj.protocol
-        urlObj.hostname = originObj.hostname
-        urlObj.port = originObj.port
+    // If it contains legacy localhost:8080 from previous FastAPI setup
+    if (
+      trimmed.includes("localhost:8080") ||
+      trimmed.includes("127.0.0.1:8080")
+    ) {
+      const fileName = trimmed.split("/").filter(Boolean).pop()
+      if (fileName) {
+        return `${supabaseUrl}/storage/v1/object/public/${bucketName}/${fileName}`
       }
-      // Ensure /data/uploads has /api/ prefix if missing
-      if (
-        urlObj.pathname.startsWith("/data/uploads") &&
-        !urlObj.pathname.startsWith("/api/")
-      ) {
-        urlObj.pathname = `/api${urlObj.pathname}`
-      }
-      return urlObj.toString()
-    } catch {}
+    }
     return trimmed
   }
 
-  // Relative path
-  const normalizedPath = trimmed.startsWith("/") ? trimmed : `/${trimmed}`
+  // 2. Extract pure file name / subpath from relative paths (e.g. "/uploads/abc.jpg", "uploads/abc.jpg", "/api/uploads/abc.jpg")
+  const cleanPath = trimmed
+    .replace(/^\/+/, "")
+    .replace(/^(api\/)?(uploads\/|data\/uploads\/)?/, "")
 
-  if (serverOrigin) {
-    if (normalizedPath.startsWith("/api/")) {
-      return `${serverOrigin}${normalizedPath}`
-    }
-    return `${apiBase}${normalizedPath}`
+  // 3. Resolve directly to Supabase Storage CDN URL (bypassing backend completely)
+  if (cleanPath && supabaseUrl) {
+    return `${supabaseUrl}/storage/v1/object/public/${bucketName}/${cleanPath}`
   }
 
-  if (normalizedPath.startsWith("/api/")) {
-    return normalizedPath
-  }
-
-  return `/api${normalizedPath}`
+  // 4. Local fallback (served by Next.js from public/ directory)
+  return trimmed.startsWith("/") ? trimmed : `/${trimmed}`
 }
 
 export const formatRoleDepartment = (

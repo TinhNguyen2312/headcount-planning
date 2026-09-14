@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { Alert, Button, Form, Input } from "antd"
 import { Sparkles, UserCheck } from "lucide-react"
 import { useCallback, useState } from "react"
-import { useRouter } from "next/navigation"
 import { AuthLayout } from "@/components/Common/AuthLayout"
 import { ProjectRoleSelectionModal } from "@/components/Common/ProjectRoleSelectionModal"
 import { getQuickLoginAccounts, type QuickLoginAccount } from "@/constants/auth"
@@ -18,7 +18,6 @@ const QUICK_LOGIN_ACCOUNTS = getQuickLoginAccounts()
 export default function LoginPage() {
   const { loginMutation } = useAuth()
   const { showError } = useUI()
-  const router = useRouter()
   const [form] = Form.useForm<LocalLoginRequest>()
 
   const [pendingUser, setPendingUser] = useState<UserMeResponse | null>(null)
@@ -132,7 +131,7 @@ export default function LoginPage() {
           <Alert
             type="error"
             showIcon
-            message={extractApiErrorMessage(
+            title={extractApiErrorMessage(
               loginMutation.error,
               "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.",
             )}

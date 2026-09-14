@@ -27,6 +27,20 @@ const DepartmentFlowNode = ({ data }: NodeProps<DepartmentFlowNodeType>) => {
         className="!opacity-0"
         isConnectable={false}
       />
+      <Handle
+        type="target"
+        id="left"
+        position={Position.Left}
+        className="!opacity-0"
+        isConnectable={false}
+      />
+      <Handle
+        type="target"
+        id="right"
+        position={Position.Right}
+        className="!opacity-0"
+        isConnectable={false}
+      />
       <DepartmentNode
         department={department}
         childCount={childCount}

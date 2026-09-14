@@ -23,7 +23,7 @@ export const BrandHeader = ({
             className="size-8 shrink-0 object-contain"
           />
           <span className="text-base font-black tracking-wider text-white">
-            PCD
+            GMS.P
           </span>
         </Link>
       </div>
@@ -45,12 +45,11 @@ export const BrandHeader = ({
           />
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-4xl font-black leading-none tracking-tight text-white">
-            PCD
+          <span className="text-2xl font-black leading-none tracking-tight text-white">
+            GMS.P
           </span>
           <div className="flex flex-col justify-between text-[11px] font-bold uppercase leading-tight tracking-wider text-slate-300">
-            <span>PROJECT CONSTRUCTION</span>
-            <span>MANAGEMENT</span>
+            <span>Project - GENERAL MANAGEMENT SYSTEM</span>
           </div>
         </div>
       </Link>

@@ -8,5 +8,14 @@ type Props = {
 }
 
 export default function ReactSwagger({ spec }: Props) {
-  return <SwaggerUI spec={spec} />
+  return (
+    <SwaggerUI
+      spec={spec}
+      docExpansion="list"
+      filter={true}
+      displayRequestDuration={true}
+      defaultModelsExpandDepth={-1}
+      persistAuthorization={true}
+    />
+  )
 }

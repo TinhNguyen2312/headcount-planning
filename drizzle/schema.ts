@@ -10,17 +10,11 @@ export const properties = pgTable("properties", {
 	dataType: varchar("data_type", { length: 20 }).default('NUMBER').notNull(),
 	unit: varchar({ length: 20 }),
 	options: jsonb(),
-	roleId: integer("role_id"),
 	description: text(),
 	isActive: boolean("is_active").default(true).notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
-	foreignKey({
-			columns: [table.roleId],
-			foreignColumns: [roles.id],
-			name: "properties_role_id_fkey"
-		}).onDelete("set null"),
 	unique("properties_code_key").on(table.code),
 	check("properties_data_type_check", sql`(data_type)::text = ANY ((ARRAY['NUMBER'::character varying, 'STRING'::character varying, 'BOOLEAN'::character varying, 'SELECT'::character varying])::text[])`),
 ]);

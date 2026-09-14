@@ -1,0 +1,208 @@
+"use client"
+
+import {
+  Button,
+  Empty,
+  Input,
+  Popconfirm,
+  Space,
+  Table,
+  Tag,
+  Tooltip,
+} from "antd"
+import type { ColumnsType } from "antd/es/table"
+import { Edit, Search, Trash2 } from "lucide-react"
+import React, { useMemo, useState } from "react"
+import { propertyQueries } from "@/hooks/server/properties"
+import type { PropertyDataType, PropertyResponse } from "@/types"
+
+interface PropertyTableViewProps {
+  onEditProperty: (property: PropertyResponse) => void
+}
+
+const DATA_TYPE_BADGES: Record<
+  PropertyDataType,
+  { label: string; color: string }
+> = {
+  NUMBER: { label: "Số (Number)", color: "blue" },
+  STRING: { label: "Văn bản (String)", color: "cyan" },
+  BOOLEAN: { label: "Đúng / Sai", color: "purple" },
+  SELECT: { label: "Chọn (Select)", color: "orange" },
+}
+
+export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
+  onEditProperty,
+}) => {
+  const [searchText, setSearchText] = useState("")
+  const { data: properties = [], isLoading } = propertyQueries.useList()
+  const deleteMutation = propertyQueries.useDelete()
+
+  const filteredProperties = useMemo(() => {
+    if (!searchText.trim()) return properties
+    const lower = searchText.toLowerCase()
+    return properties.filter(
+      (p) =>
+        p.name.toLowerCase().includes(lower) ||
+        p.code.toLowerCase().includes(lower) ||
+        (p.unit && p.unit.toLowerCase().includes(lower)),
+    )
+  }, [properties, searchText])
+
+  const columns: ColumnsType<PropertyResponse> = [
+    {
+      title: "Mã định danh",
+      dataIndex: "code",
+      key: "code",
+      width: 170,
+      render: (code: string) => (
+        <span className="font-mono font-semibold text-xs text-primary">
+          {code}
+        </span>
+      ),
+    },
+    {
+      title: "Tên chỉ số / Cơ sở",
+      dataIndex: "name",
+      key: "name",
+      render: (name: string, record) => (
+        <div>
+          <div className="font-medium text-sm">{name}</div>
+          {record.description && (
+            <div className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+              {record.description}
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
+      title: "Kiểu dữ liệu",
+      dataIndex: "dataType",
+      key: "dataType",
+      width: 140,
+      render: (dt: PropertyDataType) => {
+        const badge = DATA_TYPE_BADGES[dt] || { label: dt, color: "default" }
+        return <Tag color={badge.color}>{badge.label}</Tag>
+      },
+    },
+    {
+      title: "Đơn vị tính",
+      dataIndex: "unit",
+      key: "unit",
+      width: 120,
+      render: (unit?: string | null) =>
+        unit ? <Tag className="font-mono text-xs">{unit}</Tag> : "-",
+    },
+    {
+      title: "Lựa chọn (Options)",
+      key: "options",
+      width: 260,
+      render: (_, record) => {
+        if (
+          record.dataType === "SELECT" &&
+          record.options &&
+          record.options.length > 0
+        ) {
+          return (
+            <div className="flex flex-wrap gap-1">
+              {record.options.map((opt) => (
+                <Tag key={opt} className="text-[11px] m-0">
+                  {opt}
+                </Tag>
+              ))}
+            </div>
+          )
+        }
+        return <span className="text-xs text-muted-foreground">-</span>
+      },
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "isActive",
+      key: "isActive",
+      width: 120,
+      render: (isActive: boolean) => (
+        <Tag color={isActive ? "success" : "default"}>
+          {isActive ? "Đang dùng" : "Tạm khóa"}
+        </Tag>
+      ),
+    },
+    {
+      title: "Thao tác",
+      key: "action",
+      width: 100,
+      align: "center",
+      render: (_, record) => (
+        <Space size="small">
+          <Tooltip title="Chỉnh sửa">
+            <Button
+              type="text"
+              size="small"
+              icon={<Edit className="size-3.5 text-blue-500" />}
+              onClick={() => onEditProperty(record)}
+            />
+          </Tooltip>
+          <Tooltip title="Xóa">
+            <Popconfirm
+              title="Xác nhận xóa chỉ số định biên này?"
+              description="Hành động này sẽ không thể hoàn tác nếu đã có dự án sử dụng chỉ số này."
+              onConfirm={() => deleteMutation.mutate(record.id)}
+              okText="Xóa"
+              cancelText="Hủy"
+              okButtonProps={{
+                danger: true,
+                loading: deleteMutation.isPending,
+              }}
+            >
+              <Button
+                type="text"
+                size="small"
+                danger
+                icon={<Trash2 className="size-3.5" />}
+              />
+            </Popconfirm>
+          </Tooltip>
+        </Space>
+      ),
+    },
+  ]
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <Input
+          placeholder="Tìm theo tên, mã code, đơn vị tính..."
+          prefix={<Search className="size-4 text-muted-foreground" />}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          allowClear
+          className="max-w-md"
+        />
+        <div className="text-xs text-muted-foreground">
+          Tổng số:{" "}
+          <span className="font-semibold">{filteredProperties.length}</span> cơ
+          sở định biên
+        </div>
+      </div>
+
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={filteredProperties}
+        loading={isLoading}
+        pagination={{ pageSize: 10, showSizeChanger: true }}
+        locale={{
+          emptyText: (
+            <Empty
+              description="Chưa có cơ sở định biên nào"
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          ),
+        }}
+        className="border border-border/60 rounded-lg overflow-hidden bg-card"
+      />
+    </div>
+  )
+}
+
+export default PropertyTableView

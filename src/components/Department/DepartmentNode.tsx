@@ -1,17 +1,11 @@
 import { Badge, Card, Modal, Tag, Tooltip } from "antd"
-import {
-  Building2,
-  ChevronDown,
-  ChevronRight,
-  Pencil,
-  Trash2,
-} from "lucide-react"
+import { ChevronDown, ChevronRight, Pencil, Trash2 } from "lucide-react"
 import { ActionMenu, type ActionMenuItem } from "@/components/Common/ActionMenu"
 import { departmentQueries } from "@/hooks/server/departments"
 import type { DepartmentResponse } from "@/types"
 
 export const DEPARTMENT_NODE_WIDTH = 260
-export const DEPARTMENT_NODE_HEIGHT = 135
+export const DEPARTMENT_NODE_HEIGHT = 150
 
 interface DepartmentNodeProps {
   department: DepartmentResponse
@@ -125,16 +119,11 @@ const DepartmentNode = ({
           <span className="font-mono bg-muted text-muted-foreground px-1.5 py-0.5 rounded text-[11px] font-medium">
             {department.code}
           </span>
-          {department.level !== undefined && department.level !== null && (
-            <span className="text-[11px] bg-secondary text-secondary-foreground px-1.5 py-0.5 rounded">
-              Cấp {department.level}
-            </span>
-          )}
         </div>
 
         {/* Footer: Expand / Collapse children */}
         <div className="pt-1.5 border-t border-border/50 flex items-center justify-between text-xs">
-          {childCount > 0 ? (
+          {childCount > 0 && (
             <button
               type="button"
               onClick={onToggleExpand}
@@ -147,11 +136,6 @@ const DepartmentNode = ({
               )}
               {childCount} đơn vị con
             </button>
-          ) : (
-            <span className="text-[11px] text-muted-foreground/60 flex items-center gap-1">
-              <Building2 className="size-3 opacity-60" />
-              Đơn vị cơ sở
-            </span>
           )}
         </div>
       </div>

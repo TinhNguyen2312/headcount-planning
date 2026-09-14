@@ -9,6 +9,8 @@ import {
 } from "@xyflow/react"
 import { useCallback, useMemo, useState } from "react"
 import "@xyflow/react/dist/style.css"
+import { departmentQueries } from "@/hooks/server/departments"
+import type { DepartmentResponse } from "@/types"
 import DepartmentFlowNode, {
   type DepartmentFlowNodeData,
   type DepartmentFlowNodeType,
@@ -17,8 +19,6 @@ import {
   flattenDepartmentTree,
   layoutDepartmentTree,
 } from "./departmentTreeLayout"
-import { departmentQueries } from "@/hooks/server/departments"
-import type { DepartmentResponse } from "@/types"
 
 const nodeTypes = { departmentNode: DepartmentFlowNode }
 
@@ -27,8 +27,42 @@ interface DepartmentFlowViewProps {
 }
 
 const DepartmentFlowView = ({ onEditDepartment }: DepartmentFlowViewProps) => {
-  const { data: departments = [] } = departmentQueries.useSuspenseTree()
-  const [collapsedIds, setCollapsedIds] = useState<Set<number>>(() => new Set())
+  const { data: rawDepartments = [] } = departmentQueries.useSuspenseTree()
+
+  // Lọc chỉ hiển thị các phòng ban có status = ACTIVE (loại bỏ inactive)
+  const departments = useMemo(() => {
+    const filterActive = (
+      nodes: typeof rawDepartments,
+    ): typeof rawDepartments => {
+      const result: typeof rawDepartments = []
+      for (const node of nodes) {
+        if (node.status && node.status !== "ACTIVE") {
+          continue
+        }
+        result.push({
+          ...node,
+          children: node.children ? filterActive(node.children) : [],
+        })
+      }
+      return result
+    }
+    return filterActive(rawDepartments)
+  }, [rawDepartments])
+
+  // Mặc định collapse tất cả node có children → chỉ hiển thị root nodes lúc đầu
+  const [collapsedIds, setCollapsedIds] = useState<Set<number>>(() => {
+    const ids = new Set<number>()
+    const collectCollapsible = (nodes: typeof departments) => {
+      for (const node of nodes) {
+        if (node.children && node.children.length > 0) {
+          ids.add(node.id)
+          collectCollapsible(node.children)
+        }
+      }
+    }
+    collectCollapsible(departments)
+    return ids
+  })
 
   const toggleCollapsed = useCallback((id: number) => {
     setCollapsedIds((prev) => {
@@ -48,7 +82,7 @@ const DepartmentFlowView = ({ onEditDepartment }: DepartmentFlowViewProps) => {
     }
 
     const entries = flattenDepartmentTree(departments, collapsedIds)
-    const positions = layoutDepartmentTree(entries)
+    const { positions, stackedChildIds } = layoutDepartmentTree(entries)
 
     const flowNodes: DepartmentFlowNodeType[] = entries.map((entry) => ({
       id: entry.id,
@@ -69,15 +103,18 @@ const DepartmentFlowView = ({ onEditDepartment }: DepartmentFlowViewProps) => {
 
     const flowEdges: Edge[] = entries
       .filter((entry) => entry.parentId)
-      .map((entry) => ({
-        id: `dept-${entry.parentId}-${entry.id}`,
-        source: entry.parentId as string,
-        sourceHandle: "bottom",
-        target: entry.id,
-        targetHandle: "top",
-        type: "smoothstep",
-        style: { stroke: "var(--muted-foreground)", strokeWidth: 2 },
-      }))
+      .map((entry) => {
+        const isStacked = stackedChildIds.has(entry.id)
+        return {
+          id: `dept-${entry.parentId}-${entry.id}`,
+          source: entry.parentId as string,
+          sourceHandle: "bottom",
+          target: entry.id,
+          targetHandle: isStacked ? "left" : "top",
+          type: "smoothstep",
+          style: { stroke: "var(--muted-foreground)", strokeWidth: 2 },
+        }
+      })
 
     return { nodes: flowNodes, edges: flowEdges }
   }, [departments, collapsedIds, toggleCollapsed, onEditDepartment])
