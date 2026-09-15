@@ -24,10 +24,10 @@ const DATA_TYPE_BADGES: Record<
   PropertyDataType,
   { label: string; color: string }
 > = {
-  NUMBER: { label: "Số (Number)", color: "blue" },
-  STRING: { label: "Văn bản (String)", color: "cyan" },
+  NUMBER: { label: "Số", color: "blue" },
+  STRING: { label: "Văn bản", color: "cyan" },
   BOOLEAN: { label: "Đúng / Sai", color: "purple" },
-  SELECT: { label: "Chọn (Select)", color: "orange" },
+  SELECT: { label: "Chọn", color: "orange" },
 }
 
 const SCOPE_BADGES: Record<PropertyScope, { label: string; color: string }> = {
@@ -93,7 +93,7 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
       },
     },
     {
-      title: "Phạm vi áp dụng",
+      title: "Loại dự án",
       dataIndex: "scope",
       key: "scope",
       width: 170,
@@ -106,7 +106,7 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
       },
     },
     {
-      title: "Đơn vị tính",
+      title: "Đơn vị",
       dataIndex: "unit",
       key: "unit",
       width: 120,
@@ -114,9 +114,9 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
         unit ? <Tag className="font-mono text-xs">{unit}</Tag> : "-",
     },
     {
-      title: "Lựa chọn (Options)",
+      title: "Lựa chọn",
       key: "options",
-      width: 260,
+      width: 250,
       render: (_, record) => {
         if (
           record.dataType === "SELECT" &&
@@ -140,7 +140,7 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
       title: "Trạng thái",
       dataIndex: "isActive",
       key: "isActive",
-      width: 120,
+      width: 180,
       render: (isActive: boolean) => (
         <Tag color={isActive ? "success" : "default"}>
           {isActive ? "Đang dùng" : "Tạm khóa"}

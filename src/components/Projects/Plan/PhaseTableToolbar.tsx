@@ -23,7 +23,7 @@ export const PhaseTableToolbar: React.FC<PhaseTableToolbarProps> = ({
     <div className="flex items-center justify-between gap-3 flex-wrap">
       <div className="flex items-center gap-2">
         <span className="font-semibold text-base text-foreground">
-          Danh sách giai đoạn & mốc kiểm soát ({phasesCount})
+          Danh sách mốc kiểm soát ({phasesCount})
         </span>
         {isDirty && (
           <Badge
@@ -44,7 +44,7 @@ export const PhaseTableToolbar: React.FC<PhaseTableToolbarProps> = ({
             icon={<Plus className="size-4" />}
             onClick={onAddPhase}
           >
-            Thêm giai đoạn
+            Thêm mốc
           </Button>
 
           <Button
@@ -54,7 +54,7 @@ export const PhaseTableToolbar: React.FC<PhaseTableToolbarProps> = ({
             loading={isSaving}
             onClick={onSavePlanChanges}
           >
-            Lưu thay đổi giai đoạn
+            Lưu thay đổi
           </Button>
         </Space>
       )}

@@ -67,18 +67,26 @@ export function InfiniteSelect<
 
     const apiOptions: DefaultOptionType[] = items.map((item) => {
       if (transformItem) {
-        return transformItem(item)
+        const transformed = transformItem(item)
+        return {
+          id: transformed.value,
+          name: transformed.label,
+          ...transformed,
+        }
       }
       const val = Reflect.get(item, valKey)
       const lbl = Reflect.get(item, lblKey)
+      const { options: _, ...rest } = item as Record<string, unknown>
+      const resolvedValue =
+        typeof val === "string" || typeof val === "number" ? val : undefined
+      const resolvedLabel =
+        typeof lbl === "string" || isValidElement(lbl) ? lbl : String(val ?? "")
       return {
-        ...item,
-        value:
-          typeof val === "string" || typeof val === "number" ? val : undefined,
-        label:
-          typeof lbl === "string" || isValidElement(lbl)
-            ? lbl
-            : String(val ?? ""),
+        ...rest,
+        value: resolvedValue,
+        label: resolvedLabel,
+        id: resolvedValue,
+        name: resolvedLabel,
       }
     })
 

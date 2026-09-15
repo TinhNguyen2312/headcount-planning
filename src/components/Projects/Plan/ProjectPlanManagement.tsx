@@ -2,7 +2,7 @@
 "use client"
 
 import { Spin } from "antd"
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 
 import UnsavedChangesModal from "@/components/Common/UnsavedChangesModal"
 import { planQueries } from "@/hooks/server/plans"
@@ -18,27 +18,27 @@ import { PlanVersionModal } from "./PlanVersionModal"
 import type { ProjectPlanManagementProps } from "./types"
 import { usePhaseMetrics } from "./usePhaseMetrics"
 
-interface PhaseComparable {
-  id?: number
-  orderIndex: number
-  milestoneId: number
-  startDate: string
-  endDate: string
-  durationMonths?: number
-  description?: string | null
-}
+// interface PhaseComparable {
+//   id?: number
+//   orderIndex: number
+//   milestoneId: number
+//   startDate: string
+//   endDate: string
+//   durationMonths: number
+//   description: string | null
+// }
 
-const getComparablePhases = (phases: PhaseResponse[]): PhaseComparable[] => {
-  return phases.map((p) => ({
-    id: p.id > 0 ? p.id : undefined,
-    orderIndex: p.orderIndex,
-    milestoneId: p.milestoneId,
-    startDate: p.startDate,
-    endDate: p.endDate,
-    durationMonths: p.durationMonths,
-    description: p.description || null,
-  }))
-}
+// const getComparablePhases = (phases: PhaseResponse[]): PhaseComparable[] => {
+//   return phases.map((p) => ({
+//     id: p.id > 0 ? p.id : undefined,
+//     orderIndex: p.orderIndex,
+//     milestoneId: p.milestoneId,
+//     startDate: p.startDate,
+//     endDate: p.endDate,
+//     durationMonths: p.durationMonths,
+//     description: p.description || null,
+//   }))
+// }
 
 export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
   projectId,
@@ -69,23 +69,18 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
   const { data: planDetail, isLoading: isDetailLoading } =
     planQueries.useDetail(projectId, selectedPlanId)
 
-  // Local working copy of phases for currently selected plan
   const [workingPhases, setWorkingPhases] = useState<PhaseResponse[]>([])
 
-  const getCurrentPhasesValue = useCallback(() => {
-    return getComparablePhases(workingPhases)
-  }, [workingPhases])
-
   const { isDirty, setSnapshot, markClean } = useUnsavedChanges<
-    PhaseComparable[]
+    PhaseResponse[]
   >({
-    getCurrentValue: getCurrentPhasesValue,
+    getCurrentValue: () => workingPhases,
   })
 
   useEffect(() => {
     if (planDetail?.phases) {
       setWorkingPhases(planDetail.phases)
-      setSnapshot(getComparablePhases(planDetail.phases))
+      setSnapshot(planDetail.phases)
     } else {
       setWorkingPhases([])
       setSnapshot([])
@@ -181,13 +176,8 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
     if (!selectedPlanId) return
     try {
       const payloadPhases: PhaseInput[] = workingPhases.map((p) => ({
+        ...p,
         id: p.id > 0 ? p.id : undefined,
-        orderIndex: p.orderIndex,
-        milestoneId: p.milestoneId,
-        startDate: p.startDate,
-        endDate: p.endDate,
-        durationMonths: p.durationMonths,
-        description: p.description,
       }))
 
       await updatePlanMutation.mutateAsync({
@@ -247,7 +237,7 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
   if (isListLoading) {
     return (
       <div className="flex justify-center items-center p-12">
-        <Spin tip="Đang tải kế hoạch dự án..." />
+        <Spin description="Đang tải kế hoạch dự án..." />
       </div>
     )
   }

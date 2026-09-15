@@ -1,5 +1,3 @@
-import type { MilestoneResponse } from "./milestone"
-
 export type PlanStatus = "DRAFT" | "ACTIVE" | "ARCHIVED"
 
 export interface PhaseResponse {

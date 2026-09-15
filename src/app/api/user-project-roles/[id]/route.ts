@@ -3,7 +3,10 @@ import { eq } from "drizzle-orm"
 import { db, userProjects } from "@/db"
 import { getCurrentUserFromSession } from "@/lib/session"
 import { apiError, apiSuccess } from "@/lib/apiResponse"
-import { getDetailedUserProjectRole } from "@/lib/userProjectHelpers"
+import {
+  getDetailedUserProjectRole,
+  validateUserProjectAssignment,
+} from "@/lib/userProjectHelpers"
 
 const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || "JSESSIONID"
 
@@ -34,6 +37,36 @@ export async function PATCH(
     const { id } = await params
     const uprId = parseInt(id, 10)
     const body = await req.json()
+
+    // Lấy thông tin phân công hiện tại
+    const [existing] = await db
+      .select()
+      .from(userProjects)
+      .where(eq(userProjects.id, uprId))
+      .limit(1)
+
+    if (!existing) return apiError("Không tìm thấy phân công dự án", 404)
+
+    const targetUserId = existing.userId
+    const targetProjectId =
+      body.projectId !== undefined ? body.projectId : existing.projectId
+    const targetRoleId =
+      body.roleId !== undefined ? body.roleId : existing.roleId
+    const targetStatus =
+      body.status !== undefined ? body.status : existing.status
+
+    if (targetStatus === "ACTIVE") {
+      const validation = await validateUserProjectAssignment({
+        userId: targetUserId,
+        projectId: targetProjectId,
+        roleId: targetRoleId,
+        currentAssignmentId: uprId,
+        status: targetStatus,
+      })
+      if (!validation.valid) {
+        return apiError(validation.error || "Phân công không hợp lệ", 422, 422)
+      }
+    }
 
     const [updated] = await db
       .update(userProjects)

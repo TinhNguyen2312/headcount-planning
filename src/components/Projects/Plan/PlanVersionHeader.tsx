@@ -86,7 +86,7 @@ export const PlanVersionHeader: React.FC<PlanVersionHeaderProps> = ({
           )}
 
           {projectStartDate ? (
-            <span className="text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded flex items-center gap-1">
+            <span className="text-base text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded flex items-center gap-1">
               <Calendar className="size-3.5" />
               Mốc bắt đầu dự án (T1):{" "}
               <strong>{dayjs(projectStartDate).format("DD/MM/YYYY")}</strong>

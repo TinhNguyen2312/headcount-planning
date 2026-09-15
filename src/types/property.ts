@@ -20,7 +20,7 @@ export const PROPERTY_SCOPE_OPTIONS: { value: PropertyScope; label: string }[] =
     { value: "COMMON", label: "Chung toàn dự án" },
     {
       value: "PER_TYPE",
-      label: "Ap",
+      label: "Áp dụng cho Thấp tầng và Cao tầng",
     },
     { value: "LOW_RISE_ONLY", label: "Chỉ áp dụng Thấp tầng" },
     { value: "HIGH_RISE_ONLY", label: "Chỉ áp dụng Cao tầng" },

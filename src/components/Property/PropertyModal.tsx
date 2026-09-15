@@ -110,6 +110,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
           ? `Chỉnh sửa cơ sở định biên: ${property?.name}`
           : "Thêm cơ sở định biên mới"
       }
+      centered
       open={open}
       onCancel={onCancel}
       onOk={handleSubmit}

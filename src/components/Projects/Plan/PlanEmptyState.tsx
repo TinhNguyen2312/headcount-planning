@@ -20,8 +20,7 @@ export const PlanEmptyState: React.FC<PlanEmptyStateProps> = ({
               Dự án chưa có phiên bản kế hoạch tiến độ nào
             </span>
             <span className="text-sm text-muted-foreground">
-              Tạo phiên bản kế hoạch (Baseline) đầu tiên để khai báo các giai
-              đoạn thi công
+              Tạo phiên bản kế hoạch đầu tiên để khai báo các mốc thi công
             </span>
           </div>
         }

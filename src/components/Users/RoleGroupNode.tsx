@@ -1,155 +1,178 @@
-import { Card } from "antd"
-import { UserCheck, UserX } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Card, Tag, Tooltip } from "antd"
+import {
+  Building2,
+  ChevronDown,
+  ChevronRight,
+  Mail,
+  Phone,
+  UserX,
+} from "lucide-react"
+import { cn, getInitials } from "@/lib/utils"
+import type { RoleResponse } from "@/types"
 
-export interface RoleGroupUserItem {
-  id?: number
+export const USER_ROLE_CARD_WIDTH = 270
+
+export interface AssignedUserItem {
+  id: number
   fullName: string
-  note?: string | null // vd: "(KN)", "Tuyển (01 - 06/26)"
-  isVacancy?: boolean
+  email?: string | null
+  phone?: string | null
+  status?: string
+  isMultiProject?: boolean
 }
 
-export interface RoleSectionGroup {
-  roleId: number
-  roleName: string
-  users: RoleGroupUserItem[]
-}
-
-export interface RoleGroupNodeData extends Record<string, unknown> {
-  type: "manager" | "group"
-  title: string
-  departmentName?: string | null
-  managerUsers?: { id?: number; fullName: string }[]
-  managerName?: string
-  isVacancy?: boolean
-  sections?: RoleSectionGroup[]
+export interface UserRoleNodeProps {
+  role: RoleResponse
+  users: AssignedUserItem[]
+  childCount?: number
+  expanded?: boolean
+  onToggleExpand?: () => void
   isHighlighted?: boolean
 }
 
-interface RoleGroupNodeProps {
-  data: RoleGroupNodeData
+export const calculateUserRoleNodeHeight = (userCount: number): number => {
+  if (userCount <= 0) return 105
+  return 80 + userCount * 38
 }
 
-export const RoleGroupNode = ({ data }: RoleGroupNodeProps) => {
-  const {
-    type,
-    title,
-    departmentName,
-    managerUsers,
-    managerName,
-    sections,
-    isHighlighted,
-  } = data
+export const UserRoleNode = ({
+  role,
+  users = [],
+  childCount = 0,
+  expanded = true,
+  onToggleExpand,
+  isHighlighted = false,
+}: UserRoleNodeProps) => {
+  const isVacancy = users.length === 0
+  const height = calculateUserRoleNodeHeight(users.length)
 
-  if (type === "manager") {
-    const displayManagers =
-      managerUsers && managerUsers.length > 0
-        ? managerUsers
-        : managerName
-          ? [{ fullName: managerName }]
-          : []
-    const isVacancy = displayManagers.length === 0
-
-    return (
-      <Card
-        className={cn(
-          "w-[260px] min-h-[95px] nodrag nopan overflow-hidden p-3 text-center shadow-xs border bg-card transition-all cursor-default flex flex-col justify-center items-center gap-1 border-slate-300 dark:border-slate-700 hover:shadow-md",
-          isHighlighted &&
-            "ring-2 ring-primary ring-offset-2 ring-offset-background shadow-md",
-          isVacancy
-            ? "bg-amber-50/40 dark:bg-amber-950/20 border-dashed border-amber-300"
-            : "bg-card",
-        )}
-      >
-        <div className="text-base font-bold text-foreground leading-tight uppercase tracking-tight">
-          {title}
-        </div>
-        {departmentName && (
-          <div className="text-[10px] text-muted-foreground font-medium truncate max-w-full">
-            {departmentName}
-          </div>
-        )}
-        <div className="mt-1.5 pt-1.5 border-t border-slate-200 dark:border-slate-800 w-full flex flex-col items-center justify-center gap-1 text-base font-semibold">
-          {isVacancy ? (
-            <span className="text-amber-600 dark:text-amber-400 italic font-normal flex items-center gap-1">
-              <UserX className="size-3.5" />
-              Chưa có nhân sự
-            </span>
-          ) : (
-            displayManagers.map((m, idx) => (
-              <span
-                key={m.id || `mgr-${idx}`}
-                className="text-slate-800 dark:text-slate-100 flex items-center gap-1 leading-tight"
-              >
-                <UserCheck className="size-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <span>{m.fullName}</span>
-              </span>
-            ))
-          )}
-        </div>
-      </Card>
-    )
-  }
-
-  // Type === "group" (Gom nhóm 9 vị trí chuyên viên / giám sát)
   return (
     <Card
+      style={{ width: USER_ROLE_CARD_WIDTH, minHeight: height }}
       className={cn(
-        "w-[260px] nodrag nopan overflow-hidden py-3 px-3 text-center shadow-xs border bg-card transition-all cursor-default border-slate-300 dark:border-slate-700 hover:shadow-md",
+        "nodrag nopan gap-0 overflow-hidden text-left shadow-xs border transition-all cursor-default bg-card flex flex-col justify-between",
+        isVacancy
+          ? "border-amber-300 dark:border-amber-700 bg-amber-50/20 dark:bg-amber-950/10"
+          : "border-slate-300 dark:border-slate-700 hover:border-primary/50",
         isHighlighted &&
           "ring-2 ring-primary ring-offset-2 ring-offset-background shadow-md",
       )}
+      bodyStyle={{
+        padding: "8px 10px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        height: "100%",
+        gap: "6px",
+      }}
     >
-      <div className="flex flex-col gap-3">
-        {sections && sections.length > 0 ? (
-          sections.map((sec, idx) => (
-            <div
-              key={sec.roleId}
-              className={cn(
-                "flex flex-col gap-1 text-center",
-                idx > 0 &&
-                  "pt-2.5 border-t border-slate-200 dark:border-slate-800",
-              )}
-            >
-              <div className="text-[11px] font-bold text-foreground leading-snug">
-                {sec.roleName}
-              </div>
-              <div className="flex flex-col gap-0.5 text-[11px]">
-                {sec.users && sec.users.length > 0 ? (
-                  sec.users.map((u, uIdx) => (
-                    <div
-                      key={u.id || `vacancy-${uIdx}`}
-                      className={cn(
-                        "leading-tight truncate",
-                        u.isVacancy
-                          ? "text-amber-600 dark:text-amber-400 italic font-normal"
-                          : "text-slate-700 dark:text-slate-200 font-medium",
-                      )}
-                    >
-                      {u.fullName}{" "}
-                      {u.note ? (
-                        <span className="text-[10px] font-normal text-muted-foreground">
-                          {u.note}
-                        </span>
-                      ) : null}
-                    </div>
-                  ))
-                ) : (
-                  <span className="text-amber-600 dark:text-amber-400 italic text-[10px]">
-                    Chưa có nhân sự
-                  </span>
-                )}
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-base text-muted-foreground italic py-2">
-            Chưa có nhân sự
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between gap-1">
+          <Tooltip title={role.departmentName}>
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-600 dark:text-slate-400 truncate max-w-[170px]">
+              <Building2 className="size-3 shrink-0" />
+              <span className="truncate">{role.departmentName}</span>
+            </span>
+          </Tooltip>
+
+          {role.shortCode && (
+            <Tag className="text-[9px] px-1 py-0 m-0 font-mono shrink-0">
+              {role.shortCode}
+            </Tag>
+          )}
+        </div>
+
+        <Tooltip title={role.name}>
+          <div className="text-[12px] font-bold leading-tight text-slate-900 dark:text-slate-100 line-clamp-2">
+            {role.name}
           </div>
+        </Tooltip>
+      </div>
+
+      <div className="flex flex-col gap-1.5 py-1 border-t border-slate-200 dark:border-slate-800">
+        {isVacancy ? (
+          <div className="flex items-center gap-1.5 py-1 text-amber-600 dark:text-amber-400 text-[11px] font-medium">
+            <UserX className="size-3.5 shrink-0" />
+            <span>Chưa có nhân sự</span>
+          </div>
+        ) : (
+          users.map((u) => {
+            const initials = getInitials(u.fullName || "U")
+            return (
+              <div
+                key={u.id}
+                className="flex items-center gap-2 p-1 rounded bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800/60"
+              >
+                <div className="size-6 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-[10px] shrink-0">
+                  {initials}
+                </div>
+
+                <div className="flex flex-col min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-1">
+                    <span
+                      className="text-[11px] font-semibold text-slate-800 dark:text-slate-100 truncate"
+                      title={u.fullName}
+                    >
+                      {u.fullName}
+                    </span>
+                    {u.isMultiProject && (
+                      <Tag
+                        color="orange"
+                        className="text-[8px] px-1 py-0 m-0 leading-none shrink-0"
+                      >
+                        Kiêm nhiệm
+                      </Tag>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2 text-[9px] text-muted-foreground truncate">
+                    {u.email && (
+                      <span
+                        className="flex items-center gap-0.5 truncate"
+                        title={u.email}
+                      >
+                        <Mail className="size-2.5 shrink-0" />
+                        <span className="truncate">{u.email}</span>
+                      </span>
+                    )}
+                    {u.phone && (
+                      <span
+                        className="flex items-center gap-0.5 shrink-0"
+                        title={u.phone}
+                      >
+                        <Phone className="size-2.5 shrink-0" />
+                        <span>{u.phone}</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          })
         )}
       </div>
+
+      {childCount > 0 && onToggleExpand && (
+        <div className="flex items-center justify-between pt-1 border-t border-slate-200 dark:border-slate-800 text-[10px]">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              onToggleExpand()
+            }}
+            className="nodrag nopan flex items-center gap-1 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100 font-semibold cursor-pointer transition-colors"
+          >
+            {expanded ? (
+              <ChevronDown className="size-3" />
+            ) : (
+              <ChevronRight className="size-3" />
+            )}
+            <span>{childCount} cấp dưới</span>
+          </button>
+        </div>
+      )}
     </Card>
   )
 }
 
-export default RoleGroupNode
+export default UserRoleNode

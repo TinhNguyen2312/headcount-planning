@@ -3,7 +3,10 @@ import { count, desc, asc, eq, and, type SQL } from "drizzle-orm"
 import { db, userProjects, projects, roles, departments, users } from "@/db"
 import { getCurrentUserFromSession } from "@/lib/session"
 import { apiError, apiSuccess, createPaginationMeta } from "@/lib/apiResponse"
-import { getDetailedUserProjectRole } from "@/lib/userProjectHelpers"
+import {
+  getDetailedUserProjectRole,
+  validateUserProjectAssignment,
+} from "@/lib/userProjectHelpers"
 import { resolvePermissionGroup } from "@/lib/permissionGroups"
 
 const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || "JSESSIONID"
@@ -132,6 +135,17 @@ export async function POST(req: NextRequest) {
     if (!userId) return apiError("Nhân sự không được để trống", 422)
     if (!projectId) return apiError("Dự án không được để trống", 422)
     if (!roleId) return apiError("Chức danh không được để trống", 422)
+
+    // Kiểm tra ràng buộc phân bổ theo phương thức định biên (BRD 4.2.b)
+    const validation = await validateUserProjectAssignment({
+      userId,
+      projectId,
+      roleId,
+      status: status || "ACTIVE",
+    })
+    if (!validation.valid) {
+      return apiError(validation.error || "Phân công không hợp lệ", 422, 422)
+    }
 
     const [created] = await db
       .insert(userProjects)

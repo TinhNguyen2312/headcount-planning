@@ -1,18 +1,10 @@
-import {
-  Button,
-  Card,
-  Popconfirm,
-  Space,
-  Spin,
-  Table,
-  Tag,
-  Tooltip,
-} from "antd"
+import { Card, Spin, Table, Tag, Tooltip } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import dayjs from "dayjs"
 import { ArrowDown, ArrowUp, Pencil, Trash2 } from "lucide-react"
 import React, { useMemo } from "react"
 
+import { ActionMenu, type ActionMenuItem } from "@/components/Common/ActionMenu"
 import type { PhaseWithMetrics } from "./types"
 
 interface PhaseTableProps {
@@ -68,7 +60,7 @@ export const PhaseTable: React.FC<PhaseTableProps> = ({
         ),
       },
       {
-        title: "Tên giai đoạn",
+        title: "Tên mốc",
         key: "milestone",
         render: (_, r) => (
           <div className="flex flex-col">
@@ -96,7 +88,7 @@ export const PhaseTable: React.FC<PhaseTableProps> = ({
                 {dayjs(val).format("DD/MM/YYYY")}
               </span>
               {r.executionType === "OVERLAPPING" && (
-                <Tooltip title="Giai đoạn gối đầu: Bắt đầu trước khi giai đoạn trước hoàn tất">
+                <Tooltip title="Mốc gối đầu: Bắt đầu trước khi mốc trước hoàn tất">
                   <Tag
                     color="orange"
                     className="text-[10px] m-0 px-1 leading-4"
@@ -106,7 +98,7 @@ export const PhaseTable: React.FC<PhaseTableProps> = ({
                 </Tooltip>
               )}
               {r.executionType === "PARALLEL" && (
-                <Tooltip title="Giai đoạn chạy song song: Cùng ngày bắt đầu với giai đoạn trước">
+                <Tooltip title="Mốc chạy song song: Cùng ngày bắt đầu với mốc trước">
                   <Tag
                     color="purple"
                     className="text-[10px] m-0 px-1 leading-4"
@@ -148,35 +140,41 @@ export const PhaseTable: React.FC<PhaseTableProps> = ({
       {
         title: "Thao tác",
         key: "actions",
-        width: 90,
+        width: 80,
         align: "center",
-        render: (_, r) =>
-          !viewOnly ? (
-            <Space size="small">
-              <Button
-                type="text"
-                size="small"
-                icon={
-                  <Pencil className="size-3.5 text-muted-foreground hover:text-foreground" />
-                }
-                onClick={() => onEditPhase(r)}
-              />
-              <Popconfirm
-                title="Xóa giai đoạn này?"
-                onConfirm={() => onDeletePhase(r.id)}
-                okText="Xóa"
-                cancelText="Hủy"
-                okButtonProps={{ danger: true }}
-              >
-                <Button
-                  danger
-                  type="text"
-                  size="small"
-                  icon={<Trash2 className="size-3.5" />}
-                />
-              </Popconfirm>
-            </Space>
-          ) : null,
+        render: (_, r) => {
+          if (viewOnly) return null
+
+          const actionItems: ActionMenuItem<PhaseWithMetrics>[] = [
+            {
+              key: "edit",
+              label: "Chỉnh sửa",
+              icon: <Pencil className="size-4 text-amber-500" />,
+              onClick: (record) => onEditPhase(record),
+            },
+            {
+              type: "divider",
+            },
+            {
+              key: "delete",
+              label: "Xóa mốc",
+              icon: <Trash2 className="size-4" />,
+              danger: true,
+              confirm: {
+                title: (record) =>
+                  `Xác nhận xóa mốc "${record.milestone?.name || `Mốc #${record.orderIndex}`}"?`,
+                content:
+                  "Mốc này sẽ bị xóa khỏi kế hoạch dự án hiện tại. Thứ tự các mốc còn lại sẽ được tự động đánh số lại.",
+                okText: "Xóa",
+                cancelText: "Hủy",
+                okType: "danger",
+              },
+              onClick: (record) => onDeletePhase(record.id),
+            },
+          ]
+
+          return <ActionMenu record={r} items={actionItems} mode="dropdown" />
+        },
       },
     ],
     [viewOnly, phases.length, onMovePhase, onEditPhase, onDeletePhase],
@@ -186,7 +184,7 @@ export const PhaseTable: React.FC<PhaseTableProps> = ({
     <Card size="small" className="p-0 overflow-hidden shadow-xs">
       {loading ? (
         <div className="p-8 text-center">
-          <Spin tip="Đang tải giai đoạn..." />
+          <Spin description="Đang tải mốc..." />
         </div>
       ) : (
         <Table
