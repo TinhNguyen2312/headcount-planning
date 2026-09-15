@@ -136,11 +136,11 @@ export const PhaseTable: React.FC<PhaseTableProps> = ({
         align: "center",
         render: (_, r) => (
           <div className="flex flex-col items-center">
-            <span className="font-medium bg-muted/60 px-2 py-0.5 rounded text-sm">
-              {r.durationDays} ngày
-            </span>
+            <Tag color="blue" className="font-semibold text-xs m-0 px-2 py-0.5">
+              {r.durationMonths} tháng
+            </Tag>
             <span className="text-[11px] text-muted-foreground mt-0.5">
-              ~ {r.durationMonths} tháng
+              ({r.durationDays} ngày)
             </span>
           </div>
         ),

@@ -9,6 +9,7 @@ export interface PhaseResponse {
   milestoneId: number
   startDate: string
   endDate: string
+  durationMonths: number
   description: string | null
   createdAt: string
   updatedAt: string
@@ -19,7 +20,6 @@ export interface PhaseResponse {
     description?: string | null
   } | null
   // Computed / Helper fields
-  durationMonths?: number
   durationDays?: number
 }
 
@@ -29,6 +29,7 @@ export interface PhaseInput {
   milestoneId: number
   startDate: string
   endDate: string
+  durationMonths?: number
   description?: string | null
 }
 

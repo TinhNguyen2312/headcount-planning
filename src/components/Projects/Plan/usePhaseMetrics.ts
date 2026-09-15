@@ -20,11 +20,13 @@ export function usePhaseMetrics(workingPhases: PhaseResponse[]) {
           ? Math.max(1, end.diff(start, "day") + 1)
           : 0
 
-      // Duration months rounded to nearest full/half month or whole month
+      // Use official durationMonths or fallback to calculation
       const durationMonths =
-        start.isValid() && end.isValid()
-          ? Math.max(1, Math.round(durationDays / 30.4375))
-          : 0
+        phase.durationMonths && phase.durationMonths >= 1
+          ? phase.durationMonths
+          : start.isValid() && end.isValid()
+            ? Math.max(1, Math.round(durationDays / 30.4375))
+            : 1
 
       // Detect overlapping or parallel with previous phase
       let executionType: ExecutionType = "SEQUENTIAL"

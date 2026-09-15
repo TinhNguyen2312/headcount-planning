@@ -24,6 +24,7 @@ interface PhaseComparable {
   milestoneId: number
   startDate: string
   endDate: string
+  durationMonths?: number
   description?: string | null
 }
 
@@ -34,6 +35,7 @@ const getComparablePhases = (phases: PhaseResponse[]): PhaseComparable[] => {
     milestoneId: p.milestoneId,
     startDate: p.startDate,
     endDate: p.endDate,
+    durationMonths: p.durationMonths,
     description: p.description || null,
   }))
 }
@@ -126,6 +128,8 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
                 milestoneId: phaseInput.milestoneId,
                 startDate: phaseInput.startDate,
                 endDate: phaseInput.endDate,
+                durationMonths:
+                  phaseInput.durationMonths ?? p.durationMonths ?? 1,
                 description: phaseInput.description || null,
               }
             : p,
@@ -139,6 +143,7 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
           milestoneId: phaseInput.milestoneId,
           startDate: phaseInput.startDate,
           endDate: phaseInput.endDate,
+          durationMonths: phaseInput.durationMonths ?? 1,
           description: phaseInput.description || null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -181,6 +186,7 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
         milestoneId: p.milestoneId,
         startDate: p.startDate,
         endDate: p.endDate,
+        durationMonths: p.durationMonths,
         description: p.description,
       }))
 

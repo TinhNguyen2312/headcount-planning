@@ -202,6 +202,7 @@ export const phases = pgTable("phases", {
 	milestoneId: integer("milestone_id").notNull(),
 	startDate: date("start_date").notNull(),
 	endDate: date("end_date").notNull(),
+	durationMonths: integer("duration_months").default(1).notNull(),
 	description: text(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),

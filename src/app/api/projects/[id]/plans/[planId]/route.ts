@@ -34,6 +34,7 @@ export async function GET(
         milestoneId: phases.milestoneId,
         startDate: phases.startDate,
         endDate: phases.endDate,
+        durationMonths: phases.durationMonths,
         description: phases.description,
         createdAt: phases.createdAt,
         updatedAt: phases.updatedAt,
@@ -54,6 +55,7 @@ export async function GET(
       milestoneId: rp.milestoneId,
       startDate: rp.startDate,
       endDate: rp.endDate,
+      durationMonths: rp.durationMonths ?? 1,
       description: rp.description,
       createdAt: rp.createdAt,
       updatedAt: rp.updatedAt,
@@ -181,6 +183,8 @@ export async function PATCH(
         for (const p of body.phases) {
           const sDate = p.startDate
           const eDate = p.endDate
+          const dMonths =
+            p.durationMonths && p.durationMonths >= 1 ? p.durationMonths : 1
           const desc = p.description?.trim() || null
 
           if (!sDate || !eDate) {
@@ -196,6 +200,7 @@ export async function PATCH(
                 milestoneId: p.milestoneId,
                 startDate: sDate,
                 endDate: eDate,
+                durationMonths: dMonths,
                 description: desc,
                 updatedAt: new Date().toISOString(),
               })
@@ -208,6 +213,7 @@ export async function PATCH(
               milestoneId: p.milestoneId,
               startDate: sDate,
               endDate: eDate,
+              durationMonths: dMonths,
               description: desc,
             })
           }

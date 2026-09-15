@@ -111,6 +111,7 @@ export async function POST(
             milestoneId: sp.milestoneId,
             startDate: sp.startDate,
             endDate: sp.endDate,
+            durationMonths: sp.durationMonths ?? 1,
             description: sp.description,
           }))
 
@@ -134,6 +135,8 @@ export async function POST(
           milestoneId: p.milestoneId,
           startDate: p.startDate,
           endDate: p.endDate,
+          durationMonths:
+            p.durationMonths && p.durationMonths >= 1 ? p.durationMonths : 1,
           description: p.description?.trim() || null,
         }))
 
