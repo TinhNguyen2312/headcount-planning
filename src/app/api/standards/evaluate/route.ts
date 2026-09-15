@@ -200,7 +200,6 @@ export async function POST(req: NextRequest) {
               departmentName: std.role.department?.name || null,
               departmentCode: std.role.department?.code || null,
               planningMethod: std.role.planningMethod as any,
-              leadTimeMonths: std.role.leadTimeMonths,
               description: std.role.description,
               createdAt: std.role.createdAt,
             },
@@ -232,6 +231,8 @@ export async function POST(req: NextRequest) {
             headcountMax:
               std.headcountMax !== null ? Number(std.headcountMax) : null,
             note: std.note,
+            fromLeadTimeMonths: std.fromLeadTimeMonths ?? 0,
+            toLeadTimeMonths: std.toLeadTimeMonths ?? 0,
             criteriaCount: criteriaList.length,
             criteria: criteriaList.map((c: any) => ({
               id: c.id,

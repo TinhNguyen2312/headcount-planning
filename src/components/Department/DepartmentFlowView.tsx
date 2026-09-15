@@ -48,20 +48,7 @@ const DepartmentFlowView = ({ onEditDepartment }: DepartmentFlowViewProps) => {
     return filterActive(rawDepartments)
   }, [rawDepartments])
 
-  // Mặc định collapse tất cả node có children → chỉ hiển thị root nodes lúc đầu
-  const [collapsedIds, setCollapsedIds] = useState<Set<number>>(() => {
-    const ids = new Set<number>()
-    const collectCollapsible = (nodes: typeof departments) => {
-      for (const node of nodes) {
-        if (node.children && node.children.length > 0) {
-          ids.add(node.id)
-          collectCollapsible(node.children)
-        }
-      }
-    }
-    collectCollapsible(departments)
-    return ids
-  })
+  const [collapsedIds, setCollapsedIds] = useState<Set<number>>(() => new Set())
 
   const toggleCollapsed = useCallback((id: number) => {
     setCollapsedIds((prev) => {

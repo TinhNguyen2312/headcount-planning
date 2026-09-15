@@ -33,7 +33,6 @@ function formatStandard(standard: any): HeadcountStandardResponse {
         departmentName: standard.role.department?.name || null,
         departmentCode: standard.role.department?.code || null,
         planningMethod: standard.role.planningMethod,
-        leadTimeMonths: standard.role.leadTimeMonths,
         description: standard.role.description,
         createdAt: standard.role.createdAt,
       }
@@ -111,6 +110,8 @@ function formatStandard(standard: any): HeadcountStandardResponse {
     headcountMax:
       standard.headcountMax !== null ? Number(standard.headcountMax) : null,
     note: standard.note ?? null,
+    fromLeadTimeMonths: standard.fromLeadTimeMonths ?? 0,
+    toLeadTimeMonths: standard.toLeadTimeMonths ?? 0,
     durationMonths,
     monthlyFactors: monthlyFactorsList,
     criteriaCount: criteriaList.length,
@@ -337,6 +338,8 @@ export async function POST(req: NextRequest) {
               ? String(body.headcountMax)
               : null,
           note: body.note?.trim() || null,
+          fromLeadTimeMonths: Math.max(0, Number(body.fromLeadTimeMonths ?? 0)),
+          toLeadTimeMonths: Math.max(0, Number(body.toLeadTimeMonths ?? 0)),
           durationMonths,
           monthlyFactors: normalizedFactors,
         })

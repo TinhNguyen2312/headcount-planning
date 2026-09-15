@@ -26,7 +26,6 @@ interface RoleFormValues {
   parentRoleId?: number | null
   departmentId?: number | null
   planningMethod: PlanningMethod
-  leadTimeMonths: number
   description?: string | null
 }
 
@@ -97,7 +96,6 @@ const RoleModal = ({ open, onCancel, role }: RoleModalProps) => {
           parentRoleId: role.parentRoleId,
           departmentId: role.departmentId,
           planningMethod: role.planningMethod ?? "BY_PROJECT",
-          leadTimeMonths: role.leadTimeMonths ?? 0,
           description: role.description,
         })
       } else {
@@ -110,7 +108,6 @@ const RoleModal = ({ open, onCancel, role }: RoleModalProps) => {
           parentRoleId: null,
           departmentId: null,
           planningMethod: "BY_PROJECT",
-          leadTimeMonths: 0,
           description: null,
         })
       }
@@ -136,7 +133,6 @@ const RoleModal = ({ open, onCancel, role }: RoleModalProps) => {
         departmentId: values.departmentId ?? null,
         parentRoleId: values.parentRoleId ?? null,
         planningMethod: values.planningMethod ?? "BY_PROJECT",
-        leadTimeMonths: values.leadTimeMonths ?? 0,
         description: values.description?.trim() || null,
       }
 
@@ -161,7 +157,6 @@ const RoleModal = ({ open, onCancel, role }: RoleModalProps) => {
         departmentId: values.departmentId ?? null,
         parentRoleId: values.parentRoleId ?? null,
         planningMethod: values.planningMethod ?? "BY_PROJECT",
-        leadTimeMonths: values.leadTimeMonths ?? 0,
         description: values.description?.trim() || null,
       }
 
@@ -265,46 +260,26 @@ const RoleModal = ({ open, onCancel, role }: RoleModalProps) => {
           </Form.Item>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Form.Item
-            label="Phương thức chạy định biên"
-            name="planningMethod"
-            className="mb-0"
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng chọn phương thức định biên",
-              },
-            ]}
-            tooltip="Phân nhóm định biên: Theo Khu vực (01), Theo Vùng (02) hoặc Theo Dự án (03)"
-          >
-            <Select
-              placeholder="Chọn phương thức định biên"
-              options={PLANNING_METHOD_OPTIONS.map((opt) => ({
-                value: opt.value,
-                label: opt.label,
-              }))}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Dung sai tuyển dụng (Lead time)"
-            name="leadTimeMonths"
-            className="mb-0"
-            rules={[
-              { required: true, message: "Vui lòng nhập số tháng chuẩn bị" },
-            ]}
-            tooltip="Số tháng chuẩn bị tuyển dụng trước khi chạy định biên(ví dụ: KTS cần trước 4 tháng, GĐ PCD cần trước 1 tháng)"
-          >
-            <InputNumber
-              min={0}
-              max={36}
-              className="w-full"
-              addonAfter="tháng"
-              placeholder="0"
-            />
-          </Form.Item>
-        </div>
+        <Form.Item
+          label="Phương thức chạy định biên"
+          name="planningMethod"
+          className="mb-0"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng chọn phương thức định biên",
+            },
+          ]}
+          tooltip="Phân nhóm định biên: Theo Khu vực (01), Theo Vùng (02) hoặc Theo Dự án (03)"
+        >
+          <Select
+            placeholder="Chọn phương thức định biên"
+            options={PLANNING_METHOD_OPTIONS.map((opt) => ({
+              value: opt.value,
+              label: opt.label,
+            }))}
+          />
+        </Form.Item>
 
         <Form.Item label="Mô tả công việc" name="description" className="mb-0">
           <Input.TextArea

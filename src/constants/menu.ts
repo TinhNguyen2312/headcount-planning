@@ -2,13 +2,9 @@ import {
   Building2,
   LayoutDashboard,
   type LucideIcon,
-  MapPin,
-  Milestone,
   Scale,
-  Settings,
   Settings2,
   ShieldCheck,
-  SlidersHorizontal,
   Users,
 } from "lucide-react"
 import type { AppRole } from "@/types"
@@ -85,22 +81,22 @@ export const MENU_ITEMS: MenuItemConfig[] = [
   {
     key: "standards",
     icon: Scale,
-    label: "Khung định biên",
+    label: "Mô hình định biên",
     path: "/standards",
     roles: ["SUPER_ADMIN"],
-    position: "bottom",
+    position: "top",
     shortcut: "mod+alt+b",
     category: "Quản trị",
   },
-  {
-    key: "settings",
-    icon: Settings,
-    label: "Cài đặt",
-    path: "/settings",
-    position: "bottom",
-    shortcut: "mod+alt+,",
-    category: "Cá nhân",
-  },
+  // {
+  //   key: "settings",
+  //   icon: Settings,
+  //   label: "Cài đặt",
+  //   path: "/settings",
+  //   position: "bottom",
+  //   shortcut: "mod+alt+,",
+  //   category: "Cá nhân",
+  // },
 ]
 
 export const filterMenuItemsByRole = (

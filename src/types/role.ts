@@ -37,7 +37,6 @@ export interface RoleResponse {
   departmentParentId?: number | null
   departmentMetadata?: unknown
   planningMethod?: PlanningMethod | null
-  leadTimeMonths?: number | null
   description: string | null
   isActive?: boolean
   createdBy?: number
@@ -57,7 +56,6 @@ export interface RoleCreate {
   parentRoleId?: number | null
   departmentId?: number | null
   planningMethod?: PlanningMethod | null
-  leadTimeMonths?: number | null
   description?: string | null
   isActive?: boolean
 }
@@ -70,7 +68,6 @@ export interface RoleUpdate {
   parentRoleId?: number | null
   departmentId?: number | null
   planningMethod?: PlanningMethod | null
-  leadTimeMonths?: number | null
   description?: string | null
   isActive?: boolean
 }

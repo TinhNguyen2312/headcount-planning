@@ -48,8 +48,6 @@ export async function PATCH(
           body.departmentId !== undefined ? body.departmentId : undefined,
         planningMethod:
           body.planningMethod !== undefined ? body.planningMethod : undefined,
-        leadTimeMonths:
-          body.leadTimeMonths !== undefined ? body.leadTimeMonths : undefined,
         description:
           body.description !== undefined ? body.description : undefined,
       })

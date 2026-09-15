@@ -60,7 +60,6 @@ export async function GET(req: NextRequest) {
         parentRoleId: roles.parentRoleId,
         departmentId: roles.departmentId,
         planningMethod: roles.planningMethod,
-        leadTimeMonths: roles.leadTimeMonths,
         description: roles.description,
         createdAt: roles.createdAt,
       })
@@ -96,7 +95,6 @@ export async function POST(req: NextRequest) {
       parentRoleId,
       departmentId,
       planningMethod,
-      leadTimeMonths,
       description,
     } = body
 
@@ -121,7 +119,6 @@ export async function POST(req: NextRequest) {
         parentRoleId: parentRoleId || null,
         departmentId: departmentId || null,
         planningMethod: planningMethod || "BY_PROJECT",
-        leadTimeMonths: leadTimeMonths || 0,
         description: description || null,
       })
       .returning()

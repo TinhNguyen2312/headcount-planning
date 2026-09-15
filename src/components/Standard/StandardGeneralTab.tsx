@@ -32,36 +32,82 @@ export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = ({
         />
       </Form.Item>
 
-      <div className="grid grid-cols-2 gap-4">
-        <Form.Item
-          name="fromMilestoneId"
-          label="Mốc bắt đầu (From Milestone)"
-          rules={[{ required: true, message: "Vui lòng chọn mốc bắt đầu" }]}
-        >
-          <Select
-            placeholder="Chọn mốc bắt đầu..."
-            options={milestoneOptions}
-            showSearch
-            optionFilterProp="label"
-          />
-        </Form.Item>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Cụm Mốc bắt đầu */}
+        <div className="p-3 bg-muted/40 rounded-lg border border-border/50 space-y-3">
+          <Form.Item
+            name="fromMilestoneId"
+            label={
+              <span className="font-medium text-emerald-700 dark:text-emerald-300">
+                Mốc bắt đầu (From Milestone)
+              </span>
+            }
+            rules={[{ required: true, message: "Vui lòng chọn mốc bắt đầu" }]}
+            className="mb-0"
+          >
+            <Select
+              placeholder="Chọn mốc bắt đầu..."
+              options={milestoneOptions}
+              showSearch
+              optionFilterProp="label"
+            />
+          </Form.Item>
 
-        <Form.Item
-          name="toMilestoneId"
-          label="Mốc kết thúc (To Milestone)"
-          tooltip="Để trống nếu áp dụng xuyên suốt đến hết vòng đời dự án"
-        >
-          <Select
-            placeholder="Chọn mốc kết thúc (hoặc để trống)..."
-            options={milestoneOptions}
-            allowClear
-            showSearch
-            optionFilterProp="label"
-          />
-        </Form.Item>
+          <Form.Item
+            name="fromLeadTimeMonths"
+            label="Vào trước mốc bắt đầu"
+            tooltip="Số tháng nhân sự cần có mặt trước khi mốc bắt đầu khởi công (ví dụ: cần trước A 1 tháng)"
+            className="mb-0"
+          >
+            <InputNumber
+              min={0}
+              step={1}
+              addonAfter="tháng"
+              className="w-full"
+              placeholder="0"
+            />
+          </Form.Item>
+        </div>
+
+        {/* Cụm Mốc kết thúc */}
+        <div className="p-3 bg-muted/40 rounded-lg border border-border/50 space-y-3">
+          <Form.Item
+            name="toMilestoneId"
+            label={
+              <span className="font-medium text-blue-700 dark:text-blue-300">
+                Mốc kết thúc (To Milestone)
+              </span>
+            }
+            tooltip="Để trống nếu áp dụng xuyên suốt đến hết vòng đời dự án"
+            className="mb-0"
+          >
+            <Select
+              placeholder="Chọn mốc kết thúc (hoặc để trống)..."
+              options={milestoneOptions}
+              allowClear
+              showSearch
+              optionFilterProp="label"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="toLeadTimeMonths"
+            label="Giữ lại sau mốc kết thúc"
+            tooltip="Số tháng giữ nhân sự sau khi mốc kết thúc để hoàn công, nghiệm thu, quyết toán (ví dụ: giữ lại sau B 3 tháng)"
+            className="mb-0"
+          >
+            <InputNumber
+              min={0}
+              step={1}
+              addonAfter="tháng"
+              className="w-full"
+              placeholder="0"
+            />
+          </Form.Item>
+        </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Form.Item
           name="headcount"
           label="Định biên chuẩn (Baseline)"

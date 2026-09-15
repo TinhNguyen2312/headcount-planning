@@ -14,7 +14,7 @@ export default function StandardsPage() {
 
   return (
     <PageContainer
-      title="Khung định biên"
+      title="Mô hình định biên"
       rightSlot={
         <Button
           type="primary"

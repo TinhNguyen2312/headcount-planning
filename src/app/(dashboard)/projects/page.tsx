@@ -1,7 +1,7 @@
 "use client"
 
-import dynamic from "next/dynamic"
 import { Skeleton } from "antd"
+import dynamic from "next/dynamic"
 
 const ProjectsPage = dynamic(() => import("@/views/ProjectsPage"), {
   ssr: false,

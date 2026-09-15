@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-assignment */
 "use client"
 
 import {
@@ -7,22 +8,16 @@ import {
   type Node,
   ReactFlow,
   ReactFlowProvider,
-  useReactFlow,
 } from "@xyflow/react"
 import { useCallback, useMemo, useState } from "react"
 import "@xyflow/react/dist/style.css"
-import { Button, Input, Select } from "antd"
-import { Building2, RotateCcw, Search } from "lucide-react"
+import { Building2 } from "lucide-react"
 import { roleQueries } from "@/hooks/server/roles"
-import type { RoleResponse, RoleTreeNodeResponse } from "@/types"
+import type { RoleResponse } from "@/types"
 import DepartmentGroupNode from "./DepartmentGroupNode"
 import RoleBusEdge from "./RoleBusEdge"
 import RoleFlowNode, { type RoleFlowNodeData } from "./RoleFlowNode"
-import {
-  flattenVisible,
-  layoutDepartmentGroupedTree,
-  layoutWithDagre,
-} from "./roleTreeLayout"
+import { flattenVisible, layoutDepartmentGroupedTree } from "./roleTreeLayout"
 
 const nodeTypes = {
   roleNode: RoleFlowNode,
@@ -39,12 +34,8 @@ interface RoleFlowViewProps {
 
 const FlowContent = ({ onEditRole }: RoleFlowViewProps) => {
   const { data: roles = [] } = roleQueries.useSuspenseTree()
-  const { fitView } = useReactFlow()
 
   const [collapsedIds, setCollapsedIds] = useState<Set<number>>(() => new Set())
-  const [selectedDeptId, setSelectedDeptId] = useState<number | "ALL">("ALL")
-  const [searchKeyword, setSearchKeyword] = useState<string>("")
-  const [groupByDept, setGroupByDept] = useState<boolean>(true)
 
   const toggleCollapsed = useCallback((id: number) => {
     setCollapsedIds((prev) => {
@@ -58,165 +49,61 @@ const FlowContent = ({ onEditRole }: RoleFlowViewProps) => {
     })
   }, [])
 
-  const departmentOptions = useMemo(() => {
-    const map = new Map<number, { id: number; name: string; code?: string }>()
-    const scan = (nodes: RoleTreeNodeResponse[]) => {
-      for (const n of nodes) {
-        if (n.departmentId && n.departmentName) {
-          map.set(n.departmentId, {
-            id: n.departmentId,
-            name: n.departmentName,
-            code: n.departmentCode ?? undefined,
-          })
-        }
-        if (n.children) scan(n.children)
-      }
-    }
-    scan(roles)
-
-    return [
-      { value: "ALL", label: "Tất cả Phòng ban" },
-      ...Array.from(map.values()).map((d) => ({
-        value: d.id,
-        label: `${d.name}`,
-      })),
-    ]
-  }, [roles])
-
-  const filteredRoles = useMemo(() => {
-    if (selectedDeptId === "ALL") return roles
-
-    const filterNodes = (
-      nodes: RoleTreeNodeResponse[],
-    ): RoleTreeNodeResponse[] => {
-      const matched: RoleTreeNodeResponse[] = []
-      for (const n of nodes) {
-        const matchesSelf = n.departmentId === selectedDeptId
-        const filteredChildren = n.children ? filterNodes(n.children) : []
-        if (matchesSelf || filteredChildren.length > 0) {
-          matched.push({
-            ...n,
-            children: filteredChildren,
-          })
-        }
-      }
-      return matched
-    }
-    return filterNodes(roles)
-  }, [roles, selectedDeptId])
-
   const { nodes, edges } = useMemo(() => {
-    if (!filteredRoles || filteredRoles.length === 0) {
+    if (!roles || roles.length === 0) {
       return { nodes: [] as Node[], edges: [] as Edge[] }
     }
 
-    const entries = flattenVisible(filteredRoles, collapsedIds)
-
-    const visibleEntries = searchKeyword.trim()
-      ? entries.filter(
-          (e) =>
-            e.role.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-            e.role.code?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-            e.role.shortCode
-              ?.toLowerCase()
-              .includes(searchKeyword.toLowerCase()) ||
-            e.role.departmentName
-              ?.toLowerCase()
-              .includes(searchKeyword.toLowerCase()),
-        )
-      : entries
+    const entries = flattenVisible(roles, collapsedIds)
 
     let flowNodes: Node[] = []
     let flowEdges: Edge[] = []
     let positions = new Map<string, { x: number; y: number }>()
 
-    if (groupByDept && selectedDeptId === "ALL") {
-      const res = layoutDepartmentGroupedTree(visibleEntries)
-      positions = res.positions
+    const res = layoutDepartmentGroupedTree(entries)
+    positions = res.positions
 
-      const groupNodes: Node[] = res.groups.map((g) => ({
-        id: g.id,
-        type: "departmentGroup",
-        position: { x: g.x, y: g.y },
-        data: g,
-        draggable: false,
-        selectable: false,
-        zIndex: -1,
-        style: { pointerEvents: "none" as const },
-      }))
+    const groupNodes: Node[] = res.groups.map((g) => ({
+      id: g.id,
+      type: "departmentGroup",
+      position: { x: g.x, y: g.y },
+      data: g,
+      draggable: false,
+      selectable: false,
+      zIndex: -1,
+      style: { pointerEvents: "none" as const },
+    }))
 
-      const roleNodes: Node[] = visibleEntries.map((entry) => ({
-        id: entry.id,
-        type: "roleNode",
-        position: positions.get(entry.id) ?? { x: 0, y: 0 },
-        data: {
-          role: entry.role,
-          childCount: entry.role.children.length,
-          expanded: !collapsedIds.has(entry.role.id),
-          onToggleExpand: () => toggleCollapsed(entry.role.id),
-          onEdit: onEditRole,
-        },
-        className: "nodrag nopan",
-        draggable: false,
-        selectable: false,
-        zIndex: 10,
-        style: { pointerEvents: "all" as const },
-      }))
+    const roleNodes: Node[] = entries.map((entry) => ({
+      id: entry.id,
+      type: "roleNode",
+      position: positions.get(entry.id) ?? { x: 0, y: 0 },
+      data: {
+        role: entry.role,
+        childCount: entry.role.children.length,
+        expanded: !collapsedIds.has(entry.role.id),
+        onToggleExpand: () => toggleCollapsed(entry.role.id),
+        onEdit: onEditRole,
+      },
+      className: "nodrag nopan",
+      draggable: false,
+      selectable: false,
+      zIndex: 10,
+      style: { pointerEvents: "all" as const },
+    }))
 
-      flowNodes = [...groupNodes, ...roleNodes]
-      flowEdges = res.edges.map((e) => ({
-        id: `${e.source}-${e.target}`,
-        source: e.source,
-        sourceHandle: "bottom",
-        target: e.target,
-        targetHandle: e.targetHandle ?? "top",
-        type: "roleBus",
-        style: { stroke: "#475569", strokeWidth: 1.8, opacity: 0.9 },
-      }))
-    } else {
-      positions = layoutWithDagre(visibleEntries)
-      flowNodes = visibleEntries.map((entry) => ({
-        id: entry.id,
-        type: "roleNode",
-        position: positions.get(entry.id) ?? { x: 0, y: 0 },
-        data: {
-          role: entry.role,
-          childCount: entry.role.children.length,
-          expanded: !collapsedIds.has(entry.role.id),
-          onToggleExpand: () => toggleCollapsed(entry.role.id),
-          onEdit: onEditRole,
-        },
-        className: "nodrag nopan",
-        draggable: false,
-        selectable: false,
-        zIndex: 10,
-        style: { pointerEvents: "all" as const },
-      }))
-
-      const visibleIdSet = new Set(visibleEntries.map((e) => e.id))
-      flowEdges = visibleEntries
-        .filter((entry) => entry.parentId && visibleIdSet.has(entry.parentId))
-        .map((entry) => ({
-          id: `${entry.parentId}-${entry.id}`,
-          source: entry.parentId as string,
-          sourceHandle: "bottom",
-          target: entry.id,
-          targetHandle: "top",
-          type: "roleBus",
-          style: { stroke: "#475569", strokeWidth: 1.8, opacity: 0.9 },
-        }))
-    }
-
+    flowNodes = [...groupNodes, ...roleNodes]
+    flowEdges = res.edges.map((e) => ({
+      id: `${e.source}-${e.target}`,
+      source: e.source,
+      sourceHandle: "bottom",
+      target: e.target,
+      targetHandle: e.targetHandle ?? "top",
+      type: "roleBus",
+      style: { stroke: "#475569", strokeWidth: 1.8, opacity: 0.9 },
+    }))
     return { nodes: flowNodes, edges: flowEdges }
-  }, [
-    filteredRoles,
-    collapsedIds,
-    toggleCollapsed,
-    onEditRole,
-    searchKeyword,
-    groupByDept,
-    selectedDeptId,
-  ])
+  }, [roles, collapsedIds, toggleCollapsed, onEditRole])
 
   if (!roles || roles.length === 0) {
     return (
@@ -231,56 +118,7 @@ const FlowContent = ({ onEditRole }: RoleFlowViewProps) => {
 
   return (
     <div className="flex flex-col gap-2.5 w-full">
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-lg border bg-card/60 backdrop-blur-xs">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-            <Building2 className="size-3.5" />
-            Lọc theo phòng ban:
-          </span>
-          <Select
-            value={selectedDeptId}
-            onChange={(val) => setSelectedDeptId(val)}
-            options={departmentOptions}
-            className="w-72!"
-            showSearch
-            filterOption={(input, option) =>
-              (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-            }
-          />
-
-          <Input
-            placeholder="Tìm kiếm chức vụ..."
-            prefix={<Search className="size-3.5 text-muted-foreground" />}
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-            allowClear
-            className="w-56!"
-          />
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            size="small"
-            type={groupByDept ? "primary" : "default"}
-            onClick={() => setGroupByDept(!groupByDept)}
-          >
-            {groupByDept ? "✓ Nhóm theo Phòng ban" : "Dạng phẳng"}
-          </Button>
-
-          <Button
-            size="small"
-            icon={<RotateCcw className="size-3.5" />}
-            onClick={() => {
-              setCollapsedIds(new Set())
-              setSelectedDeptId("ALL")
-              setSearchKeyword("")
-              setTimeout(() => fitView({ padding: 0.1, duration: 400 }), 100)
-            }}
-          >
-            Đặt lại
-          </Button>
-        </div>
-      </div>
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-lg border bg-card/60 backdrop-blur-xs"></div>
 
       <div className="h-170 w-full overflow-hidden rounded-lg border bg-background relative">
         <ReactFlow

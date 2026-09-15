@@ -168,6 +168,8 @@ export const headcountStandards = pgTable("headcount_standards", {
 	headcountMin: numeric("headcount_min", { precision: 10, scale:  4 }),
 	headcountMax: numeric("headcount_max", { precision: 10, scale:  4 }),
 	note: text(),
+	fromLeadTimeMonths: integer("from_lead_time_months").default(0).notNull(),
+	toLeadTimeMonths: integer("to_lead_time_months").default(0).notNull(),
 	durationMonths: integer("duration_months").default(12).notNull(),
 	monthlyFactors: jsonb("monthly_factors").$type<number[]>().default([]).notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
@@ -325,7 +327,6 @@ export const roles = pgTable("roles", {
 	parentRoleId: bigint("parent_role_id", { mode: "number" }),
 	departmentId: integer("department_id"),
 	planningMethod: varchar("planning_method", { length: 20 }).default('BY_PROJECT'),
-	leadTimeMonths: integer("lead_time_months").default(0).notNull(),
 	description: text(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [

@@ -11,10 +11,10 @@ import {
 import { useState } from "react"
 
 import PageContainer from "@/components/Common/PageContainer"
-import ProtectedButton from "@/components/Common/ProtectedButton"
 import { ProjectPlanManagement } from "@/components/Projects/Plan"
 import ProjectEditForm from "@/components/Projects/ProjectEditForm"
 import ProjectPropertiesDrawer from "@/components/Projects/ProjectPropertiesDrawer"
+import ProjectUsersTab from "@/components/Projects/ProjectUsersTab"
 import { projectQueries } from "@/hooks/server/projects"
 import { uploadMutations } from "@/hooks/server/uploads"
 import { useProjectAuth } from "@/hooks/useProjectAuth"
@@ -23,13 +23,11 @@ import { useUI } from "@/hooks/useUI"
 interface ProjectEditPageProps {
   projectId: number
   onBack: () => void
-  onNavigateUsers: () => void
 }
 
 export default function ProjectEditPage({
   projectId,
   onBack,
-  onNavigateUsers,
 }: ProjectEditPageProps) {
   const { data: project } = projectQueries.useSuspenseDetail(projectId)
   const { isSuperUser } = useProjectAuth(projectId)
@@ -49,16 +47,8 @@ export default function ProjectEditPage({
         await updateMutation.mutateAsync({
           id: projectId,
           data: {
-            name: project.name,
-            address: project.address,
-            generalInfo: project.generalInfo,
-            region: project.region,
-            sector: project.sector,
-            status: project.status,
-            startDate: project.startDate,
-            endDate: project.endDate,
+            ...project,
             thumbnail: fileUrl,
-            accProjectId: project.accProjectId,
           },
         })
         message.success(
@@ -96,6 +86,16 @@ export default function ProjectEditPage({
         />
       ),
     },
+    {
+      key: "users",
+      label: (
+        <span className="flex items-center gap-1.5 font-medium">
+          <Users className="size-4" />
+          Quản lý nhân sự
+        </span>
+      ),
+      children: <ProjectUsersTab projectId={projectId} />,
+    },
   ]
 
   return (
@@ -128,13 +128,6 @@ export default function ProjectEditPage({
           >
             Quy mô & Cơ sở định biên
           </Button>
-          <ProtectedButton
-            projectRoles={[]}
-            onClick={onNavigateUsers}
-            icon={<Users className="size-4" />}
-          >
-            Quản lý nhân sự
-          </ProtectedButton>
         </>
       }
     >

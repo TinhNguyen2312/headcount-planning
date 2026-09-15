@@ -31,7 +31,6 @@ function formatStandard(standard: any): HeadcountStandardResponse {
         departmentName: standard.role.department?.name || null,
         departmentCode: standard.role.department?.code || null,
         planningMethod: standard.role.planningMethod,
-        leadTimeMonths: standard.role.leadTimeMonths,
         description: standard.role.description,
         createdAt: standard.role.createdAt,
       }
@@ -109,6 +108,8 @@ function formatStandard(standard: any): HeadcountStandardResponse {
     headcountMax:
       standard.headcountMax !== null ? Number(standard.headcountMax) : null,
     note: standard.note ?? null,
+    fromLeadTimeMonths: standard.fromLeadTimeMonths ?? 0,
+    toLeadTimeMonths: standard.toLeadTimeMonths ?? 0,
     durationMonths,
     monthlyFactors: monthlyFactorsList,
     criteriaCount: criteriaList.length,
@@ -311,6 +312,13 @@ export async function PATCH(
         updateData.headcountMax =
           body.headcountMax !== null ? String(body.headcountMax) : null
       if (body.note !== undefined) updateData.note = body.note?.trim() || null
+      if (body.fromLeadTimeMonths !== undefined)
+        updateData.fromLeadTimeMonths = Math.max(
+          0,
+          Number(body.fromLeadTimeMonths),
+        )
+      if (body.toLeadTimeMonths !== undefined)
+        updateData.toLeadTimeMonths = Math.max(0, Number(body.toLeadTimeMonths))
       if (body.durationMonths !== undefined)
         updateData.durationMonths = currentDuration
       if (normalizedFactors !== undefined)

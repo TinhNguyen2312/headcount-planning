@@ -27,7 +27,6 @@ export async function GET(req: NextRequest) {
         departmentParentId: departments.parentId,
         departmentMetadata: departments.metadata,
         planningMethod: roles.planningMethod,
-        leadTimeMonths: roles.leadTimeMonths,
         description: roles.description,
         createdAt: roles.createdAt,
       })

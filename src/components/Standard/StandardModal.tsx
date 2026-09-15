@@ -86,6 +86,8 @@ export const StandardModal: React.FC<StandardModalProps> = ({
           headcount: standard.headcount,
           headcountMin: standard.headcountMin,
           headcountMax: standard.headcountMax,
+          fromLeadTimeMonths: standard.fromLeadTimeMonths ?? 0,
+          toLeadTimeMonths: standard.toLeadTimeMonths ?? 0,
           note: standard.note ?? "",
           durationMonths: dur,
           monthlyFactors: factors,
@@ -102,6 +104,8 @@ export const StandardModal: React.FC<StandardModalProps> = ({
         form.resetFields()
         form.setFieldsValue({
           headcount: 1.0,
+          fromLeadTimeMonths: 0,
+          toLeadTimeMonths: 0,
           durationMonths: 12,
           monthlyFactors: Array(12).fill(1.0),
           criteria: [],
@@ -139,6 +143,8 @@ export const StandardModal: React.FC<StandardModalProps> = ({
             ? Number(values.headcountMax)
             : null,
         note: values.note?.trim() || null,
+        fromLeadTimeMonths: Number(values.fromLeadTimeMonths ?? 0),
+        toLeadTimeMonths: Number(values.toLeadTimeMonths ?? 0),
         durationMonths: dur,
         monthlyFactors: factors,
         criteria: (values.criteria || [])

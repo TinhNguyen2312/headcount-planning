@@ -91,6 +91,8 @@ export interface HeadcountStandardResponse {
   headcountMin: number | null
   headcountMax: number | null
   note: string | null
+  fromLeadTimeMonths: number
+  toLeadTimeMonths: number
   durationMonths: number
   monthlyFactors: number[]
   criteriaCount?: number
@@ -107,6 +109,8 @@ export interface HeadcountStandardCreatePayload {
   headcountMin?: number | null
   headcountMax?: number | null
   note?: string | null
+  fromLeadTimeMonths?: number
+  toLeadTimeMonths?: number
   durationMonths?: number
   monthlyFactors?: number[]
   criteria?: HeadcountCriteriaInput[]
@@ -120,6 +124,8 @@ export interface HeadcountStandardUpdatePayload {
   headcountMin?: number | null
   headcountMax?: number | null
   note?: string | null
+  fromLeadTimeMonths?: number
+  toLeadTimeMonths?: number
   durationMonths?: number
   monthlyFactors?: number[]
   criteria?: HeadcountCriteriaInput[]

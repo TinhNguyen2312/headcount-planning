@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
 import { Tabs } from "antd"
@@ -17,15 +19,11 @@ import UserTree from "@/components/Users/UserTree"
 import { projectQueries } from "@/hooks/server/projects"
 import { useProjectAuth } from "@/hooks/useProjectAuth"
 
-interface ProjectUsersPageProps {
+interface ProjectUsersTabProps {
   projectId: number
-  onBack?: () => void
 }
 
-export default function ProjectUsersPage({
-  projectId,
-  onBack,
-}: ProjectUsersPageProps) {
+export default function ProjectUsersTab({ projectId }: ProjectUsersTabProps) {
   const [activeTab, setActiveTab] = useState("list")
   const [selectedZoneId] = useState<number | undefined>(undefined)
 
@@ -108,7 +106,7 @@ export default function ProjectUsersPage({
   return (
     <PageContainer
       title={`Quản lý nhân sự ${project ? ` - ${project.name}` : ""}`}
-      onBack={onBack}
+      onBack={() => {}}
       rightSlot={
         <ShowFor projectRoles={["PROJECT_ADMIN"]}>
           <AddProjectUser

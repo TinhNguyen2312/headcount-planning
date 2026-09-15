@@ -2,50 +2,26 @@
 
 import {
   Button,
-  Empty,
   Input,
   Popconfirm,
   Select,
   Space,
   Table,
-  Tabs,
   Tag,
   Tooltip,
 } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import {
-  ArrowRight,
-  Edit,
-  RotateCcw,
-  Search,
-  SlidersHorizontal,
-  Trash2,
-  Users,
-} from "lucide-react"
+import { Edit, RotateCcw, Search, Trash2 } from "lucide-react"
 import React, { useMemo, useState } from "react"
 import { milestoneQueries } from "@/hooks/server/milestones"
 import { roleQueries } from "@/hooks/server/roles"
 import { standardQueries } from "@/hooks/server/standards"
-import type {
-  ConditionOperator,
-  HeadcountCriteriaResponse,
-  HeadcountStandardResponse,
-} from "@/types"
+import type { HeadcountStandardResponse } from "@/types"
 import { formatCriteriaDisplay } from "./criteriaRules"
 
 interface StandardTableViewProps {
   onEditStandard: (standard: HeadcountStandardResponse) => void
 }
-
-const OPERATOR_LABELS: Record<ConditionOperator, string> = {
-  "=": "=",
-  "<": "<",
-  "<=": "≤",
-  ">": ">",
-  ">=": "≥",
-  BETWEEN: "trong khoảng",
-}
-
 export const StandardTableView: React.FC<StandardTableViewProps> = ({
   onEditStandard,
 }) => {
@@ -66,7 +42,7 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
     () =>
       roles.map((r) => ({
         value: r.id,
-        label: `${r.name} (${r.code || "N/A"})`,
+        label: `${r.name}`,
       })),
     [roles],
   )
@@ -75,7 +51,7 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
     () =>
       milestones.map((m) => ({
         value: m.id,
-        label: `${m.name} (${m.code})`,
+        label: `${m.name}`,
       })),
     [milestones],
   )
@@ -120,54 +96,56 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
       render: (_, record) => (
         <div>
           <div className="font-semibold text-sm text-foreground flex items-center gap-1.5">
-            <span>{record.role?.name || `Role #${record.roleId}`}</span>
-          </div>
-          <div className="flex items-center gap-1 mt-1 flex-wrap">
-            {record.role?.departmentName && (
-              <Tag color="cyan" className="text-xs m-0">
-                {record.role.departmentName}
-              </Tag>
-            )}
+            <span>{record.role?.name}</span>
           </div>
         </div>
       ),
     },
     {
-      title: "Giai đoạn / Mốc áp dụng",
+      title: "Giai đoạn",
       key: "milestone",
-      width: 270,
+      width: 290,
       render: (_, record) => {
-        const fromLabel =
-          record.fromMilestone?.name || `Mốc #${record.fromMilestoneId}`
-        const fromCode = record.fromMilestone?.code
-        const toLabel =
-          record.toMilestone?.name ||
-          (record.toMilestoneId
-            ? `Mốc #${record.toMilestoneId}`
-            : "Toàn bộ dự án")
-        const toCode = record.toMilestone?.code
+        const fromLabel = record.fromMilestone?.name
+        const toLabel = record.toMilestone?.name || "Toàn bộ dự án"
+        const fromLead = record.fromLeadTimeMonths || 0
+        const toLead = record.toLeadTimeMonths || 0
 
         return (
           <div className="flex items-center gap-1.5 text-xs flex-wrap">
+            {fromLead > 0 && (
+              <Tag
+                color="orange"
+                className="text-[11px] font-semibold m-0"
+                title={`Vào trước mốc bắt đầu ${fromLead} tháng`}
+              >
+                -{fromLead}T
+              </Tag>
+            )}
             <span className="font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
               {fromLabel}
             </span>
-            {fromCode && (
-              <Tag className="text-[10px] m-0 font-mono">{fromCode}</Tag>
-            )}
-            <ArrowRight className="size-3 text-muted-foreground shrink-0" />
+
+            <span className="text-muted-foreground text-xs">{" đến "}</span>
+
             <span className="font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/30 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800">
               {toLabel}
             </span>
-            {toCode && (
-              <Tag className="text-[10px] m-0 font-mono">{toCode}</Tag>
+            {toLead > 0 && (
+              <Tag
+                color="purple"
+                className="text-[11px] font-semibold m-0"
+                title={`Giữ lại sau mốc kết thúc ${toLead} tháng`}
+              >
+                +{toLead}T
+              </Tag>
             )}
           </div>
         )
       },
     },
     {
-      title: "Định biên chuẩn",
+      title: "Khung định biên",
       key: "headcount",
       width: 170,
       render: (_, record) => (
@@ -190,7 +168,7 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
       ),
     },
     {
-      title: "Điều kiện lọc",
+      title: "Cơ sơ sở định biên",
       key: "criteria",
       width: 260,
       render: (_, record) => {
@@ -208,7 +186,7 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
               <Tag
                 key={c.id}
                 color="blue"
-                className="text-xs max-w-[240px] truncate"
+                className="text-xs max-w-240px truncate"
                 title={formatCriteriaDisplay(c)}
               >
                 {formatCriteriaDisplay(c)}
@@ -234,18 +212,48 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
       },
     },
     {
-      title: "Thời lượng",
+      title: "Hệ số tối ưu",
       key: "durationMonths",
-      width: 170,
+      width: 200,
       render: (_, record) => {
         const dur = record.durationMonths || 12
-        const factors = record.monthlyFactors || []
+        const fromLead = record.fromLeadTimeMonths || 0
+        const toLead = record.toLeadTimeMonths || 0
         return (
-          <div className="flex flex-col gap-0.5">
+          <div className="flex flex-col gap-1 text-xs">
             <div className="flex items-center gap-1.5">
+              <span className="text-muted-foreground text-[11px]">
+                Thời gian:
+              </span>
               <Tag color="blue" className="font-semibold text-xs m-0">
                 {dur} tháng
               </Tag>
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-muted-foreground text-[11px]">
+                Gối đầu:
+              </span>
+              {fromLead > 0 || toLead > 0 ? (
+                <div className="flex items-center gap-1 flex-wrap">
+                  {fromLead > 0 && (
+                    <Tag color="orange" className="text-[10px] m-0 font-medium">
+                      Trước {fromLead}T
+                    </Tag>
+                  )}
+                  {toLead > 0 && (
+                    <Tag color="purple" className="text-[10px] m-0 font-medium">
+                      Sau {toLead}T
+                    </Tag>
+                  )}
+                </div>
+              ) : (
+                <Tag
+                  color="default"
+                  className="text-xs m-0 text-muted-foreground"
+                >
+                  Đúng mốc
+                </Tag>
+              )}
             </div>
           </div>
         )
@@ -304,179 +312,6 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
     },
   ]
 
-  const expandedRowRender = (record: HeadcountStandardResponse) => {
-    const criteriaList = record.criteria || []
-    const factorsList = record.monthlyFactors || []
-
-    return (
-      <div className="bg-slate-50/70 dark:bg-slate-900/40 p-4 rounded-lg border border-border my-2">
-        <Tabs
-          defaultActiveKey="criteria"
-          size="small"
-          items={[
-            {
-              key: "criteria",
-              label: (
-                <span className="flex items-center gap-1.5 font-medium text-xs">
-                  <SlidersHorizontal className="size-3.5" />
-                  Điều kiện lọc áp dụng ({criteriaList.length})
-                </span>
-              ),
-              children:
-                criteriaList.length > 0 ? (
-                  <Table
-                    size="small"
-                    pagination={false}
-                    dataSource={criteriaList}
-                    rowKey="id"
-                    columns={[
-                      {
-                        title: "STT",
-                        key: "stt",
-                        width: 50,
-                        render: (_, __, index) => index + 1,
-                      },
-                      {
-                        title: "Mã chỉ số",
-                        dataIndex: ["property", "code"],
-                        key: "propCode",
-                        width: 150,
-                        render: (code) => (
-                          <span className="font-mono text-xs font-semibold text-primary">
-                            {code}
-                          </span>
-                        ),
-                      },
-                      {
-                        title: "Tên cơ sở định biên",
-                        dataIndex: ["property", "name"],
-                        key: "propName",
-                      },
-                      {
-                        title: "Kiểu dữ liệu",
-                        dataIndex: ["property", "dataType"],
-                        key: "dataType",
-                        width: 110,
-                        render: (dt) => (
-                          <Tag className="text-[10px]">{dt || "NUMBER"}</Tag>
-                        ),
-                      },
-                      {
-                        title: "Đơn vị tính",
-                        dataIndex: ["property", "unit"],
-                        key: "unit",
-                        width: 90,
-                        render: (unit) =>
-                          unit ? <Tag className="text-xs">{unit}</Tag> : "—",
-                      },
-                      {
-                        title: "Phép so sánh",
-                        dataIndex: "conditionOperator",
-                        key: "op",
-                        width: 130,
-                        render: (op: ConditionOperator) => (
-                          <Tag color="processing">
-                            {OPERATOR_LABELS[op] || op}
-                          </Tag>
-                        ),
-                      },
-                      {
-                        title: "Giá trị áp dụng",
-                        key: "val",
-                        width: 180,
-                        render: (_, crit: HeadcountCriteriaResponse) => {
-                          if (crit.valueText) {
-                            return <Tag color="blue">{crit.valueText}</Tag>
-                          }
-                          if (crit.conditionOperator === "BETWEEN") {
-                            return `${crit.minValue ?? "?"} - ${crit.maxValue ?? "?"}`
-                          }
-                          return crit.minValue ?? crit.maxValue ?? "—"
-                        },
-                      },
-                      {
-                        title: "Ghi chú điều kiện",
-                        dataIndex: "note",
-                        key: "note",
-                        render: (note) => note || "—",
-                      },
-                    ]}
-                  />
-                ) : (
-                  <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description="Không có điều kiện lọc (Áp dụng cho mọi quy mô dự án)"
-                  />
-                ),
-            },
-            {
-              key: "factors",
-              label: (
-                <span className="flex items-center gap-1.5 font-medium text-xs">
-                  <Users className="size-3.5" />
-                  Hệ số phân bổ nhân sự theo tháng (
-                  {record.durationMonths || 12} tháng)
-                </span>
-              ),
-              children: (() => {
-                const dur = record.durationMonths || 12
-                const factors =
-                  record.monthlyFactors && record.monthlyFactors.length > 0
-                    ? record.monthlyFactors
-                    : Array(dur).fill(1.0)
-
-                const factorCols: ColumnsType<any> = [
-                  {
-                    title: "Thời lượng",
-                    key: "duration",
-                    fixed: "left",
-                    width: 110,
-                    render: () => (
-                      <Tag color="blue" className="font-semibold text-xs m-0">
-                        {dur} tháng
-                      </Tag>
-                    ),
-                  },
-                ]
-
-                for (let m = 1; m <= dur; m++) {
-                  const factor = factors[m - 1] ?? 1.0
-                  factorCols.push({
-                    title: `T${m}`,
-                    key: `m_${m}`,
-                    width: 65,
-                    align: "center",
-                    render: () => (
-                      <div className="flex flex-col items-center justify-center">
-                        <span className="font-mono text-xs font-semibold text-primary">
-                          {factor}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground font-mono">
-                          {Math.round(factor * 100)}%
-                        </span>
-                      </div>
-                    ),
-                  })
-                }
-
-                return (
-                  <Table
-                    size="small"
-                    bordered
-                    pagination={false}
-                    dataSource={[{ key: 1 }]}
-                    scroll={{ x: "max-content" }}
-                    columns={factorCols}
-                  />
-                )
-              })(),
-            },
-          ]}
-        />
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-4">
       {/* Search & Filter Bar */}
@@ -525,14 +360,6 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
             Đặt lại
           </Button>
         )}
-
-        <div className="ml-auto text-xs text-muted-foreground">
-          Tổng số:{" "}
-          <strong className="text-foreground">
-            {filteredStandards.length}
-          </strong>{" "}
-          khung định biên
-        </div>
       </div>
 
       {/* Table View */}
@@ -541,14 +368,6 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
         dataSource={filteredStandards}
         columns={columns}
         rowKey="id"
-        expandable={{
-          expandedRowRender,
-          rowExpandable: (record) =>
-            Boolean(
-              (record.criteria && record.criteria.length > 0) ||
-                (record.monthlyFactors && record.monthlyFactors.length > 0),
-            ),
-        }}
         pagination={{
           pageSize: 15,
           showSizeChanger: true,

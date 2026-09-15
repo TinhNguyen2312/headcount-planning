@@ -22,7 +22,6 @@ export default function Page() {
     <ProjectEditPage
       projectId={projectId}
       onBack={() => router.push("/projects")}
-      onNavigateUsers={() => router.push(`/projects/${projectId}/users`)}
     />
   )
 }
