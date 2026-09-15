@@ -14,7 +14,6 @@ import { apiError, apiSuccess, createPaginationMeta } from "@/lib/apiResponse"
 import type {
   ConditionOperator,
   HeadcountCriteriaInput,
-  HeadcountMonthlyFactorInput,
   HeadcountStandardCreatePayload,
   HeadcountStandardResponse,
 } from "@/types"
@@ -40,16 +39,27 @@ function formatStandard(standard: any): HeadcountStandardResponse {
       }
     : ({} as any)
 
-  const milestoneObj = standard.milestone
+  const fromMilestoneObj = standard.fromMilestone
     ? {
-        id: standard.milestone.id,
-        code: standard.milestone.code,
-        name: standard.milestone.name,
-        description: standard.milestone.description,
-        isActive: standard.milestone.isActive,
-        createdAt: standard.milestone.createdAt,
+        id: standard.fromMilestone.id,
+        code: standard.fromMilestone.code,
+        name: standard.fromMilestone.name,
+        description: standard.fromMilestone.description,
+        isActive: standard.fromMilestone.isActive,
+        createdAt: standard.fromMilestone.createdAt,
       }
     : ({} as any)
+
+  const toMilestoneObj = standard.toMilestone
+    ? {
+        id: standard.toMilestone.id,
+        code: standard.toMilestone.code,
+        name: standard.toMilestone.name,
+        description: standard.toMilestone.description,
+        isActive: standard.toMilestone.isActive,
+        createdAt: standard.toMilestone.createdAt,
+      }
+    : null
 
   const criteriaList = (standard.headcountCriteria || []).map((c: any) => ({
     id: c.id,
@@ -91,8 +101,10 @@ function formatStandard(standard: any): HeadcountStandardResponse {
     id: standard.id,
     roleId: standard.roleId,
     role: roleObj,
-    milestoneId: standard.milestoneId,
-    milestone: milestoneObj,
+    fromMilestoneId: standard.fromMilestoneId,
+    fromMilestone: fromMilestoneObj,
+    toMilestoneId: standard.toMilestoneId ?? null,
+    toMilestone: toMilestoneObj,
     headcount: Number(standard.headcount),
     headcountMin:
       standard.headcountMin !== null ? Number(standard.headcountMin) : null,
@@ -113,7 +125,8 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const keyword = searchParams.get("keyword")?.trim() || ""
     const roleIdParam = searchParams.get("roleId")
-    const milestoneIdParam = searchParams.get("milestoneId")
+    const fromMilestoneIdParam = searchParams.get("fromMilestoneId")
+    const toMilestoneIdParam = searchParams.get("toMilestoneId")
     const page = parseInt(searchParams.get("page") || "0", 10)
     const limit = Math.min(500, parseInt(searchParams.get("limit") || "50", 10))
     const order =
@@ -124,9 +137,17 @@ export async function GET(req: NextRequest) {
     if (roleIdParam) {
       conditions.push(eq(headcountStandards.roleId, parseInt(roleIdParam, 10)))
     }
-    if (milestoneIdParam) {
+    if (fromMilestoneIdParam) {
       conditions.push(
-        eq(headcountStandards.milestoneId, parseInt(milestoneIdParam, 10)),
+        eq(
+          headcountStandards.fromMilestoneId,
+          parseInt(fromMilestoneIdParam, 10),
+        ),
+      )
+    }
+    if (toMilestoneIdParam) {
+      conditions.push(
+        eq(headcountStandards.toMilestoneId, parseInt(toMilestoneIdParam, 10)),
       )
     }
 
@@ -146,7 +167,8 @@ export async function GET(req: NextRequest) {
             department: true,
           },
         },
-        milestone: true,
+        fromMilestone: true,
+        toMilestone: true,
         headcountCriteria: {
           with: {
             property: true,
@@ -170,8 +192,10 @@ export async function GET(req: NextRequest) {
         (item) =>
           item.role?.name?.toLowerCase().includes(lower) ||
           item.role?.code?.toLowerCase().includes(lower) ||
-          item.milestone?.name?.toLowerCase().includes(lower) ||
-          item.milestone?.code?.toLowerCase().includes(lower) ||
+          item.fromMilestone?.name?.toLowerCase().includes(lower) ||
+          item.fromMilestone?.code?.toLowerCase().includes(lower) ||
+          item.toMilestone?.name?.toLowerCase().includes(lower) ||
+          item.toMilestone?.code?.toLowerCase().includes(lower) ||
           (item.note && item.note.toLowerCase().includes(lower)),
       )
     }
@@ -206,8 +230,8 @@ export async function POST(req: NextRequest) {
     if (!body.roleId) {
       return apiError("Vui lòng chọn chức danh áp dụng định biên", 400, 400)
     }
-    if (!body.milestoneId) {
-      return apiError("Vui lòng chọn mốc kiểm soát áp dụng", 400, 400)
+    if (!body.fromMilestoneId) {
+      return apiError("Vui lòng chọn mốc kiểm soát bắt đầu", 400, 400)
     }
     if (
       body.headcount === undefined ||
@@ -227,23 +251,35 @@ export async function POST(req: NextRequest) {
       return apiError("Chức danh không tồn tại trong hệ thống", 400, 400)
     }
 
-    // Verify milestone exists
-    const [existingMilestone] = await db
+    // Verify fromMilestone exists
+    const [existingFromMilestone] = await db
       .select({ id: milestones.id })
       .from(milestones)
-      .where(eq(milestones.id, body.milestoneId))
+      .where(eq(milestones.id, body.fromMilestoneId))
       .limit(1)
-    if (!existingMilestone) {
-      return apiError("Mốc kiểm soát không tồn tại trong hệ thống", 400, 400)
+    if (!existingFromMilestone) {
+      return apiError("Mốc bắt đầu không tồn tại trong hệ thống", 400, 400)
+    }
+
+    // Verify toMilestone exists if provided
+    if (body.toMilestoneId) {
+      const [existingToMilestone] = await db
+        .select({ id: milestones.id })
+        .from(milestones)
+        .where(eq(milestones.id, body.toMilestoneId))
+        .limit(1)
+      if (!existingToMilestone) {
+        return apiError("Mốc kết thúc không tồn tại trong hệ thống", 400, 400)
+      }
     }
 
     // Validate & normalize durationMonths and monthlyFactors
     const durationMonths = body.durationMonths
       ? Number(body.durationMonths)
       : 12
-    if (durationMonths < 6 || durationMonths > 60) {
+    if (durationMonths < 1 || durationMonths > 60) {
       return apiError(
-        `Thời lượng chu kỳ phân bổ phải từ 6 đến 60 tháng (nhận ${durationMonths} tháng)`,
+        `Thời lượng chu kỳ phân bổ phải từ 1 đến 60 tháng (nhận ${durationMonths} tháng)`,
         400,
         400,
       )
@@ -289,7 +325,8 @@ export async function POST(req: NextRequest) {
         .insert(headcountStandards)
         .values({
           roleId: body.roleId,
-          milestoneId: body.milestoneId,
+          fromMilestoneId: body.fromMilestoneId,
+          toMilestoneId: body.toMilestoneId || null,
           headcount: String(body.headcount),
           headcountMin:
             body.headcountMin !== undefined && body.headcountMin !== null
@@ -341,7 +378,8 @@ export async function POST(req: NextRequest) {
             department: true,
           },
         },
-        milestone: true,
+        fromMilestone: true,
+        toMilestone: true,
         headcountCriteria: {
           with: {
             property: true,

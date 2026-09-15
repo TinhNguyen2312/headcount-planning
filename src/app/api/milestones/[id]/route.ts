@@ -169,7 +169,12 @@ export async function DELETE(
     const [standardRef] = await db
       .select({ id: headcountStandards.id })
       .from(headcountStandards)
-      .where(eq(headcountStandards.milestoneId, milestoneId))
+      .where(
+        or(
+          eq(headcountStandards.fromMilestoneId, milestoneId),
+          eq(headcountStandards.toMilestoneId, milestoneId),
+        ),
+      )
       .limit(1)
 
     if (standardRef) {

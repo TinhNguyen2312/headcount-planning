@@ -7,4 +7,3 @@ export { PhaseTableToolbar } from "./PhaseTableToolbar"
 export { PhaseTable } from "./PhaseTable"
 export { usePhaseMetrics } from "./usePhaseMetrics"
 export * from "./types"
-

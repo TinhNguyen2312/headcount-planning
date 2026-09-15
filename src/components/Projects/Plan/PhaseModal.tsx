@@ -181,4 +181,3 @@ export const PhaseModal: React.FC<PhaseModalProps> = ({
     </Modal>
   )
 }
-

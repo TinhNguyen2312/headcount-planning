@@ -4,7 +4,6 @@ import {
   db,
   headcountStandards,
   headcountCriteria,
-  headcountMonthlyFactors,
   roles,
   milestones,
 } from "@/db"
@@ -13,7 +12,6 @@ import { apiError, apiSuccess } from "@/lib/apiResponse"
 import type {
   ConditionOperator,
   HeadcountCriteriaInput,
-  HeadcountMonthlyFactorInput,
   HeadcountStandardResponse,
   HeadcountStandardUpdatePayload,
 } from "@/types"
@@ -39,16 +37,27 @@ function formatStandard(standard: any): HeadcountStandardResponse {
       }
     : ({} as any)
 
-  const milestoneObj = standard.milestone
+  const fromMilestoneObj = standard.fromMilestone
     ? {
-        id: standard.milestone.id,
-        code: standard.milestone.code,
-        name: standard.milestone.name,
-        description: standard.milestone.description,
-        isActive: standard.milestone.isActive,
-        createdAt: standard.milestone.createdAt,
+        id: standard.fromMilestone.id,
+        code: standard.fromMilestone.code,
+        name: standard.fromMilestone.name,
+        description: standard.fromMilestone.description,
+        isActive: standard.fromMilestone.isActive,
+        createdAt: standard.fromMilestone.createdAt,
       }
     : ({} as any)
+
+  const toMilestoneObj = standard.toMilestone
+    ? {
+        id: standard.toMilestone.id,
+        code: standard.toMilestone.code,
+        name: standard.toMilestone.name,
+        description: standard.toMilestone.description,
+        isActive: standard.toMilestone.isActive,
+        createdAt: standard.toMilestone.createdAt,
+      }
+    : null
 
   const criteriaList = (standard.headcountCriteria || []).map((c: any) => ({
     id: c.id,
@@ -90,8 +99,10 @@ function formatStandard(standard: any): HeadcountStandardResponse {
     id: standard.id,
     roleId: standard.roleId,
     role: roleObj,
-    milestoneId: standard.milestoneId,
-    milestone: milestoneObj,
+    fromMilestoneId: standard.fromMilestoneId,
+    fromMilestone: fromMilestoneObj,
+    toMilestoneId: standard.toMilestoneId ?? null,
+    toMilestone: toMilestoneObj,
     headcount: Number(standard.headcount),
     headcountMin:
       standard.headcountMin !== null ? Number(standard.headcountMin) : null,
@@ -126,7 +137,8 @@ export async function GET(
             department: true,
           },
         },
-        milestone: true,
+        fromMilestone: true,
+        toMilestone: true,
         headcountCriteria: {
           with: {
             property: true,
@@ -198,15 +210,27 @@ export async function PATCH(
       }
     }
 
-    // Validate milestone if updating milestoneId
-    if (body.milestoneId) {
-      const [existingMilestone] = await db
+    // Validate fromMilestone if updating fromMilestoneId
+    if (body.fromMilestoneId) {
+      const [existingFromMilestone] = await db
         .select({ id: milestones.id })
         .from(milestones)
-        .where(eq(milestones.id, body.milestoneId))
+        .where(eq(milestones.id, body.fromMilestoneId))
         .limit(1)
-      if (!existingMilestone) {
-        return apiError("Mốc kiểm soát không tồn tại trong hệ thống", 400, 400)
+      if (!existingFromMilestone) {
+        return apiError("Mốc bắt đầu không tồn tại trong hệ thống", 400, 400)
+      }
+    }
+
+    // Validate toMilestone if updating toMilestoneId
+    if (body.toMilestoneId) {
+      const [existingToMilestone] = await db
+        .select({ id: milestones.id })
+        .from(milestones)
+        .where(eq(milestones.id, body.toMilestoneId))
+        .limit(1)
+      if (!existingToMilestone) {
+        return apiError("Mốc kết thúc không tồn tại trong hệ thống", 400, 400)
       }
     }
 
@@ -218,9 +242,9 @@ export async function PATCH(
           : 12
 
     if (body.durationMonths !== undefined) {
-      if (currentDuration < 6 || currentDuration > 60) {
+      if (currentDuration < 1 || currentDuration > 60) {
         return apiError(
-          `Thời lượng chu kỳ phân bổ phải từ 6 đến 60 tháng (nhận ${currentDuration} tháng)`,
+          `Thời lượng chu kỳ phân bổ phải từ 1 đến 60 tháng (nhận ${currentDuration} tháng)`,
           400,
           400,
         )
@@ -229,30 +253,34 @@ export async function PATCH(
 
     let normalizedFactors: number[] | undefined = undefined
     if (body.monthlyFactors !== undefined) {
-      const raw = body.monthlyFactors
-      let factorsList: number[] = []
-      if (Array.isArray(raw)) {
-        if (raw.length > 0 && typeof raw[0] === "number") {
-          factorsList = raw.map(Number)
+      if (Array.isArray(body.monthlyFactors)) {
+        if (typeof body.monthlyFactors[0] === "number") {
+          normalizedFactors = body.monthlyFactors.map((f: any) => Number(f))
         } else if (
-          raw.length > 0 &&
-          typeof raw[0] === "object" &&
-          raw[0] !== null
+          typeof body.monthlyFactors[0] === "object" &&
+          body.monthlyFactors[0] !== null
         ) {
-          factorsList = raw.map((f: any) => Number(f.factor ?? 1.0))
+          normalizedFactors = body.monthlyFactors.map((f: any) =>
+            Number(f.factor ?? 1.0),
+          )
+        } else {
+          normalizedFactors = []
         }
+      } else {
+        normalizedFactors = []
       }
 
-      if (factorsList.length < currentDuration) {
-        while (factorsList.length < currentDuration) {
-          factorsList.push(1.0)
+      // Pad or trim
+      if (normalizedFactors.length < currentDuration) {
+        while (normalizedFactors.length < currentDuration) {
+          normalizedFactors.push(1.0)
         }
-      } else if (factorsList.length > currentDuration) {
-        factorsList = factorsList.slice(0, currentDuration)
+      } else if (normalizedFactors.length > currentDuration) {
+        normalizedFactors = normalizedFactors.slice(0, currentDuration)
       }
 
-      for (let i = 0; i < factorsList.length; i++) {
-        const f = factorsList[i]
+      for (let i = 0; i < normalizedFactors.length; i++) {
+        const f = normalizedFactors[i]
         if (isNaN(f) || f < 0 || f > 10) {
           return apiError(
             `Hệ số phân bổ của tháng T${i + 1} phải nằm trong khoảng từ 0.0 đến 10.0`,
@@ -261,38 +289,39 @@ export async function PATCH(
           )
         }
       }
-      normalizedFactors = factorsList
     }
 
+    // Atomic update
     await db.transaction(async (tx) => {
-      // 1. Build standard update values
-      const updateValues: Record<string, any> = {
+      const updateData: Record<string, any> = {
         updatedAt: new Date().toISOString(),
       }
 
-      if (body.roleId !== undefined) updateValues.roleId = body.roleId
-      if (body.milestoneId !== undefined)
-        updateValues.milestoneId = body.milestoneId
+      if (body.roleId !== undefined) updateData.roleId = body.roleId
+      if (body.fromMilestoneId !== undefined)
+        updateData.fromMilestoneId = body.fromMilestoneId
+      if (body.toMilestoneId !== undefined)
+        updateData.toMilestoneId = body.toMilestoneId || null
       if (body.headcount !== undefined)
-        updateValues.headcount = String(body.headcount)
+        updateData.headcount = String(body.headcount)
       if (body.headcountMin !== undefined)
-        updateValues.headcountMin =
+        updateData.headcountMin =
           body.headcountMin !== null ? String(body.headcountMin) : null
       if (body.headcountMax !== undefined)
-        updateValues.headcountMax =
+        updateData.headcountMax =
           body.headcountMax !== null ? String(body.headcountMax) : null
-      if (body.note !== undefined) updateValues.note = body.note?.trim() || null
+      if (body.note !== undefined) updateData.note = body.note?.trim() || null
       if (body.durationMonths !== undefined)
-        updateValues.durationMonths = currentDuration
+        updateData.durationMonths = currentDuration
       if (normalizedFactors !== undefined)
-        updateValues.monthlyFactors = normalizedFactors
+        updateData.monthlyFactors = normalizedFactors
 
       await tx
         .update(headcountStandards)
-        .set(updateValues)
+        .set(updateData)
         .where(eq(headcountStandards.id, id))
 
-      // 2. Sync criteria if provided
+      // Sync criteria if provided
       if (body.criteria !== undefined) {
         await tx
           .delete(headcountCriteria)
@@ -321,7 +350,7 @@ export async function PATCH(
       }
     })
 
-    // Fetch updated standard with relations
+    // Fetch updated
     const updatedRecord = await db.query.headcountStandards.findFirst({
       where: eq(headcountStandards.id, id),
       with: {
@@ -330,7 +359,8 @@ export async function PATCH(
             department: true,
           },
         },
-        milestone: true,
+        fromMilestone: true,
+        toMilestone: true,
         headcountCriteria: {
           with: {
             property: true,
@@ -355,16 +385,10 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const sessionToken = req.cookies.get(SESSION_COOKIE_NAME)?.value
-    const user = await getCurrentUserFromSession(sessionToken)
-    if (!user) {
-      return apiError("Unauthorized", 401, 401)
-    }
-
     const { id: rawId } = await params
     const id = parseInt(rawId, 10)
     if (isNaN(id)) {

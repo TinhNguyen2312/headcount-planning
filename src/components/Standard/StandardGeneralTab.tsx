@@ -32,20 +32,34 @@ export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = ({
         />
       </Form.Item>
 
-      <Form.Item
-        name="milestoneId"
-        label="Mốc / Giai đoạn kiểm soát áp dụng (Milestone)"
-        rules={[
-          { required: true, message: "Vui lòng chọn mốc kiểm soát áp dụng" },
-        ]}
-      >
-        <Select
-          placeholder="Chọn mốc kiểm soát áp dụng..."
-          options={milestoneOptions}
-          showSearch
-          optionFilterProp="label"
-        />
-      </Form.Item>
+      <div className="grid grid-cols-2 gap-4">
+        <Form.Item
+          name="fromMilestoneId"
+          label="Mốc bắt đầu (From Milestone)"
+          rules={[{ required: true, message: "Vui lòng chọn mốc bắt đầu" }]}
+        >
+          <Select
+            placeholder="Chọn mốc bắt đầu..."
+            options={milestoneOptions}
+            showSearch
+            optionFilterProp="label"
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="toMilestoneId"
+          label="Mốc kết thúc (To Milestone)"
+          tooltip="Để trống nếu áp dụng xuyên suốt đến hết vòng đời dự án"
+        >
+          <Select
+            placeholder="Chọn mốc kết thúc (hoặc để trống)..."
+            options={milestoneOptions}
+            allowClear
+            showSearch
+            optionFilterProp="label"
+          />
+        </Form.Item>
+      </div>
 
       <div className="grid grid-cols-3 gap-4">
         <Form.Item

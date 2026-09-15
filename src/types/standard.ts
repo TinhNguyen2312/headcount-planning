@@ -83,8 +83,10 @@ export interface HeadcountStandardResponse {
   id: number
   roleId: number
   role: RoleResponse
-  milestoneId: number
-  milestone: MilestoneResponse
+  fromMilestoneId: number
+  fromMilestone: MilestoneResponse
+  toMilestoneId: number | null
+  toMilestone: MilestoneResponse | null
   headcount: number
   headcountMin: number | null
   headcountMax: number | null
@@ -99,7 +101,8 @@ export interface HeadcountStandardResponse {
 
 export interface HeadcountStandardCreatePayload {
   roleId: number
-  milestoneId: number
+  fromMilestoneId: number
+  toMilestoneId?: number | null
   headcount: number
   headcountMin?: number | null
   headcountMax?: number | null
@@ -111,7 +114,8 @@ export interface HeadcountStandardCreatePayload {
 
 export interface HeadcountStandardUpdatePayload {
   roleId?: number
-  milestoneId?: number
+  fromMilestoneId?: number
+  toMilestoneId?: number | null
   headcount?: number
   headcountMin?: number | null
   headcountMax?: number | null
@@ -123,7 +127,8 @@ export interface HeadcountStandardUpdatePayload {
 
 export interface HeadcountStandardQueryParams {
   roleId?: number
-  milestoneId?: number
+  fromMilestoneId?: number
+  toMilestoneId?: number
   keyword?: string
   page?: number
   limit?: number

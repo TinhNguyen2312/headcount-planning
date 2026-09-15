@@ -200,4 +200,3 @@ export const PhaseTable: React.FC<PhaseTableProps> = ({
     </Card>
   )
 }
-

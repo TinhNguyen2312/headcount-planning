@@ -83,22 +83,30 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
   const filteredStandards = useMemo(() => {
     return standards.filter((item) => {
       if (selectedRoleId && item.roleId !== selectedRoleId) return false
-      if (
-        selectedMilestoneId &&
-        item.milestoneId !== selectedMilestoneId
-      ) {
-        return false
+      if (selectedMilestoneId) {
+        const matchFrom = item.fromMilestoneId === selectedMilestoneId
+        const matchTo = item.toMilestoneId === selectedMilestoneId
+        if (!matchFrom && !matchTo) return false
       }
       if (keyword.trim()) {
         const lower = keyword.toLowerCase()
         const matchRole =
           item.role?.name?.toLowerCase().includes(lower) ||
           item.role?.code?.toLowerCase().includes(lower)
-        const matchMilestone =
-          item.milestone?.name?.toLowerCase().includes(lower) ||
-          item.milestone?.code?.toLowerCase().includes(lower)
+        const matchFromMilestone =
+          item.fromMilestone?.name?.toLowerCase().includes(lower) ||
+          item.fromMilestone?.code?.toLowerCase().includes(lower)
+        const matchToMilestone =
+          item.toMilestone?.name?.toLowerCase().includes(lower) ||
+          item.toMilestone?.code?.toLowerCase().includes(lower)
         const matchNote = item.note?.toLowerCase().includes(lower)
-        if (!matchRole && !matchMilestone && !matchNote) return false
+        if (
+          !matchRole &&
+          !matchFromMilestone &&
+          !matchToMilestone &&
+          !matchNote
+        )
+          return false
       }
       return true
     })
@@ -125,21 +133,38 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
       ),
     },
     {
-      title: "Mốc / Giai đoạn áp dụng",
+      title: "Giai đoạn / Mốc áp dụng",
       key: "milestone",
-      width: 240,
-      render: (_, record) => (
-        <div className="flex items-center gap-2 text-xs">
-          <span className="font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
-            {record.milestone?.name || `Mốc #${record.milestoneId}`}
-          </span>
-          {record.milestone?.code && (
-            <Tag className="text-[10px] m-0 font-mono">
-              {record.milestone.code}
-            </Tag>
-          )}
-        </div>
-      ),
+      width: 270,
+      render: (_, record) => {
+        const fromLabel =
+          record.fromMilestone?.name || `Mốc #${record.fromMilestoneId}`
+        const fromCode = record.fromMilestone?.code
+        const toLabel =
+          record.toMilestone?.name ||
+          (record.toMilestoneId
+            ? `Mốc #${record.toMilestoneId}`
+            : "Toàn bộ dự án")
+        const toCode = record.toMilestone?.code
+
+        return (
+          <div className="flex items-center gap-1.5 text-xs flex-wrap">
+            <span className="font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+              {fromLabel}
+            </span>
+            {fromCode && (
+              <Tag className="text-[10px] m-0 font-mono">{fromCode}</Tag>
+            )}
+            <ArrowRight className="size-3 text-muted-foreground shrink-0" />
+            <span className="font-medium text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/30 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800">
+              {toLabel}
+            </span>
+            {toCode && (
+              <Tag className="text-[10px] m-0 font-mono">{toCode}</Tag>
+            )}
+          </div>
+        )
+      },
     },
     {
       title: "Định biên chuẩn",

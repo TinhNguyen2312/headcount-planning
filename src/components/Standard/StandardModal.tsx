@@ -81,7 +81,8 @@ export const StandardModal: React.FC<StandardModalProps> = ({
 
         form.setFieldsValue({
           roleId: standard.roleId,
-          milestoneId: standard.milestoneId,
+          fromMilestoneId: standard.fromMilestoneId,
+          toMilestoneId: standard.toMilestoneId ?? undefined,
           headcount: standard.headcount,
           headcountMin: standard.headcountMin,
           headcountMax: standard.headcountMax,
@@ -126,7 +127,8 @@ export const StandardModal: React.FC<StandardModalProps> = ({
 
       const payload: HeadcountStandardCreatePayload = {
         roleId: values.roleId,
-        milestoneId: values.milestoneId,
+        fromMilestoneId: values.fromMilestoneId,
+        toMilestoneId: values.toMilestoneId || null,
         headcount: Number(values.headcount),
         headcountMin:
           values.headcountMin !== undefined && values.headcountMin !== null

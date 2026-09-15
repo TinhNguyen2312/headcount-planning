@@ -61,4 +61,3 @@ export const PhaseTableToolbar: React.FC<PhaseTableToolbarProps> = ({
     </div>
   )
 }
-

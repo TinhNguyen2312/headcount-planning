@@ -124,10 +124,7 @@ export const PlanVersionHeader: React.FC<PlanVersionHeaderProps> = ({
 
           {!viewOnly && (
             <>
-              <Button
-                icon={<Copy className="size-4" />}
-                onClick={onClonePlan}
-              >
+              <Button icon={<Copy className="size-4" />} onClick={onClonePlan}>
                 Nhân bản
               </Button>
 

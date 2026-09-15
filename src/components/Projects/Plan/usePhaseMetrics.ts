@@ -55,4 +55,3 @@ export function usePhaseMetrics(workingPhases: PhaseResponse[]) {
     phasesWithMetrics,
   }
 }
-
