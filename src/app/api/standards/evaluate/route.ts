@@ -1,6 +1,13 @@
 import { NextRequest } from "next/server"
 import { eq, inArray } from "drizzle-orm"
-import { db, headcountStandards, propertyValues, properties, roles } from "@/db"
+import {
+  db,
+  headcountStandards,
+  propertyValues,
+  properties,
+  roles,
+  projects,
+} from "@/db"
 import { apiError, apiSuccess } from "@/lib/apiResponse"
 import type {
   CriteriaMatchEvaluation,
@@ -8,6 +15,22 @@ import type {
   HeadcountStandardResponse,
   StandardMatchResult,
 } from "@/types"
+
+function isStandardApplicable(
+  standardProjectType: string | null | undefined,
+  projectTypes: string[],
+): boolean {
+  if (!standardProjectType || standardProjectType === "ALL") return true
+  if (standardProjectType === "LOW_RISE")
+    return projectTypes.includes("LOW_RISE")
+  if (standardProjectType === "HIGH_RISE")
+    return projectTypes.includes("HIGH_RISE")
+  if (standardProjectType === "MIXED")
+    return (
+      projectTypes.includes("LOW_RISE") && projectTypes.includes("HIGH_RISE")
+    )
+  return false
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,6 +40,21 @@ export async function POST(req: NextRequest) {
     if (!projectId) {
       return apiError("Vui lòng cung cấp projectId", 400, 400)
     }
+
+    // 0. Fetch project info (especially projectTypes)
+    const [project] = await db
+      .select({ id: projects.id, projectTypes: projects.projectTypes })
+      .from(projects)
+      .where(eq(projects.id, projectId))
+      .limit(1)
+
+    if (!project) {
+      return apiError("Dự án không tồn tại trong hệ thống", 404, 404)
+    }
+
+    const projectTypes: string[] = Array.isArray(project.projectTypes)
+      ? project.projectTypes
+      : ["HIGH_RISE"]
 
     // 1. Fetch project property values
     const pValues = await db
@@ -127,6 +165,11 @@ export async function POST(req: NextRequest) {
       let isMatch = false
 
       for (const std of standards) {
+        // Filter out standards not applicable to the project's development types
+        if (!isStandardApplicable(std.projectType, projectTypes)) {
+          continue
+        }
+
         const criteriaList = std.headcountCriteria || []
         const currentEvaluations: CriteriaMatchEvaluation[] = []
         let allCriteriaSatisfied = true
@@ -278,6 +321,7 @@ export async function POST(req: NextRequest) {
               : Array(
                   std.durationMonths ? Number(std.durationMonths) : 12,
                 ).fill(1.0),
+            projectType: (std.projectType || "ALL") as any,
             createdAt: std.createdAt,
             updatedAt: std.updatedAt,
           }

@@ -16,7 +16,11 @@ import React, { useMemo, useState } from "react"
 import { milestoneQueries } from "@/hooks/server/milestones"
 import { roleQueries } from "@/hooks/server/roles"
 import { standardQueries } from "@/hooks/server/standards"
-import type { HeadcountStandardResponse } from "@/types"
+import {
+  type HeadcountStandardResponse,
+  STANDARD_PROJECT_TYPE_OPTIONS,
+  type StandardProjectType,
+} from "@/types"
 import { formatCriteriaDisplay } from "./criteriaRules"
 
 interface StandardTableViewProps {
@@ -31,6 +35,9 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
   )
   const [selectedMilestoneId, setSelectedMilestoneId] = useState<
     number | undefined
+  >(undefined)
+  const [selectedProjectType, setSelectedProjectType] = useState<
+    StandardProjectType | undefined
   >(undefined)
 
   const { data: standards = [], isLoading } = standardQueries.useList()
@@ -59,6 +66,11 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
   const filteredStandards = useMemo(() => {
     return standards.filter((item) => {
       if (selectedRoleId && item.roleId !== selectedRoleId) return false
+      if (
+        selectedProjectType &&
+        (item.projectType || "ALL") !== selectedProjectType
+      )
+        return false
       if (selectedMilestoneId) {
         const matchFrom = item.fromMilestoneId === selectedMilestoneId
         const matchTo = item.toMilestoneId === selectedMilestoneId
@@ -86,13 +98,19 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
       }
       return true
     })
-  }, [standards, selectedRoleId, selectedMilestoneId, keyword])
+  }, [
+    standards,
+    selectedRoleId,
+    selectedProjectType,
+    selectedMilestoneId,
+    keyword,
+  ])
 
   const columns: ColumnsType<HeadcountStandardResponse> = [
     {
       title: "Chức danh định biên",
       key: "role",
-      width: 240,
+      width: 220,
       render: (_, record) => (
         <div>
           <div className="font-semibold text-sm text-foreground flex items-center gap-1.5">
@@ -100,6 +118,41 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
           </div>
         </div>
       ),
+    },
+    {
+      title: "Loại dự án",
+      key: "projectType",
+      width: 130,
+      render: (_, record) => {
+        const type = record.projectType || "ALL"
+        switch (type) {
+          case "LOW_RISE":
+            return (
+              <Tag color="green" className="font-medium text-xs">
+                Thấp tầng
+              </Tag>
+            )
+          case "HIGH_RISE":
+            return (
+              <Tag color="purple" className="font-medium text-xs">
+                Cao tầng
+              </Tag>
+            )
+          case "MIXED":
+            return (
+              <Tag color="orange" className="font-medium text-xs">
+                Hỗn hợp
+              </Tag>
+            )
+          case "ALL":
+          default:
+            return (
+              <Tag color="blue" className="font-medium text-xs">
+                Tất cả
+              </Tag>
+            )
+        }
+      },
     },
     {
       title: "Giai đoạn",
@@ -335,7 +388,19 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
           optionFilterProp="label"
         />
 
-        {(keyword || selectedRoleId || selectedMilestoneId) && (
+        <Select
+          placeholder="Lọc loại dự án"
+          value={selectedProjectType}
+          onChange={setSelectedProjectType}
+          options={STANDARD_PROJECT_TYPE_OPTIONS}
+          className="w-52"
+          allowClear
+        />
+
+        {(keyword ||
+          selectedRoleId ||
+          selectedMilestoneId ||
+          selectedProjectType) && (
           <Button
             type="dashed"
             icon={<RotateCcw className="size-3.5" />}
@@ -343,6 +408,7 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
               setKeyword("")
               setSelectedRoleId(undefined)
               setSelectedMilestoneId(undefined)
+              setSelectedProjectType(undefined)
             }}
           >
             Đặt lại

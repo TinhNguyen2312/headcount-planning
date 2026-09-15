@@ -114,6 +114,7 @@ function formatStandard(standard: any): HeadcountStandardResponse {
     toLeadTimeMonths: standard.toLeadTimeMonths ?? 0,
     durationMonths,
     monthlyFactors: monthlyFactorsList,
+    projectType: (standard.projectType || "ALL") as any,
     criteriaCount: criteriaList.length,
     criteria: criteriaList,
     createdAt: standard.createdAt,
@@ -128,6 +129,7 @@ export async function GET(req: NextRequest) {
     const roleIdParam = searchParams.get("roleId")
     const fromMilestoneIdParam = searchParams.get("fromMilestoneId")
     const toMilestoneIdParam = searchParams.get("toMilestoneId")
+    const projectTypeParam = searchParams.get("projectType")
     const page = parseInt(searchParams.get("page") || "0", 10)
     const limit = Math.min(500, parseInt(searchParams.get("limit") || "50", 10))
     const order =
@@ -150,6 +152,12 @@ export async function GET(req: NextRequest) {
       conditions.push(
         eq(headcountStandards.toMilestoneId, parseInt(toMilestoneIdParam, 10)),
       )
+    }
+    if (
+      projectTypeParam &&
+      ["ALL", "LOW_RISE", "HIGH_RISE", "MIXED"].includes(projectTypeParam)
+    ) {
+      conditions.push(eq(headcountStandards.projectType, projectTypeParam))
     }
 
     const whereCondition =
@@ -322,6 +330,12 @@ export async function POST(req: NextRequest) {
 
     // Execute atomic composite insert
     const createdStandardId = await db.transaction(async (tx) => {
+      const projectType =
+        body.projectType &&
+        ["ALL", "LOW_RISE", "HIGH_RISE", "MIXED"].includes(body.projectType)
+          ? body.projectType
+          : "ALL"
+
       const [insertedStandard] = await tx
         .insert(headcountStandards)
         .values({
@@ -342,6 +356,7 @@ export async function POST(req: NextRequest) {
           toLeadTimeMonths: Math.max(0, Number(body.toLeadTimeMonths ?? 0)),
           durationMonths,
           monthlyFactors: normalizedFactors,
+          projectType,
         })
         .returning({ id: headcountStandards.id })
 

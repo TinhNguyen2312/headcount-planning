@@ -79,6 +79,43 @@ export interface MonthlyFactorCurve {
   }>
 }
 
+export type StandardProjectType = "ALL" | "LOW_RISE" | "HIGH_RISE" | "MIXED"
+
+export const STANDARD_PROJECT_TYPE_OPTIONS: {
+  value: StandardProjectType
+  label: string
+  description: string
+}[] = [
+  {
+    value: "ALL",
+    label: "Tất cả loại hình",
+    description: "Áp dụng cho mọi dự án không phân biệt loại hình",
+  },
+  {
+    value: "LOW_RISE",
+    label: "Chỉ Thấp tầng",
+    description: "Chỉ áp dụng khi dự án có hạng mục Thấp tầng",
+  },
+  {
+    value: "HIGH_RISE",
+    label: "Chỉ Cao tầng",
+    description: "Chỉ áp dụng khi dự án có hạng mục Cao tầng",
+  },
+  {
+    value: "MIXED",
+    label: "Dự án thấp tầng và cao tầng",
+    description: "Chỉ áp dụng khi dự án có đồng thời cả Thấp tầng và Cao tầng",
+  },
+]
+
+export const STANDARD_PROJECT_TYPE_LABELS: Record<StandardProjectType, string> =
+  {
+    ALL: "Tất cả",
+    LOW_RISE: "Thấp tầng",
+    HIGH_RISE: "Cao tầng",
+    MIXED: "Hỗn hợp",
+  }
+
 export interface HeadcountStandardResponse {
   id: number
   roleId: number
@@ -95,6 +132,7 @@ export interface HeadcountStandardResponse {
   toLeadTimeMonths: number
   durationMonths: number
   monthlyFactors: number[]
+  projectType: StandardProjectType
   criteriaCount?: number
   criteria?: HeadcountCriteriaResponse[]
   createdAt: string
@@ -113,6 +151,7 @@ export interface HeadcountStandardCreatePayload {
   toLeadTimeMonths?: number
   durationMonths?: number
   monthlyFactors?: number[]
+  projectType?: StandardProjectType
   criteria?: HeadcountCriteriaInput[]
 }
 
@@ -128,6 +167,7 @@ export interface HeadcountStandardUpdatePayload {
   toLeadTimeMonths?: number
   durationMonths?: number
   monthlyFactors?: number[]
+  projectType?: StandardProjectType
   criteria?: HeadcountCriteriaInput[]
 }
 
@@ -135,6 +175,7 @@ export interface HeadcountStandardQueryParams {
   roleId?: number
   fromMilestoneId?: number
   toMilestoneId?: number
+  projectType?: StandardProjectType
   keyword?: string
   page?: number
   limit?: number

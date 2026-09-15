@@ -4,6 +4,7 @@ import { Form, Input, InputNumber, Select } from "antd"
 import React, { useMemo } from "react"
 import { milestoneQueries } from "@/hooks/server/milestones"
 import { roleQueries } from "@/hooks/server/roles"
+import { STANDARD_PROJECT_TYPE_OPTIONS } from "@/types"
 
 interface StandardGeneralTabProps {}
 
@@ -30,18 +31,38 @@ export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = () => {
 
   return (
     <div className="space-y-3 pt-2">
-      <Form.Item
-        name="roleId"
-        label="Chức danh chạy định biên"
-        rules={[{ required: true, message: "Vui lòng chọn chức danh" }]}
-      >
-        <Select
-          placeholder="Chọn chức danh..."
-          options={roleOptions}
-          showSearch
-          optionFilterProp="label"
-        />
-      </Form.Item>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="md:col-span-2">
+          <Form.Item
+            name="roleId"
+            label="Chức danh chạy định biên"
+            rules={[{ required: true, message: "Vui lòng chọn chức danh" }]}
+            className="mb-0"
+          >
+            <Select
+              placeholder="Chọn chức danh..."
+              options={roleOptions}
+              showSearch
+              optionFilterProp="label"
+            />
+          </Form.Item>
+        </div>
+
+        <div className="md:col-span-1">
+          <Form.Item
+            name="projectType"
+            label="Loại dự án áp dụng"
+            rules={[{ required: true, message: "Chọn loại dự án áp dụng" }]}
+            tooltip="Phạm vi công trình mà chức danh này được kích hoạt đánh giá định biên"
+            className="mb-0"
+          >
+            <Select
+              placeholder="Chọn loại dự án..."
+              options={STANDARD_PROJECT_TYPE_OPTIONS}
+            />
+          </Form.Item>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Cụm Mốc bắt đầu */}

@@ -175,6 +175,7 @@ export const headcountStandards = pgTable("headcount_standards", {
 	toLeadTimeMonths: integer("to_lead_time_months").default(0).notNull(),
 	durationMonths: integer("duration_months").default(12).notNull(),
 	monthlyFactors: jsonb("monthly_factors").$type<number[]>().default([]).notNull(),
+	projectType: varchar("project_type", { length: 30 }).default('ALL').notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
@@ -193,6 +194,7 @@ export const headcountStandards = pgTable("headcount_standards", {
 			foreignColumns: [roles.id],
 			name: "headcount_standards_role_id_fkey"
 		}).onDelete("cascade"),
+	check("headcount_standards_project_type_check", sql`(project_type)::text = ANY ((ARRAY['ALL'::character varying, 'LOW_RISE'::character varying, 'HIGH_RISE'::character varying, 'MIXED'::character varying])::text[])`),
 ]);
 
 export const phases = pgTable("phases", {

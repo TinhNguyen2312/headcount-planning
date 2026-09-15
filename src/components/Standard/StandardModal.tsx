@@ -57,6 +57,7 @@ export const StandardModal: React.FC<StandardModalProps> = ({
           note: standard.note ?? "",
           durationMonths: dur,
           monthlyFactors: factors,
+          projectType: standard.projectType || "ALL",
           criteria: (standard.criteria || []).map((c) => ({
             propertyId: c.propertyId,
             conditionOperator: c.conditionOperator,
@@ -74,6 +75,7 @@ export const StandardModal: React.FC<StandardModalProps> = ({
           toLeadTimeMonths: 0,
           durationMonths: 12,
           monthlyFactors: Array(12).fill(1.0),
+          projectType: "ALL",
           criteria: [],
         })
       }
@@ -113,6 +115,7 @@ export const StandardModal: React.FC<StandardModalProps> = ({
         toLeadTimeMonths: Number(values.toLeadTimeMonths ?? 0),
         durationMonths: dur,
         monthlyFactors: factors,
+        projectType: values.projectType || "ALL",
         criteria: (values.criteria || [])
           .filter((c: HeadcountCriteriaInput) => c && c.propertyId)
           .map((c: HeadcountCriteriaInput) => ({

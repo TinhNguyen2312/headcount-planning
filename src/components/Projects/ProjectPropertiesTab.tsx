@@ -316,13 +316,10 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
           <Card
             size="small"
             title={
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 dark:text-slate-200">
-                  <Building2 className="size-3.5 text-blue-600" />
-                  <span>Thông số chung toàn dự án</span>
-                </div>
-                <Tag color="blue" className="m-0 text-[11px]">
-                  Chung
+              <div className="flex items-center gap-2 justify-start">
+                <Building2 className="size-3.5 text-blue-600" />
+                <Tag color="blue" className="m-0 text-base">
+                  Thông số chung toàn dự án
                 </Tag>
               </div>
             }
@@ -351,17 +348,13 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
           <Card
             size="small"
             title={
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
-                  <Home className="size-3.5 text-emerald-600" />
-                  <span>Hạng mục Thấp tầng</span>
-                </div>
-                <Tag color="green" className="m-0 text-[11px]">
-                  Thấp tầng
+              <div className="flex items-center gap-2 justify-start">
+                <Home className="size-3.5 text-emerald-600" />
+                <Tag color="green" className="m-0 text-base">
+                  Hạng mục Thấp tầng
                 </Tag>
               </div>
             }
-            className="border-emerald-200/80 dark:border-emerald-900/40 bg-emerald-50/20 dark:bg-emerald-950/10 shadow-xs"
           >
             {lowRiseProperties.length === 0 ? (
               <Empty
@@ -393,13 +386,10 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
           <Card
             size="small"
             title={
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-semibold text-indigo-800 dark:text-indigo-300">
-                  <Building2 className="size-3.5 text-indigo-600" />
-                  <span>Hạng mục Cao tầng</span>
-                </div>
-                <Tag color="purple" className="m-0 text-[11px]">
-                  Cao tầng
+              <div className="flex items-center  gap-2 justify-start">
+                <Building2 className="size-3.5 text-indigo-600" />
+                <Tag color="purple" className="m-0 text-base">
+                  Hạng mục Cao tầng
                 </Tag>
               </div>
             }

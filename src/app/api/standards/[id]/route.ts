@@ -112,6 +112,7 @@ function formatStandard(standard: any): HeadcountStandardResponse {
     toLeadTimeMonths: standard.toLeadTimeMonths ?? 0,
     durationMonths,
     monthlyFactors: monthlyFactorsList,
+    projectType: (standard.projectType || "ALL") as any,
     criteriaCount: criteriaList.length,
     criteria: criteriaList,
     createdAt: standard.createdAt,
@@ -323,6 +324,12 @@ export async function PATCH(
         updateData.durationMonths = currentDuration
       if (normalizedFactors !== undefined)
         updateData.monthlyFactors = normalizedFactors
+      if (
+        body.projectType !== undefined &&
+        ["ALL", "LOW_RISE", "HIGH_RISE", "MIXED"].includes(body.projectType)
+      ) {
+        updateData.projectType = body.projectType
+      }
 
       await tx
         .update(headcountStandards)
