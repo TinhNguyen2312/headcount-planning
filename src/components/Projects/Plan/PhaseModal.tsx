@@ -6,7 +6,6 @@ import {
   InputNumber,
   Modal,
   Select,
-  Space,
   Switch,
   Typography,
 } from "antd"
@@ -48,14 +47,20 @@ export const PhaseModal: React.FC<PhaseModalProps> = ({
     return Number(watchedStartMonth) + Number(watchedDuration) - 1
   }, [watchedStartMonth, watchedDuration])
 
-  const expectedEndDateStr = useMemo(() => {
+  const calendarMonthsInfo = useMemo(() => {
     if (!projectStartDate) return null
     const baseDate = dayjs(projectStartDate)
     if (!baseDate.isValid()) return null
-    // endMonth is 1-indexed relative to start_date month
-    const targetDate = baseDate.add(endMonth - 1, "month").endOf("month")
-    return targetDate.format("DD/MM/YYYY")
-  }, [projectStartDate, endMonth])
+    const startCal = baseDate
+      .add(Number(watchedStartMonth) - 1, "month")
+      .format("MM/YYYY")
+    const endCal = baseDate.add(endMonth - 1, "month").format("MM/YYYY")
+    const expectedEndDate = baseDate
+      .add(endMonth - 1, "month")
+      .endOf("month")
+      .format("DD/MM/YYYY")
+    return { startCal, endCal, expectedEndDate }
+  }, [projectStartDate, watchedStartMonth, endMonth])
 
   useEffect(() => {
     if (open) {
@@ -136,9 +141,9 @@ export const PhaseModal: React.FC<PhaseModalProps> = ({
 
         <div className="grid grid-cols-2 gap-4">
           <Form.Item
-            label="Tháng bắt đầu (Tháng thứ)"
+            label="Tháng bắt đầu (Tháng thứ mấy của dự án)"
             name="startMonth"
-            tooltip="Tháng thứ mấy của dự án giai đoạn này bắt đầu (>= 1)"
+            tooltip="Thứ tự tháng thi công kể từ mốc bắt đầu dự án (Ví dụ: Tháng thứ 1 là tháng khởi công, Tháng thứ 5 là sau 4 tháng thi công)"
             rules={[{ required: true, message: "Vui lòng nhập tháng bắt đầu" }]}
           >
             <InputNumber min={1} max={120} className="w-full" />
@@ -155,23 +160,39 @@ export const PhaseModal: React.FC<PhaseModalProps> = ({
         </div>
 
         {/* Dynamic Calculation Info */}
-        <div className="bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3 mb-4 text-sm flex flex-col gap-1">
+        <div className="bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3 mb-4 text-sm flex flex-col gap-1.5">
           <div className="flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300 font-medium">
             <Info className="size-4" />
-            <span>Tính toán tự động theo thời lượng:</span>
+            <span>Thời gian giai đoạn (Tính theo mốc bắt đầu dự án):</span>
           </div>
-          <div className="text-muted-foreground ml-5">
-            Tháng kết thúc:{" "}
-            <strong className="text-foreground">Tháng {endMonth}</strong>
-            {expectedEndDateStr && (
-              <>
-                {" "}
-                (Dự kiến:{" "}
+          <div className="text-foreground ml-5 flex flex-col gap-1 text-xs sm:text-sm">
+            <div>
+              • Phạm vi: <strong>Tháng thứ {watchedStartMonth}</strong>
+              {calendarMonthsInfo && (
+                <span className="text-emerald-700 dark:text-emerald-400 font-medium">
+                  {" "}
+                  ({calendarMonthsInfo.startCal})
+                </span>
+              )}{" "}
+              → <strong>Tháng thứ {endMonth}</strong>
+              {calendarMonthsInfo && (
+                <span className="text-emerald-700 dark:text-emerald-400 font-medium">
+                  {" "}
+                  ({calendarMonthsInfo.endCal})
+                </span>
+              )}
+            </div>
+            {calendarMonthsInfo ? (
+              <div className="text-muted-foreground">
+                • Dự kiến hoàn thành mốc:{" "}
                 <strong className="text-emerald-700 dark:text-emerald-400">
-                  {expectedEndDateStr}
+                  {calendarMonthsInfo.expectedEndDate}
                 </strong>
-                )
-              </>
+              </div>
+            ) : (
+              <div className="text-amber-600 dark:text-amber-400 text-xs italic">
+                * Chưa có ngày bắt đầu dự án trong Thông tin chung để quy đổi sang lịch thực tế.
+              </div>
             )}
           </div>
         </div>

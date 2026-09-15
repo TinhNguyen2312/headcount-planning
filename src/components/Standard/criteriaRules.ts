@@ -27,36 +27,36 @@ export interface DataTypeConfig {
 export const DATA_TYPE_RULES: Record<PropertyDataType, DataTypeConfig> = {
   NUMBER: {
     operators: [
-      { value: "BETWEEN", label: "Trong khoảng (BETWEEN)", mode: "RANGE" },
-      { value: ">=", label: "Lớn hơn hoặc bằng (>=)", mode: "SINGLE_NUMBER" },
-      { value: "<=", label: "Nhỏ hơn hoặc bằng (<=)", mode: "SINGLE_NUMBER" },
-      { value: ">", label: "Lớn hơn (>)", mode: "SINGLE_NUMBER" },
-      { value: "<", label: "Nhỏ hơn (<)", mode: "SINGLE_NUMBER" },
-      { value: "=", label: "Bằng (=)", mode: "SINGLE_NUMBER" },
+      { value: "BETWEEN", label: "BETWEEN", mode: "RANGE" },
+      { value: ">=", label: ">=", mode: "SINGLE_NUMBER" },
+      { value: "<=", label: "<=", mode: "SINGLE_NUMBER" },
+      { value: ">", label: ">", mode: "SINGLE_NUMBER" },
+      { value: "<", label: "<", mode: "SINGLE_NUMBER" },
+      { value: "=", label: "=", mode: "SINGLE_NUMBER" },
     ],
     defaultOperator: "BETWEEN",
     valueType: "number",
   },
   SELECT: {
-    operators: [{ value: "=", label: "Bằng (=)", mode: "SELECT" }],
+    operators: [{ value: "=", label: "=", mode: "SELECT" }],
     defaultOperator: "=",
     valueType: "text",
   },
   BOOLEAN: {
-    operators: [{ value: "=", label: "Là (=)", mode: "BOOLEAN" }],
+    operators: [{ value: "=", label: "=", mode: "BOOLEAN" }],
     defaultOperator: "=",
     valueType: "text",
   },
   STRING: {
-    operators: [{ value: "=", label: "Bằng (=)", mode: "TEXT" }],
+    operators: [{ value: "=", label: "=", mode: "TEXT" }],
     defaultOperator: "=",
     valueType: "text",
   },
 }
 
 export const BOOLEAN_OPTIONS = [
-  { value: "true", label: "Có / Đúng (True)" },
-  { value: "false", label: "Không / Sai (False)" },
+  { value: "true", label: "Có / Đúng" },
+  { value: "false", label: "Không / Sai" },
 ]
 
 export function getOperatorsForDataType(

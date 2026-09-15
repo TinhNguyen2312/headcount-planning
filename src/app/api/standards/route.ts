@@ -40,38 +40,16 @@ function formatStandard(standard: any): HeadcountStandardResponse {
       }
     : ({} as any)
 
-  const fromMilestoneObj =
-    standard.milestone_fromMilestoneId || standard.fromMilestone
-      ? {
-          id: (standard.milestone_fromMilestoneId || standard.fromMilestone).id,
-          code: (standard.milestone_fromMilestoneId || standard.fromMilestone)
-            .code,
-          name: (standard.milestone_fromMilestoneId || standard.fromMilestone)
-            .name,
-          description: (
-            standard.milestone_fromMilestoneId || standard.fromMilestone
-          ).description,
-          isActive: (
-            standard.milestone_fromMilestoneId || standard.fromMilestone
-          ).isActive,
-          createdAt: (
-            standard.milestone_fromMilestoneId || standard.fromMilestone
-          ).createdAt,
-        }
-      : ({} as any)
-
-  const rawToMilestone =
-    standard.milestone_toMilestoneId || standard.toMilestone
-  const toMilestoneObj = rawToMilestone
+  const milestoneObj = standard.milestone
     ? {
-        id: rawToMilestone.id,
-        code: rawToMilestone.code,
-        name: rawToMilestone.name,
-        description: rawToMilestone.description,
-        isActive: rawToMilestone.isActive,
-        createdAt: rawToMilestone.createdAt,
+        id: standard.milestone.id,
+        code: standard.milestone.code,
+        name: standard.milestone.name,
+        description: standard.milestone.description,
+        isActive: standard.milestone.isActive,
+        createdAt: standard.milestone.createdAt,
       }
-    : null
+    : ({} as any)
 
   const criteriaList = (standard.headcountCriteria || []).map((c: any) => ({
     id: c.id,
@@ -113,10 +91,8 @@ function formatStandard(standard: any): HeadcountStandardResponse {
     id: standard.id,
     roleId: standard.roleId,
     role: roleObj,
-    fromMilestoneId: standard.fromMilestoneId,
-    fromMilestone: fromMilestoneObj,
-    toMilestoneId: standard.toMilestoneId ?? null,
-    toMilestone: toMilestoneObj,
+    milestoneId: standard.milestoneId,
+    milestone: milestoneObj,
     headcount: Number(standard.headcount),
     headcountMin:
       standard.headcountMin !== null ? Number(standard.headcountMin) : null,
@@ -137,8 +113,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const keyword = searchParams.get("keyword")?.trim() || ""
     const roleIdParam = searchParams.get("roleId")
-    const fromMilestoneIdParam = searchParams.get("fromMilestoneId")
-    const toMilestoneIdParam = searchParams.get("toMilestoneId")
+    const milestoneIdParam = searchParams.get("milestoneId")
     const page = parseInt(searchParams.get("page") || "0", 10)
     const limit = Math.min(500, parseInt(searchParams.get("limit") || "50", 10))
     const order =
@@ -149,17 +124,9 @@ export async function GET(req: NextRequest) {
     if (roleIdParam) {
       conditions.push(eq(headcountStandards.roleId, parseInt(roleIdParam, 10)))
     }
-    if (fromMilestoneIdParam) {
+    if (milestoneIdParam) {
       conditions.push(
-        eq(
-          headcountStandards.fromMilestoneId,
-          parseInt(fromMilestoneIdParam, 10),
-        ),
-      )
-    }
-    if (toMilestoneIdParam) {
-      conditions.push(
-        eq(headcountStandards.toMilestoneId, parseInt(toMilestoneIdParam, 10)),
+        eq(headcountStandards.milestoneId, parseInt(milestoneIdParam, 10)),
       )
     }
 
@@ -179,8 +146,7 @@ export async function GET(req: NextRequest) {
             department: true,
           },
         },
-        milestone_fromMilestoneId: true,
-        milestone_toMilestoneId: true,
+        milestone: true,
         headcountCriteria: {
           with: {
             property: true,
@@ -204,11 +170,8 @@ export async function GET(req: NextRequest) {
         (item) =>
           item.role?.name?.toLowerCase().includes(lower) ||
           item.role?.code?.toLowerCase().includes(lower) ||
-          item.fromMilestone?.name?.toLowerCase().includes(lower) ||
-          item.fromMilestone?.code?.toLowerCase().includes(lower) ||
-          (item.toMilestone &&
-            (item.toMilestone.name.toLowerCase().includes(lower) ||
-              item.toMilestone.code.toLowerCase().includes(lower))) ||
+          item.milestone?.name?.toLowerCase().includes(lower) ||
+          item.milestone?.code?.toLowerCase().includes(lower) ||
           (item.note && item.note.toLowerCase().includes(lower)),
       )
     }
@@ -243,8 +206,8 @@ export async function POST(req: NextRequest) {
     if (!body.roleId) {
       return apiError("Vui lòng chọn chức danh áp dụng định biên", 400, 400)
     }
-    if (!body.fromMilestoneId) {
-      return apiError("Vui lòng chọn mốc bắt đầu", 400, 400)
+    if (!body.milestoneId) {
+      return apiError("Vui lòng chọn mốc kiểm soát áp dụng", 400, 400)
     }
     if (
       body.headcount === undefined ||
@@ -264,25 +227,14 @@ export async function POST(req: NextRequest) {
       return apiError("Chức danh không tồn tại trong hệ thống", 400, 400)
     }
 
-    // Verify fromMilestone exists
+    // Verify milestone exists
     const [existingMilestone] = await db
       .select({ id: milestones.id })
       .from(milestones)
-      .where(eq(milestones.id, body.fromMilestoneId))
+      .where(eq(milestones.id, body.milestoneId))
       .limit(1)
     if (!existingMilestone) {
-      return apiError("Mốc bắt đầu không tồn tại trong hệ thống", 400, 400)
-    }
-
-    if (body.toMilestoneId) {
-      const [existingToMilestone] = await db
-        .select({ id: milestones.id })
-        .from(milestones)
-        .where(eq(milestones.id, body.toMilestoneId))
-        .limit(1)
-      if (!existingToMilestone) {
-        return apiError("Mốc kết thúc không tồn tại trong hệ thống", 400, 400)
-      }
+      return apiError("Mốc kiểm soát không tồn tại trong hệ thống", 400, 400)
     }
 
     // Validate & normalize durationMonths and monthlyFactors
@@ -337,8 +289,7 @@ export async function POST(req: NextRequest) {
         .insert(headcountStandards)
         .values({
           roleId: body.roleId,
-          fromMilestoneId: body.fromMilestoneId,
-          toMilestoneId: body.toMilestoneId || null,
+          milestoneId: body.milestoneId,
           headcount: String(body.headcount),
           headcountMin:
             body.headcountMin !== undefined && body.headcountMin !== null
@@ -390,8 +341,7 @@ export async function POST(req: NextRequest) {
             department: true,
           },
         },
-        milestone_fromMilestoneId: true,
-        milestone_toMilestoneId: true,
+        milestone: true,
         headcountCriteria: {
           with: {
             property: true,

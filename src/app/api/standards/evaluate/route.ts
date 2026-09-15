@@ -74,8 +74,7 @@ export async function POST(req: NextRequest) {
             department: true,
           },
         },
-        milestone_fromMilestoneId: true,
-        milestone_toMilestoneId: true,
+        milestone: true,
         headcountCriteria: {
           with: {
             property: true,
@@ -204,26 +203,15 @@ export async function POST(req: NextRequest) {
               description: std.role.description,
               createdAt: std.role.createdAt,
             },
-            fromMilestoneId: std.fromMilestoneId,
-            fromMilestone: {
-              id: std.milestone_fromMilestoneId.id,
-              code: std.milestone_fromMilestoneId.code,
-              name: std.milestone_fromMilestoneId.name,
-              description: std.milestone_fromMilestoneId.description,
-              isActive: std.milestone_fromMilestoneId.isActive,
-              createdAt: std.milestone_fromMilestoneId.createdAt,
+            milestoneId: std.milestoneId,
+            milestone: {
+              id: std.milestone.id,
+              code: std.milestone.code,
+              name: std.milestone.name,
+              description: std.milestone.description,
+              isActive: std.milestone.isActive,
+              createdAt: std.milestone.createdAt,
             },
-            toMilestoneId: std.toMilestoneId,
-            toMilestone: std.milestone_toMilestoneId
-              ? {
-                  id: std.milestone_toMilestoneId.id,
-                  code: std.milestone_toMilestoneId.code,
-                  name: std.milestone_toMilestoneId.name,
-                  description: std.milestone_toMilestoneId.description,
-                  isActive: std.milestone_toMilestoneId.isActive,
-                  createdAt: std.milestone_toMilestoneId.createdAt,
-                }
-              : null,
             headcount: Number(std.headcount),
             headcountMin:
               std.headcountMin !== null ? Number(std.headcountMin) : null,

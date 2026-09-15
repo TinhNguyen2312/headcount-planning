@@ -85,8 +85,7 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
       if (selectedRoleId && item.roleId !== selectedRoleId) return false
       if (
         selectedMilestoneId &&
-        item.fromMilestoneId !== selectedMilestoneId &&
-        item.toMilestoneId !== selectedMilestoneId
+        item.milestoneId !== selectedMilestoneId
       ) {
         return false
       }
@@ -96,10 +95,8 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
           item.role?.name?.toLowerCase().includes(lower) ||
           item.role?.code?.toLowerCase().includes(lower)
         const matchMilestone =
-          item.fromMilestone?.name?.toLowerCase().includes(lower) ||
-          item.fromMilestone?.code?.toLowerCase().includes(lower) ||
-          item.toMilestone?.name?.toLowerCase().includes(lower) ||
-          item.toMilestone?.code?.toLowerCase().includes(lower)
+          item.milestone?.name?.toLowerCase().includes(lower) ||
+          item.milestone?.code?.toLowerCase().includes(lower)
         const matchNote = item.note?.toLowerCase().includes(lower)
         if (!matchRole && !matchMilestone && !matchNote) return false
       }
@@ -128,26 +125,19 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
       ),
     },
     {
-      title: "Giai đoạn tiến độ",
-      key: "milestones",
-      width: 280,
+      title: "Mốc / Giai đoạn áp dụng",
+      key: "milestone",
+      width: 240,
       render: (_, record) => (
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-xs">
-            <span className="font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-              {record.fromMilestone?.name || `Mốc #${record.fromMilestoneId}`}
-            </span>
-            <ArrowRight className="size-3.5 text-muted-foreground shrink-0" />
-            {record.toMilestone ? (
-              <span className="font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                {record.toMilestone.name}
-              </span>
-            ) : (
-              <span className="text-muted-foreground italic bg-gray-50 px-2 py-0.5 rounded border border-dashed border-gray-200">
-                Theo vòng đời dự án
-              </span>
-            )}
-          </div>
+        <div className="flex items-center gap-2 text-xs">
+          <span className="font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+            {record.milestone?.name || `Mốc #${record.milestoneId}`}
+          </span>
+          {record.milestone?.code && (
+            <Tag className="text-[10px] m-0 font-mono">
+              {record.milestone.code}
+            </Tag>
+          )}
         </div>
       ),
     },

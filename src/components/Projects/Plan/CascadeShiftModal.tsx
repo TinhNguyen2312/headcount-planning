@@ -107,7 +107,7 @@ export const CascadeShiftModal: React.FC<CascadeShiftModalProps> = ({
               value={selectedPhase?.id}
               onChange={(val) => setSelectedPhaseId(val)}
               options={sortedPhases.map((p) => ({
-                label: `GĐ ${p.orderIndex}: ${p.milestone?.name || p.milestoneId} (Tháng ${p.startMonth})`,
+                label: `GĐ ${p.orderIndex}: ${p.milestone?.name || p.milestoneId} (Tháng thứ ${p.startMonth})`,
                 value: p.id,
               }))}
             />
@@ -161,24 +161,24 @@ export const CascadeShiftModal: React.FC<CascadeShiftModalProps> = ({
                 render: (val) => `${val}T`,
               },
               {
-                title: "Tiến độ cũ",
+                title: "Tiến độ cũ (Tháng thứ)",
                 key: "old",
-                width: 140,
+                width: 150,
                 render: (_, r) => (
                   <Text type="secondary">
-                    T{r.oldStart} → T{r.oldEnd}
+                    Tháng {r.oldStart} → {r.oldEnd}
                   </Text>
                 ),
               },
               {
-                title: "Tiến độ mới",
+                title: "Tiến độ mới (Tháng thứ)",
                 key: "new",
                 width: 170,
                 render: (_, r) => (
                   <span className="flex items-center gap-1.5 font-medium text-emerald-600 dark:text-emerald-400">
                     <ArrowRight className="size-3 text-muted-foreground" />
                     <span>
-                      T{r.newStart} → T{r.newEnd}
+                      Tháng {r.newStart} → {r.newEnd}
                     </span>
                   </span>
                 ),

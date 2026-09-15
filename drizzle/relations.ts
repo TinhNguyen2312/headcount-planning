@@ -116,12 +116,7 @@ export const milestonesRelations = relations(milestones, ({many}) => ({
 	milestoneDependencies_toMilestoneId: many(milestoneDependencies, {
 		relationName: "milestoneDependencies_toMilestoneId_milestones_id"
 	}),
-	headcountStandards_fromMilestoneId: many(headcountStandards, {
-		relationName: "headcountStandards_fromMilestoneId_milestones_id"
-	}),
-	headcountStandards_toMilestoneId: many(headcountStandards, {
-		relationName: "headcountStandards_toMilestoneId_milestones_id"
-	}),
+	headcountStandards: many(headcountStandards),
 	phases: many(phases),
 }));
 
@@ -134,19 +129,13 @@ export const plansRelations = relations(plans, ({one, many}) => ({
 }));
 
 export const headcountStandardsRelations = relations(headcountStandards, ({one, many}) => ({
-	milestone_fromMilestoneId: one(milestones, {
-		fields: [headcountStandards.fromMilestoneId],
-		references: [milestones.id],
-		relationName: "headcountStandards_fromMilestoneId_milestones_id"
+	milestone: one(milestones, {
+		fields: [headcountStandards.milestoneId],
+		references: [milestones.id]
 	}),
 	role: one(roles, {
 		fields: [headcountStandards.roleId],
 		references: [roles.id]
-	}),
-	milestone_toMilestoneId: one(milestones, {
-		fields: [headcountStandards.toMilestoneId],
-		references: [milestones.id],
-		relationName: "headcountStandards_toMilestoneId_milestones_id"
 	}),
 	headcountCriteria: many(headcountCriteria),
 	headcountMonthlyFactors: many(headcountMonthlyFactors),

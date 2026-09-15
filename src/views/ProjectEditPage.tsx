@@ -12,8 +12,8 @@ import { useState } from "react"
 
 import PageContainer from "@/components/Common/PageContainer"
 import ProtectedButton from "@/components/Common/ProtectedButton"
-import ProjectEditForm from "@/components/Projects/ProjectEditForm"
 import { ProjectPlanManagement } from "@/components/Projects/Plan"
+import ProjectEditForm from "@/components/Projects/ProjectEditForm"
 import ProjectPropertiesDrawer from "@/components/Projects/ProjectPropertiesDrawer"
 import { projectQueries } from "@/hooks/server/projects"
 import { uploadMutations } from "@/hooks/server/uploads"
@@ -84,7 +84,7 @@ export default function ProjectEditPage({
       label: (
         <span className="flex items-center gap-1.5 font-medium">
           <CalendarDays className="size-4" />
-          Kế hoạch tiến độ (Plans & Phases)
+          Kế hoạch tiến độ
         </span>
       ),
       children: (

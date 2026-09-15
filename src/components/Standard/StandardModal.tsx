@@ -81,8 +81,7 @@ export const StandardModal: React.FC<StandardModalProps> = ({
 
         form.setFieldsValue({
           roleId: standard.roleId,
-          fromMilestoneId: standard.fromMilestoneId,
-          toMilestoneId: standard.toMilestoneId,
+          milestoneId: standard.milestoneId,
           headcount: standard.headcount,
           headcountMin: standard.headcountMin,
           headcountMax: standard.headcountMax,
@@ -127,8 +126,7 @@ export const StandardModal: React.FC<StandardModalProps> = ({
 
       const payload: HeadcountStandardCreatePayload = {
         roleId: values.roleId,
-        fromMilestoneId: values.fromMilestoneId,
-        toMilestoneId: values.toMilestoneId || null,
+        milestoneId: values.milestoneId,
         headcount: Number(values.headcount),
         headcountMin:
           values.headcountMin !== undefined && values.headcountMin !== null
@@ -191,7 +189,7 @@ export const StandardModal: React.FC<StandardModalProps> = ({
       onOk={handleSubmit}
       confirmLoading={createMutation.isPending || updateMutation.isPending}
       destroyOnHidden
-      width={1000}
+      width={1200}
       okText={isEdit ? "Lưu thay đổi" : "Tạo mới"}
       cancelText="Hủy"
     >

@@ -162,8 +162,7 @@ export const plans = pgTable("plans", {
 export const headcountStandards = pgTable("headcount_standards", {
 	id: serial().primaryKey().notNull(),
 	roleId: integer("role_id").notNull(),
-	fromMilestoneId: integer("from_milestone_id").notNull(),
-	toMilestoneId: integer("to_milestone_id"),
+	milestoneId: integer("milestone_id").notNull(),
 	headcount: numeric({ precision: 10, scale:  4 }).default('1.0').notNull(),
 	headcountMin: numeric("headcount_min", { precision: 10, scale:  4 }),
 	headcountMax: numeric("headcount_max", { precision: 10, scale:  4 }),
@@ -174,20 +173,15 @@ export const headcountStandards = pgTable("headcount_standards", {
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	foreignKey({
-			columns: [table.fromMilestoneId],
+			columns: [table.milestoneId],
 			foreignColumns: [milestones.id],
-			name: "headcount_standards_from_milestone_id_fkey"
+			name: "headcount_standards_milestone_id_fkey"
 		}).onDelete("cascade"),
 	foreignKey({
 			columns: [table.roleId],
 			foreignColumns: [roles.id],
 			name: "headcount_standards_role_id_fkey"
 		}).onDelete("cascade"),
-	foreignKey({
-			columns: [table.toMilestoneId],
-			foreignColumns: [milestones.id],
-			name: "headcount_standards_to_milestone_id_fkey"
-		}).onDelete("set null"),
 ]);
 
 export const phases = pgTable("phases", {
