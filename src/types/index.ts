@@ -1,6 +1,7 @@
 export * from "./auth"
 export * from "./common"
 export * from "./department"
+export * from "./headcountProject"
 export * from "./milestone"
 export * from "./plan"
 export * from "./project"

@@ -1,0 +1,46 @@
+import type { ProjectResponse } from "./project"
+
+export interface HeadcountProjectResponse {
+  id: number
+  projectId: number
+  isActive: boolean
+  note: string | null
+  createdAt: string
+  updatedAt: string
+  project?: {
+    id: number
+    code: string | null
+    name: string
+    address?: string | null
+    startDate?: string | null
+    endDate?: string | null
+    status: string
+    thumbnail?: string | null
+    regionId?: number | null
+    regionName?: string | null
+    sectorId?: number | null
+    sectorName?: string | null
+  }
+}
+
+export interface HeadcountProjectCreatePayload {
+  projectId: number
+  isActive?: boolean
+  note?: string | null
+}
+
+export interface HeadcountProjectUpdatePayload {
+  isActive?: boolean
+  note?: string | null
+}
+
+export interface HeadcountProjectQueryParams {
+  keyword?: string
+  isActive?: boolean
+  regionId?: number
+  sectorId?: number
+  page?: number
+  limit?: number
+  sortBy?: string
+  order?: "ASC" | "DESC" | string
+}
