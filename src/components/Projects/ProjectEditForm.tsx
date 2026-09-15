@@ -16,7 +16,6 @@ import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
 import UnsavedChangesModal from "@/components/Common/UnsavedChangesModal"
-import ProjectAdminSelect from "@/components/Projects/ProjectAdminSelect"
 import { projectQueries } from "@/hooks/server/projects"
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges"
 import {
@@ -171,7 +170,7 @@ const ProjectEditForm = ({ project, viewOnly }: ProjectEditFormProps) => {
         // disabled={viewOnly}
       >
         <Form.Item
-          label="Tên dự án"
+          label="Tên Dự án"
           name="name"
           className="mb-0"
           rules={[
@@ -272,11 +271,11 @@ const ProjectEditForm = ({ project, viewOnly }: ProjectEditFormProps) => {
           </Space.Compact>
         </Form.Item>
 
-        <ProjectAdminSelect
+        {/* <ProjectAdminSelect
           projectId={project.id}
           project={project}
           disabled={viewOnly}
-        />
+        /> */}
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:max-w-full">
           <Form.Item label="Vùng" name="region" className="mb-0">

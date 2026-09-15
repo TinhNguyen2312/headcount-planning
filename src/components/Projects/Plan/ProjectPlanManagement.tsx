@@ -2,9 +2,11 @@
 "use client"
 
 import { Spin } from "antd"
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 
+import UnsavedChangesModal from "@/components/Common/UnsavedChangesModal"
 import { planQueries } from "@/hooks/server/plans"
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges"
 import type { PhaseInput, PhaseResponse, PlanCreatePayload } from "@/types"
 
 import { PhaseModal } from "./PhaseModal"
@@ -15,6 +17,26 @@ import { PlanVersionHeader } from "./PlanVersionHeader"
 import { PlanVersionModal } from "./PlanVersionModal"
 import type { ProjectPlanManagementProps } from "./types"
 import { usePhaseMetrics } from "./usePhaseMetrics"
+
+interface PhaseComparable {
+  id?: number
+  orderIndex: number
+  milestoneId: number
+  startDate: string
+  endDate: string
+  description?: string | null
+}
+
+const getComparablePhases = (phases: PhaseResponse[]): PhaseComparable[] => {
+  return phases.map((p) => ({
+    id: p.id > 0 ? p.id : undefined,
+    orderIndex: p.orderIndex,
+    milestoneId: p.milestoneId,
+    startDate: p.startDate,
+    endDate: p.endDate,
+    description: p.description || null,
+  }))
+}
 
 export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
   projectId,
@@ -27,6 +49,8 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
     planQueries.useList(projectId)
 
   const [selectedPlanId, setSelectedPlanId] = useState<number | undefined>()
+  const [pendingPlanId, setPendingPlanId] = useState<number | null>(null)
+  const [showLeaveModal, setShowLeaveModal] = useState(false)
 
   // Auto-select ACTIVE plan or first plan
   useEffect(() => {
@@ -45,17 +69,26 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
 
   // Local working copy of phases for currently selected plan
   const [workingPhases, setWorkingPhases] = useState<PhaseResponse[]>([])
-  const [isDirty, setIsDirty] = useState(false)
+
+  const getCurrentPhasesValue = useCallback(() => {
+    return getComparablePhases(workingPhases)
+  }, [workingPhases])
+
+  const { isDirty, setSnapshot, markClean } = useUnsavedChanges<
+    PhaseComparable[]
+  >({
+    getCurrentValue: getCurrentPhasesValue,
+  })
 
   useEffect(() => {
     if (planDetail?.phases) {
       setWorkingPhases(planDetail.phases)
-      setIsDirty(false)
+      setSnapshot(getComparablePhases(planDetail.phases))
     } else {
       setWorkingPhases([])
-      setIsDirty(false)
+      setSnapshot([])
     }
-  }, [planDetail])
+  }, [planDetail, setSnapshot])
 
   // Mutations
   const createPlanMutation = planQueries.useCreate(projectId)
@@ -114,7 +147,6 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
       }
       return updated.sort((a, b) => a.orderIndex - b.orderIndex)
     })
-    setIsDirty(true)
   }
 
   const handleDeletePhase = (phaseId: number) => {
@@ -123,7 +155,6 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
       // Re-index remaining
       return filtered.map((p, idx) => ({ ...p, orderIndex: idx + 1 }))
     })
-    setIsDirty(true)
   }
 
   const handleMovePhase = (index: number, direction: "UP" | "DOWN") => {
@@ -138,7 +169,6 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
       // Reassign orderIndex
       return arr.map((p, idx) => ({ ...p, orderIndex: idx + 1 }))
     })
-    setIsDirty(true)
   }
 
   // Save changes to current plan
@@ -160,7 +190,7 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
           phases: payloadPhases,
         },
       })
-      setIsDirty(false)
+      markClean()
     } catch {
       // Handled in onError
     }
@@ -172,6 +202,29 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
     if (res.result?.id) {
       setSelectedPlanId(res.result.id)
     }
+  }
+
+  const handleSelectPlan = (newPlanId: number) => {
+    if (newPlanId === selectedPlanId) return
+    if (isDirty) {
+      setPendingPlanId(newPlanId)
+      setShowLeaveModal(true)
+    } else {
+      setSelectedPlanId(newPlanId)
+    }
+  }
+
+  const handleConfirmLeavePlan = () => {
+    setShowLeaveModal(false)
+    if (pendingPlanId !== null) {
+      setSelectedPlanId(pendingPlanId)
+      setPendingPlanId(null)
+    }
+  }
+
+  const handleCancelLeavePlan = () => {
+    setShowLeaveModal(false)
+    setPendingPlanId(null)
   }
 
   const handleActivatePlan = async () => {
@@ -229,7 +282,7 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
         workingPhasesCount={workingPhases.length}
         isActivating={activatePlanMutation.isPending}
         isDeleting={deletePlanMutation.isPending}
-        onSelectPlan={(id) => setSelectedPlanId(id)}
+        onSelectPlan={handleSelectPlan}
         onActivatePlan={handleActivatePlan}
         onClonePlan={() => {
           setCloneSourcePlanId(selectedPlanId)
@@ -289,6 +342,15 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
         existingPlans={plansList}
         loading={createPlanMutation.isPending}
         defaultClonePlanId={cloneSourcePlanId}
+      />
+
+      {/* Unsaved Changes Confirmation Modal */}
+      <UnsavedChangesModal
+        open={showLeaveModal}
+        onConfirm={handleConfirmLeavePlan}
+        onCancel={handleCancelLeavePlan}
+        title="Có thay đổi giai đoạn chưa lưu"
+        description="Nếu chuyển sang phiên bản khác, các thay đổi chưa lưu của phiên bản hiện tại sẽ bị mất. Bạn có chắc muốn tiếp tục?"
       />
     </div>
   )

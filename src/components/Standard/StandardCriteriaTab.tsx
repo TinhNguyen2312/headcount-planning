@@ -12,7 +12,7 @@ import {
 } from "antd"
 import { Plus, Trash2 } from "lucide-react"
 import React, { useMemo } from "react"
-import type { PropertyResponse } from "@/types"
+import { propertyQueries } from "@/hooks/server/properties"
 import { CriteriaValueField } from "./CriteriaValueField"
 import {
   getDefaultOperatorForDataType,
@@ -21,13 +21,13 @@ import {
 
 export interface StandardCriteriaTabProps {
   form: FormInstance
-  properties: PropertyResponse[]
 }
 
 export const StandardCriteriaTab: React.FC<StandardCriteriaTabProps> = ({
   form,
-  properties,
 }) => {
+  const { data: properties = [] } = propertyQueries.useList({ limit: 500 })
+
   const propertyMap = useMemo(
     () => new Map(properties.map((p) => [p.id, p])),
     [properties],
@@ -49,7 +49,7 @@ export const StandardCriteriaTab: React.FC<StandardCriteriaTabProps> = ({
         type="info"
         showIcon
         className="mb-3 text-xs"
-        message="Quy tắc lọc AND"
+        title="Quy tắc lọc AND"
         description="Định biên này sẽ được áp dụng cho dự án nếu thỏa mãn tất cả các điều kiện bên dưới. Phép toán so sánh và kiểu giá trị tự động điều chỉnh theo Cơ sở định biên."
       />
 

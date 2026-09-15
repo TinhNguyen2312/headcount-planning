@@ -1,22 +1,33 @@
 "use client"
 
 import { Form, Input, InputNumber, Select } from "antd"
-import React from "react"
+import React, { useMemo } from "react"
+import { milestoneQueries } from "@/hooks/server/milestones"
+import { roleQueries } from "@/hooks/server/roles"
 
-interface OptionItem {
-  value: number
-  label: string
-}
+interface StandardGeneralTabProps {}
 
-export interface StandardGeneralTabProps {
-  roleOptions: OptionItem[]
-  milestoneOptions: OptionItem[]
-}
+export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = () => {
+  const { data: milestones = [] } = milestoneQueries.useList({ limit: 500 })
+  const { data: roles = [] } = roleQueries.useList({ limit: 500 })
+  const roleOptions = useMemo(
+    () =>
+      roles.map((r) => ({
+        value: r.id,
+        label: `${r.name}`,
+      })),
+    [roles],
+  )
 
-export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = ({
-  roleOptions,
-  milestoneOptions,
-}) => {
+  const milestoneOptions = useMemo(
+    () =>
+      milestones.map((m) => ({
+        value: m.id,
+        label: `${m.name}`,
+      })),
+    [milestones],
+  )
+
   return (
     <div className="space-y-3 pt-2">
       <Form.Item
@@ -55,7 +66,7 @@ export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = ({
 
           <Form.Item
             name="fromLeadTimeMonths"
-            label="Vào trước mốc bắt đầu"
+            label="Dung sai"
             tooltip="Số tháng nhân sự cần có mặt trước khi mốc bắt đầu khởi công (ví dụ: cần trước A 1 tháng)"
             className="mb-0"
           >
@@ -92,7 +103,7 @@ export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = ({
 
           <Form.Item
             name="toLeadTimeMonths"
-            label="Giữ lại sau mốc kết thúc"
+            label="Dung sai"
             tooltip="Số tháng giữ nhân sự sau khi mốc kết thúc để hoàn công, nghiệm thu, quyết toán (ví dụ: giữ lại sau B 3 tháng)"
             className="mb-0"
           >

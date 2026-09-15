@@ -231,29 +231,17 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
             </div>
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-muted-foreground text-[11px]">
-                Gối đầu:
+                Dung sai:
               </span>
-              {fromLead > 0 || toLead > 0 ? (
-                <div className="flex items-center gap-1 flex-wrap">
-                  {fromLead > 0 && (
-                    <Tag color="orange" className="text-[10px] m-0 font-medium">
-                      Trước {fromLead}T
-                    </Tag>
-                  )}
-                  {toLead > 0 && (
-                    <Tag color="purple" className="text-[10px] m-0 font-medium">
-                      Sau {toLead}T
-                    </Tag>
-                  )}
-                </div>
-              ) : (
-                <Tag
-                  color="default"
-                  className="text-xs m-0 text-muted-foreground"
-                >
-                  Đúng mốc
+
+              <div className="flex items-center gap-1 flex-wrap">
+                <Tag color="orange" className="text-xs! m-0 font-medium">
+                  Trước {fromLead} T
                 </Tag>
-              )}
+                <Tag color="purple" className="text-xs! m-0 font-medium">
+                  Sau {toLead} T
+                </Tag>
+              </div>
             </div>
           </div>
         )

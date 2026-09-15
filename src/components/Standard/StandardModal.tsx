@@ -2,13 +2,11 @@
 
 import { Form, Modal, Tabs } from "antd"
 import { Calendar, Layers, SlidersHorizontal, Users } from "lucide-react"
-import React, { useEffect, useMemo, useState } from "react"
-import { milestoneQueries } from "@/hooks/server/milestones"
-import { propertyQueries } from "@/hooks/server/properties"
-import { roleQueries } from "@/hooks/server/roles"
+import React, { useEffect, useState } from "react"
 import { standardQueries } from "@/hooks/server/standards"
 import { applyApiFieldErrors } from "@/lib/errors"
 import type {
+  HeadcountCriteriaInput,
   HeadcountStandardCreatePayload,
   HeadcountStandardResponse,
   HeadcountStandardUpdatePayload,
@@ -32,43 +30,11 @@ export const StandardModal: React.FC<StandardModalProps> = ({
   const createMutation = standardQueries.useCreate()
   const updateMutation = standardQueries.useUpdate()
 
-  const { data: roles = [] } = roleQueries.useList({ limit: 500 })
-  const { data: milestones = [] } = milestoneQueries.useList({ limit: 500 })
-  const { data: properties = [] } = propertyQueries.useList({ limit: 500 })
-
   const [form] = Form.useForm()
   const [activeTab, setActiveTab] = useState("general")
 
-  const roleOptions = useMemo(
-    () =>
-      roles.map((r) => ({
-        value: r.id,
-        label: `${r.name}`,
-      })),
-    [roles],
-  )
-
-  const milestoneOptions = useMemo(
-    () =>
-      milestones.map((m) => ({
-        value: m.id,
-        label: `${m.name} (${m.code})`,
-      })),
-    [milestones],
-  )
-
-  const propertyOptions = useMemo(
-    () =>
-      properties.map((p) => ({
-        value: p.id,
-        label: `${p.name}${p.unit ? ` [${p.unit}]` : ""}`,
-      })),
-    [properties],
-  )
-
   useEffect(() => {
     if (open) {
-      setActiveTab("general")
       if (standard) {
         const dur = standard.durationMonths
           ? Number(standard.durationMonths)
@@ -148,8 +114,8 @@ export const StandardModal: React.FC<StandardModalProps> = ({
         durationMonths: dur,
         monthlyFactors: factors,
         criteria: (values.criteria || [])
-          .filter((c: any) => c && c.propertyId)
-          .map((c: any) => ({
+          .filter((c: HeadcountCriteriaInput) => c && c.propertyId)
+          .map((c: HeadcountCriteriaInput) => ({
             propertyId: c.propertyId,
             conditionOperator: c.conditionOperator,
             minValue:
@@ -175,7 +141,7 @@ export const StandardModal: React.FC<StandardModalProps> = ({
       }
 
       onCancel()
-    } catch (error: any) {
+    } catch (error) {
       applyApiFieldErrors(form, error)
     }
   }
@@ -192,6 +158,7 @@ export const StandardModal: React.FC<StandardModalProps> = ({
           </span>
         </div>
       }
+      centered
       open={open}
       onCancel={onCancel}
       onOk={handleSubmit}
@@ -214,31 +181,24 @@ export const StandardModal: React.FC<StandardModalProps> = ({
                   Thông tin chung
                 </span>
               ),
-              children: (
-                <StandardGeneralTab
-                  roleOptions={roleOptions}
-                  milestoneOptions={milestoneOptions}
-                />
-              ),
+              children: <StandardGeneralTab />,
             },
             {
               key: "criteria",
               label: (
                 <span className="flex items-center gap-1.5 font-medium">
                   <SlidersHorizontal className="size-4" />
-                  Điều kiện lọc
+                  Khung định biên
                 </span>
               ),
-              children: (
-                <StandardCriteriaTab form={form} properties={properties} />
-              ),
+              children: <StandardCriteriaTab form={form} />,
             },
             {
               key: "factors",
               label: (
                 <span className="flex items-center gap-1.5 font-medium">
                   <Calendar className="size-4" />
-                  Phân bổ theo tháng
+                  Hệ số tối ưu
                 </span>
               ),
               children: <StandardMonthlyFactorsTab form={form} />,
