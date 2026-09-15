@@ -7,9 +7,8 @@ export interface PhaseResponse {
   planId: number
   orderIndex: number
   milestoneId: number
-  startMonth: number
-  durationMonths: number
-  isAnchor: boolean
+  startDate: string
+  endDate: string
   description: string | null
   createdAt: string
   updatedAt: string
@@ -19,18 +18,17 @@ export interface PhaseResponse {
     name?: string | null
     description?: string | null
   } | null
-  // Computed fields
-  endMonth?: number
-  expectedDate?: string | null
+  // Computed / Helper fields
+  durationMonths?: number
+  durationDays?: number
 }
 
 export interface PhaseInput {
   id?: number
   orderIndex: number
   milestoneId: number
-  startMonth: number
-  durationMonths: number
-  isAnchor?: boolean
+  startDate: string
+  endDate: string
   description?: string | null
 }
 

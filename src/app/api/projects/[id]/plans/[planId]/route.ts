@@ -32,9 +32,8 @@ export async function GET(
         planId: phases.planId,
         orderIndex: phases.orderIndex,
         milestoneId: phases.milestoneId,
-        startMonth: phases.startMonth,
-        durationMonths: phases.durationMonths,
-        isAnchor: phases.isAnchor,
+        startDate: phases.startDate,
+        endDate: phases.endDate,
         description: phases.description,
         createdAt: phases.createdAt,
         updatedAt: phases.updatedAt,
@@ -46,20 +45,18 @@ export async function GET(
       .from(phases)
       .leftJoin(milestones, eq(phases.milestoneId, milestones.id))
       .where(eq(phases.planId, pId))
-      .orderBy(phases.orderIndex, phases.startMonth)
+      .orderBy(phases.orderIndex, phases.startDate)
 
     const formattedPhases: PhaseResponse[] = rawPhases.map((rp) => ({
       id: rp.id,
       planId: rp.planId,
       orderIndex: rp.orderIndex,
       milestoneId: rp.milestoneId,
-      startMonth: rp.startMonth,
-      durationMonths: rp.durationMonths,
-      isAnchor: rp.isAnchor,
+      startDate: rp.startDate,
+      endDate: rp.endDate,
       description: rp.description,
       createdAt: rp.createdAt,
       updatedAt: rp.updatedAt,
-      endMonth: rp.startMonth + rp.durationMonths - 1,
       milestone: rp.milestoneIdJoined
         ? {
             id: rp.milestoneIdJoined,
@@ -182,10 +179,13 @@ export async function PATCH(
 
         // Upsert phases
         for (const p of body.phases) {
-          const sMonth = Math.max(1, p.startMonth || 1)
-          const dMonths = Math.max(1, p.durationMonths || 1)
-          const isAnch = Boolean(p.isAnchor)
+          const sDate = p.startDate
+          const eDate = p.endDate
           const desc = p.description?.trim() || null
+
+          if (!sDate || !eDate) {
+            throw new Error("Ngày bắt đầu và ngày kết thúc không được để trống")
+          }
 
           if (p.id && incomingIds.includes(p.id)) {
             // Update existing phase
@@ -194,9 +194,8 @@ export async function PATCH(
               .set({
                 orderIndex: p.orderIndex,
                 milestoneId: p.milestoneId,
-                startMonth: sMonth,
-                durationMonths: dMonths,
-                isAnchor: isAnch,
+                startDate: sDate,
+                endDate: eDate,
                 description: desc,
                 updatedAt: new Date().toISOString(),
               })
@@ -207,9 +206,8 @@ export async function PATCH(
               planId: pId,
               orderIndex: p.orderIndex,
               milestoneId: p.milestoneId,
-              startMonth: sMonth,
-              durationMonths: dMonths,
-              isAnchor: isAnch,
+              startDate: sDate,
+              endDate: eDate,
               description: desc,
             })
           }

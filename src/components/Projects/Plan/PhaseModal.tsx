@@ -1,22 +1,12 @@
 "use client"
 
-import {
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-  Switch,
-  Typography,
-} from "antd"
+import { DatePicker, Form, Input, Modal, Select } from "antd"
 import dayjs from "dayjs"
-import { Flag, Info } from "lucide-react"
+import { Calendar } from "lucide-react"
 import React, { useEffect, useMemo } from "react"
 
 import { milestoneQueries } from "@/hooks/server/milestones"
 import type { PhaseInput, PhaseResponse } from "@/types"
-
-const { Text } = Typography
 
 interface PhaseModalProps {
   open: boolean
@@ -24,8 +14,13 @@ interface PhaseModalProps {
   onSave: (phase: PhaseInput) => void
   initialPhase?: PhaseResponse | null
   existingMilestoneIds: number[]
-  projectStartDate?: string | null
   defaultOrderIndex?: number
+}
+
+interface FormValues {
+  milestoneId: number
+  dateRange: [dayjs.Dayjs, dayjs.Dayjs]
+  description?: string
 }
 
 export const PhaseModal: React.FC<PhaseModalProps> = ({
@@ -34,58 +29,50 @@ export const PhaseModal: React.FC<PhaseModalProps> = ({
   onSave,
   initialPhase,
   existingMilestoneIds,
-  projectStartDate,
   defaultOrderIndex = 1,
 }) => {
-  const [form] = Form.useForm<PhaseInput>()
+  const [form] = Form.useForm<FormValues>()
   const { data: milestonesData = [] } = milestoneQueries.useList({ limit: 100 })
 
-  const watchedStartMonth = Form.useWatch("startMonth", form) || 1
-  const watchedDuration = Form.useWatch("durationMonths", form) || 1
+  const watchedDateRange = Form.useWatch("dateRange", form)
 
-  const endMonth = useMemo(() => {
-    return Number(watchedStartMonth) + Number(watchedDuration) - 1
-  }, [watchedStartMonth, watchedDuration])
-
-  const calendarMonthsInfo = useMemo(() => {
-    if (!projectStartDate) return null
-    const baseDate = dayjs(projectStartDate)
-    if (!baseDate.isValid()) return null
-    const startCal = baseDate
-      .add(Number(watchedStartMonth) - 1, "month")
-      .format("MM/YYYY")
-    const endCal = baseDate.add(endMonth - 1, "month").format("MM/YYYY")
-    const expectedEndDate = baseDate
-      .add(endMonth - 1, "month")
-      .endOf("month")
-      .format("DD/MM/YYYY")
-    return { startCal, endCal, expectedEndDate }
-  }, [projectStartDate, watchedStartMonth, endMonth])
+  const durationInfo = useMemo(() => {
+    if (!watchedDateRange || !watchedDateRange[0] || !watchedDateRange[1]) {
+      return null
+    }
+    const start = watchedDateRange[0]
+    const end = watchedDateRange[1]
+    const days = Math.max(1, end.diff(start, "day") + 1)
+    const months = Math.max(1, Math.round(days / 30.4375))
+    return {
+      days,
+      months,
+      startFormatted: start.format("DD/MM/YYYY"),
+      endFormatted: end.format("DD/MM/YYYY"),
+    }
+  }, [watchedDateRange])
 
   useEffect(() => {
     if (open) {
       if (initialPhase) {
         form.setFieldsValue({
-          id: initialPhase.id,
-          orderIndex: initialPhase.orderIndex,
           milestoneId: initialPhase.milestoneId,
-          startMonth: initialPhase.startMonth,
-          durationMonths: initialPhase.durationMonths,
-          isAnchor: initialPhase.isAnchor,
+          dateRange: [
+            dayjs(initialPhase.startDate),
+            dayjs(initialPhase.endDate),
+          ],
           description: initialPhase.description || "",
         })
       } else {
         form.resetFields()
+        const today = dayjs()
         form.setFieldsValue({
-          orderIndex: defaultOrderIndex,
-          startMonth: 1,
-          durationMonths: 1,
-          isAnchor: false,
+          dateRange: [today, today.add(1, "month").subtract(1, "day")],
           description: "",
         })
       }
     }
-  }, [open, initialPhase, defaultOrderIndex, form])
+  }, [open, initialPhase, form])
 
   const milestoneOptions = useMemo(() => {
     const currentMilestoneId = initialPhase?.milestoneId
@@ -100,9 +87,14 @@ export const PhaseModal: React.FC<PhaseModalProps> = ({
   const handleOk = async () => {
     try {
       const values = await form.validateFields()
+      const [startDate, endDate] = values.dateRange
       onSave({
-        ...values,
         id: initialPhase?.id,
+        orderIndex: initialPhase?.orderIndex ?? defaultOrderIndex,
+        milestoneId: values.milestoneId,
+        startDate: startDate.format("YYYY-MM-DD"),
+        endDate: endDate.format("YYYY-MM-DD"),
+        description: values.description || null,
       })
       onClose()
     } catch {
@@ -139,78 +131,45 @@ export const PhaseModal: React.FC<PhaseModalProps> = ({
           />
         </Form.Item>
 
-        <div className="grid grid-cols-2 gap-4">
-          <Form.Item
-            label="Tháng bắt đầu (Tháng thứ mấy của dự án)"
-            name="startMonth"
-            tooltip="Thứ tự tháng thi công kể từ mốc bắt đầu dự án (Ví dụ: Tháng thứ 1 là tháng khởi công, Tháng thứ 5 là sau 4 tháng thi công)"
-            rules={[{ required: true, message: "Vui lòng nhập tháng bắt đầu" }]}
-          >
-            <InputNumber min={1} max={120} className="w-full" />
-          </Form.Item>
-
-          <Form.Item
-            label="Thời lượng (Số tháng)"
-            name="durationMonths"
-            tooltip="Số tháng thực hiện giai đoạn (>= 1, tính tròn tháng)"
-            rules={[{ required: true, message: "Vui lòng nhập thời lượng" }]}
-          >
-            <InputNumber min={1} max={60} className="w-full" />
-          </Form.Item>
-        </div>
+        <Form.Item
+          label="Khoảng thời gian thực hiện (Từ ngày - Đến ngày)"
+          name="dateRange"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng chọn ngày bắt đầu và kết thúc giai đoạn",
+            },
+          ]}
+        >
+          <DatePicker.RangePicker
+            format="DD/MM/YYYY"
+            className="w-full"
+            placeholder={["Ngày bắt đầu", "Ngày kết thúc"]}
+          />
+        </Form.Item>
 
         {/* Dynamic Calculation Info */}
-        <div className="bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3 mb-4 text-sm flex flex-col gap-1.5">
-          <div className="flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300 font-medium">
-            <Info className="size-4" />
-            <span>Thời gian giai đoạn (Tính theo mốc bắt đầu dự án):</span>
-          </div>
-          <div className="text-foreground ml-5 flex flex-col gap-1 text-xs sm:text-sm">
-            <div>
-              • Phạm vi: <strong>Tháng thứ {watchedStartMonth}</strong>
-              {calendarMonthsInfo && (
-                <span className="text-emerald-700 dark:text-emerald-400 font-medium">
-                  {" "}
-                  ({calendarMonthsInfo.startCal})
-                </span>
-              )}{" "}
-              → <strong>Tháng thứ {endMonth}</strong>
-              {calendarMonthsInfo && (
-                <span className="text-emerald-700 dark:text-emerald-400 font-medium">
-                  {" "}
-                  ({calendarMonthsInfo.endCal})
-                </span>
-              )}
+        {durationInfo && (
+          <div className="bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3 mb-4 text-sm flex flex-col gap-1.5">
+            <div className="flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300 font-medium">
+              <Calendar className="size-4" />
+              <span>Thời gian thực hiện giai đoạn:</span>
             </div>
-            {calendarMonthsInfo ? (
+            <div className="text-foreground ml-5 flex flex-col gap-1 text-xs sm:text-sm">
+              <div>
+                • Thời gian: <strong>{durationInfo.startFormatted}</strong> →{" "}
+                <strong>{durationInfo.endFormatted}</strong>
+              </div>
               <div className="text-muted-foreground">
-                • Dự kiến hoàn thành mốc:{" "}
+                • Thời lượng:{" "}
                 <strong className="text-emerald-700 dark:text-emerald-400">
-                  {calendarMonthsInfo.expectedEndDate}
-                </strong>
+                  {durationInfo.days} ngày
+                </strong>{" "}
+                (xấp xỉ {durationInfo.months} tháng)
               </div>
-            ) : (
-              <div className="text-amber-600 dark:text-amber-400 text-xs italic">
-                * Chưa có ngày bắt đầu dự án trong Thông tin chung để quy đổi sang lịch thực tế.
-              </div>
-            )}
+            </div>
           </div>
-        </div>
-
-        <Form.Item
-          label="Mốc chốt chặn cam kết (Anchor)"
-          name="isAnchor"
-          valuePropName="checked"
-        >
-          <div className="flex items-center gap-3">
-            <Switch />
-            <Text type="secondary" className="text-xs">
-              <Flag className="size-3.5 inline mr-1 text-amber-500" />
-              Đánh dấu là mốc chốt chặn chiến lược (ví dụ: Mốc bàn giao nhà,
-              hoàn công)
-            </Text>
-          </div>
-        </Form.Item>
+        )}
 
         <Form.Item label="Ghi chú / Phạm vi công việc" name="description">
           <Input.TextArea
@@ -222,3 +181,4 @@ export const PhaseModal: React.FC<PhaseModalProps> = ({
     </Modal>
   )
 }
+

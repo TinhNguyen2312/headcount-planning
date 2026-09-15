@@ -9,15 +9,8 @@ import {
   Tooltip,
 } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import {
-  AlertTriangle,
-  ArrowDown,
-  ArrowUp,
-  Flag,
-  HelpCircle,
-  Pencil,
-  Trash2,
-} from "lucide-react"
+import dayjs from "dayjs"
+import { ArrowDown, ArrowUp, Pencil, Trash2 } from "lucide-react"
 import React, { useMemo } from "react"
 
 import type { PhaseWithMetrics } from "./types"
@@ -93,21 +86,14 @@ export const PhaseTable: React.FC<PhaseTableProps> = ({
         ),
       },
       {
-        title: (
-          <div className="flex items-center gap-1">
-            <span>Tháng bắt đầu (Tháng thứ)</span>
-            <Tooltip title="Thứ tự tháng kể từ mốc bắt đầu dự án. Ví dụ: Tháng thứ 1 là tháng khởi công dự án.">
-              <HelpCircle className="size-3.5 text-muted-foreground" />
-            </Tooltip>
-          </div>
-        ),
-        dataIndex: "startMonth",
+        title: "Ngày bắt đầu",
+        dataIndex: "startDate",
         width: 190,
         render: (val, r) => (
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="font-semibold text-foreground">
-                Tháng thứ {val}
+                {dayjs(val).format("DD/MM/YYYY")}
               </span>
               {r.executionType === "OVERLAPPING" && (
                 <Tooltip title="Giai đoạn gối đầu: Bắt đầu trước khi giai đoạn trước hoàn tất">
@@ -120,7 +106,7 @@ export const PhaseTable: React.FC<PhaseTableProps> = ({
                 </Tooltip>
               )}
               {r.executionType === "PARALLEL" && (
-                <Tooltip title="Giai đoạn chạy song song: Cùng tháng bắt đầu với giai đoạn trước">
+                <Tooltip title="Giai đoạn chạy song song: Cùng ngày bắt đầu với giai đoạn trước">
                   <Tag
                     color="purple"
                     className="text-[10px] m-0 px-1 leading-4"
@@ -130,89 +116,34 @@ export const PhaseTable: React.FC<PhaseTableProps> = ({
                 </Tooltip>
               )}
             </div>
-            {r.startDateCal ? (
-              <span className="text-xs text-muted-foreground">
-                Lịch: <strong>{r.startDateCal}</strong>
-              </span>
-            ) : null}
           </div>
         ),
       },
       {
-        title: "Thời lượng",
-        dataIndex: "durationMonths",
-        width: 110,
-        align: "center",
+        title: "Ngày kết thúc",
+        dataIndex: "endDate",
+        width: 150,
         render: (val) => (
-          <span className="font-medium bg-muted/60 px-2 py-0.5 rounded text-sm">
-            {val} tháng
+          <span className="font-semibold text-foreground">
+            {dayjs(val).format("DD/MM/YYYY")}
           </span>
         ),
       },
       {
-        title: (
-          <div className="flex items-center justify-center gap-1">
-            <span>Tháng kết thúc (Tháng thứ)</span>
-            <Tooltip title="Thứ tự tháng hoàn thành tính từ ngày bắt đầu dự án.">
-              <HelpCircle className="size-3.5 text-muted-foreground" />
-            </Tooltip>
-          </div>
-        ),
-        dataIndex: "endMonth",
-        width: 180,
+        title: "Thời lượng",
+        key: "duration",
+        width: 140,
         align: "center",
-        render: (val, r) => (
+        render: (_, r) => (
           <div className="flex flex-col items-center">
-            <span className="font-semibold text-foreground">
-              Tháng thứ {val}
+            <span className="font-medium bg-muted/60 px-2 py-0.5 rounded text-sm">
+              {r.durationDays} ngày
             </span>
-            {r.endDateCal ? (
-              <span className="text-xs text-muted-foreground">
-                Lịch: <strong>{r.endDateCal}</strong>
-              </span>
-            ) : null}
+            <span className="text-[11px] text-muted-foreground mt-0.5">
+              ~ {r.durationMonths} tháng
+            </span>
           </div>
         ),
-      },
-      {
-        title: "Dự kiến hoàn thành",
-        dataIndex: "expectedDate",
-        width: 160,
-        render: (val, r) => (
-          <div className="flex items-center gap-1">
-            {val ? (
-              <span className="font-medium text-foreground">{val}</span>
-            ) : (
-              <Tooltip title="Vui lòng thiết lập 'Ngày bắt đầu dự án' trong Thông tin chung để quy đổi ngày hoàn thành chính xác">
-                <span className="text-xs text-muted-foreground italic">
-                  Chưa có ngày mốc
-                </span>
-              </Tooltip>
-            )}
-            {r.isPastProjectEnd && (
-              <Tooltip title="Vượt quá ngày kết thúc cam kết của dự án">
-                <AlertTriangle className="size-3.5 text-amber-500" />
-              </Tooltip>
-            )}
-          </div>
-        ),
-      },
-      {
-        title: "Chốt chặn",
-        dataIndex: "isAnchor",
-        width: 100,
-        align: "center",
-        render: (val) =>
-          val ? (
-            <Tooltip title="Mốc cam kết chiến lược (Anchor)">
-              <Tag color="gold" className="m-0 text-xs px-2 py-0.5">
-                <Flag className="size-3 inline mr-1 text-amber-600" />
-                Anchor
-              </Tag>
-            </Tooltip>
-          ) : (
-            <span className="text-muted-foreground text-xs">-</span>
-          ),
       },
       {
         title: "Thao tác",
@@ -269,3 +200,4 @@ export const PhaseTable: React.FC<PhaseTableProps> = ({
     </Card>
   )
 }
+

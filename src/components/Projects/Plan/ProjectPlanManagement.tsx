@@ -5,14 +5,11 @@ import { Spin } from "antd"
 import React, { useEffect, useMemo, useState } from "react"
 
 import { planQueries } from "@/hooks/server/plans"
-import { useUI } from "@/hooks/useUI"
 import type { PhaseInput, PhaseResponse, PlanCreatePayload } from "@/types"
 
-import { CascadeShiftModal } from "./CascadeShiftModal"
 import { PhaseModal } from "./PhaseModal"
 import { PhaseTable } from "./PhaseTable"
 import { PhaseTableToolbar } from "./PhaseTableToolbar"
-import { PlanDeadlineAlert } from "./PlanDeadlineAlert"
 import { PlanEmptyState } from "./PlanEmptyState"
 import { PlanVersionHeader } from "./PlanVersionHeader"
 import { PlanVersionModal } from "./PlanVersionModal"
@@ -25,8 +22,6 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
   projectEndDate,
   viewOnly = false,
 }) => {
-  const { message } = useUI()
-
   // Queries & State
   const { data: plansList = [], isLoading: isListLoading } =
     planQueries.useList(projectId)
@@ -75,7 +70,6 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
   >()
   const [isPhaseModalOpen, setIsPhaseModalOpen] = useState(false)
   const [editingPhase, setEditingPhase] = useState<PhaseResponse | null>(null)
-  const [isShiftModalOpen, setIsShiftModalOpen] = useState(false)
 
   // Milestone IDs already used in this plan
   const existingMilestoneIds = useMemo(() => {
@@ -83,11 +77,7 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
   }, [workingPhases])
 
   // Computed phase metrics
-  const { phasesWithMetrics, deadlineWarnings } = usePhaseMetrics(
-    workingPhases,
-    projectStartDate,
-    projectEndDate,
-  )
+  const { phasesWithMetrics } = usePhaseMetrics(workingPhases)
 
   // Handlers for Phase operations
   const handleSavePhase = (phaseInput: PhaseInput) => {
@@ -101,9 +91,8 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
                 ...p,
                 orderIndex: phaseInput.orderIndex,
                 milestoneId: phaseInput.milestoneId,
-                startMonth: phaseInput.startMonth,
-                durationMonths: phaseInput.durationMonths,
-                isAnchor: Boolean(phaseInput.isAnchor),
+                startDate: phaseInput.startDate,
+                endDate: phaseInput.endDate,
                 description: phaseInput.description || null,
               }
             : p,
@@ -115,9 +104,8 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
           planId: selectedPlanId!,
           orderIndex: phaseInput.orderIndex,
           milestoneId: phaseInput.milestoneId,
-          startMonth: phaseInput.startMonth,
-          durationMonths: phaseInput.durationMonths,
-          isAnchor: Boolean(phaseInput.isAnchor),
+          startDate: phaseInput.startDate,
+          endDate: phaseInput.endDate,
           description: phaseInput.description || null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -153,27 +141,6 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
     setIsDirty(true)
   }
 
-  const handleApplyCascadeShift = (
-    fromOrderIndex: number,
-    deltaMonths: number,
-  ) => {
-    setWorkingPhases((prev) => {
-      return prev.map((p) => {
-        if (p.orderIndex >= fromOrderIndex) {
-          return {
-            ...p,
-            startMonth: Math.max(1, p.startMonth + deltaMonths),
-          }
-        }
-        return p
-      })
-    })
-    setIsDirty(true)
-    message.success(
-      `Đã tịnh tiến các giai đoạn từ STT ${fromOrderIndex} trở đi thêm ${deltaMonths > 0 ? `+${deltaMonths}` : deltaMonths} tháng`,
-    )
-  }
-
   // Save changes to current plan
   const handleSavePlanChanges = async () => {
     if (!selectedPlanId) return
@@ -182,9 +149,8 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
         id: p.id > 0 ? p.id : undefined,
         orderIndex: p.orderIndex,
         milestoneId: p.milestoneId,
-        startMonth: p.startMonth,
-        durationMonths: p.durationMonths,
-        isAnchor: p.isAnchor,
+        startDate: p.startDate,
+        endDate: p.endDate,
         description: p.description,
       }))
 
@@ -276,19 +242,12 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
         onDeletePlan={handleDeletePlan}
       />
 
-      {/* Deadline Warnings Banner */}
-      <PlanDeadlineAlert
-        deadlineWarnings={deadlineWarnings}
-        projectEndDate={projectEndDate}
-      />
-
       {/* Action Bar for Phases */}
       <PhaseTableToolbar
         phasesCount={workingPhases.length}
         isDirty={isDirty}
         viewOnly={viewOnly}
         isSaving={updatePlanMutation.isPending}
-        onOpenShiftModal={() => setIsShiftModalOpen(true)}
         onAddPhase={() => {
           setEditingPhase(null)
           setIsPhaseModalOpen(true)
@@ -319,7 +278,6 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
         onSave={handleSavePhase}
         initialPhase={editingPhase}
         existingMilestoneIds={existingMilestoneIds}
-        projectStartDate={projectStartDate}
         defaultOrderIndex={workingPhases.length + 1}
       />
 
@@ -332,14 +290,7 @@ export const ProjectPlanManagement: React.FC<ProjectPlanManagementProps> = ({
         loading={createPlanMutation.isPending}
         defaultClonePlanId={cloneSourcePlanId}
       />
-
-      {/* Cascade Delta Shift Modal */}
-      <CascadeShiftModal
-        open={isShiftModalOpen}
-        onClose={() => setIsShiftModalOpen(false)}
-        phases={workingPhases}
-        onApplyShift={handleApplyCascadeShift}
-      />
     </div>
   )
 }
+

@@ -109,9 +109,8 @@ export async function POST(
             planId: insertedPlan.id,
             orderIndex: sp.orderIndex,
             milestoneId: sp.milestoneId,
-            startMonth: sp.startMonth,
-            durationMonths: sp.durationMonths,
-            isAnchor: sp.isAnchor,
+            startDate: sp.startDate,
+            endDate: sp.endDate,
             description: sp.description,
           }))
 
@@ -133,9 +132,8 @@ export async function POST(
           planId: insertedPlan.id,
           orderIndex: p.orderIndex ?? idx + 1,
           milestoneId: p.milestoneId,
-          startMonth: Math.max(1, p.startMonth || 1),
-          durationMonths: Math.max(1, p.durationMonths || 1),
-          isAnchor: Boolean(p.isAnchor),
+          startDate: p.startDate,
+          endDate: p.endDate,
           description: p.description?.trim() || null,
         }))
 

@@ -3,11 +3,8 @@ import type { PhaseResponse, PlanStatus } from "@/types"
 export type ExecutionType = "SEQUENTIAL" | "OVERLAPPING" | "PARALLEL"
 
 export interface PhaseWithMetrics extends PhaseResponse {
-  endMonth: number
-  startDateCal: string | null
-  endDateCal: string | null
-  expectedDate: string | null
-  isPastProjectEnd: boolean
+  durationDays: number
+  durationMonths: number
   executionType: ExecutionType
 }
 

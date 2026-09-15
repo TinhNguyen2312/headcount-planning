@@ -1,5 +1,5 @@
 import { Badge, Button, Space } from "antd"
-import { FastForward, Plus, Save } from "lucide-react"
+import { Plus, Save } from "lucide-react"
 import React from "react"
 
 interface PhaseTableToolbarProps {
@@ -7,7 +7,6 @@ interface PhaseTableToolbarProps {
   isDirty: boolean
   viewOnly?: boolean
   isSaving?: boolean
-  onOpenShiftModal: () => void
   onAddPhase: () => void
   onSavePlanChanges: () => void
 }
@@ -17,7 +16,6 @@ export const PhaseTableToolbar: React.FC<PhaseTableToolbarProps> = ({
   isDirty,
   viewOnly = false,
   isSaving = false,
-  onOpenShiftModal,
   onAddPhase,
   onSavePlanChanges,
 }) => {
@@ -42,14 +40,6 @@ export const PhaseTableToolbar: React.FC<PhaseTableToolbarProps> = ({
       {!viewOnly && (
         <Space>
           <Button
-            icon={<FastForward className="size-4" />}
-            disabled={phasesCount === 0}
-            onClick={onOpenShiftModal}
-          >
-            Tịnh tiến (+/- tháng)
-          </Button>
-
-          <Button
             type="dashed"
             icon={<Plus className="size-4" />}
             onClick={onAddPhase}
@@ -71,3 +61,4 @@ export const PhaseTableToolbar: React.FC<PhaseTableToolbarProps> = ({
     </div>
   )
 }
+
