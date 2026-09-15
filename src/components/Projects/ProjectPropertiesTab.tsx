@@ -2,6 +2,7 @@
 "use client"
 
 import {
+  Badge,
   Button,
   Card,
   Empty,
@@ -10,13 +11,22 @@ import {
   InputNumber,
   Select,
   Skeleton,
+  Space,
   Switch,
   Tag,
 } from "antd"
-import { Building2, Home, Save, SlidersHorizontal } from "lucide-react"
-import React, { useEffect, useMemo } from "react"
+import {
+  Building2,
+  Home,
+  RotateCcw,
+  Save,
+  SlidersHorizontal,
+} from "lucide-react"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
+import UnsavedChangesModal from "@/components/Common/UnsavedChangesModal"
 import { propertyQueries } from "@/hooks/server/properties"
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges"
 import type {
   DevelopmentType,
   PropertyDataType,
@@ -47,11 +57,35 @@ const sortPropertiesByType = (list: PropertyResponse[]): PropertyResponse[] => {
   })
 }
 
+const getNormalizedFormValues = (formVals: Record<string, any>) => {
+  const result: Record<string, any> = {}
+  for (const [key, val] of Object.entries(formVals || {})) {
+    if (key.startsWith("prop_")) {
+      result[key] = val === "" || val === null ? undefined : val
+    }
+  }
+  return result
+}
+
 export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
   projectId,
   viewOnly = false,
 }) => {
   const [form] = Form.useForm()
+  Form.useWatch([], form)
+
+  const [showResetModal, setShowResetModal] = useState(false)
+  const initialFormFieldsRef = useRef<Record<string, any>>({})
+
+  const getCurrentFormValue = useCallback(() => {
+    return getNormalizedFormValues(form.getFieldsValue(true))
+  }, [form])
+
+  const { isDirty, setSnapshot, markClean } = useUnsavedChanges<
+    Record<string, any>
+  >({
+    getCurrentValue: getCurrentFormValue,
+  })
 
   const { data: matrixData, isLoading } =
     propertyQueries.useProjectProperties(projectId)
@@ -148,8 +182,10 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
       }
     }
 
+    initialFormFieldsRef.current = formFields
     form.setFieldsValue(formFields)
-  }, [properties, values, form, hasLowRise, hasHighRise])
+    setSnapshot(getNormalizedFormValues(formFields))
+  }, [properties, values, form, hasLowRise, hasHighRise, setSnapshot])
 
   const handleSave = async () => {
     try {
@@ -197,9 +233,17 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
       }
 
       await saveMutation.mutateAsync({ values: payloadValues })
+      initialFormFieldsRef.current = form.getFieldsValue(true)
+      markClean()
     } catch (err) {
       console.error("Form validation error:", err)
     }
+  }
+
+  const handleConfirmReset = () => {
+    form.setFieldsValue(initialFormFieldsRef.current)
+    markClean()
+    setShowResetModal(false)
   }
 
   const renderFieldInput = (prop: PropertyResponse) => {
@@ -296,17 +340,39 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
                 Cao tầng
               </Tag>
             )}
+
+            {isDirty && (
+              <Badge
+                status="processing"
+                text={
+                  <span className="text-xs text-amber-600 font-medium">
+                    Có thay đổi chưa lưu
+                  </span>
+                }
+              />
+            )}
           </div>
 
           {!viewOnly && (
-            <Button
-              type="primary"
-              icon={<Save className="size-4" />}
-              onClick={handleSave}
-              loading={saveMutation.isPending}
-            >
-              Lưu thay đổi
-            </Button>
+            <Space>
+              {isDirty && (
+                <Button
+                  icon={<RotateCcw className="size-4" />}
+                  onClick={() => setShowResetModal(true)}
+                >
+                  Hủy thay đổi
+                </Button>
+              )}
+              <Button
+                type="primary"
+                icon={<Save className="size-4" />}
+                onClick={handleSave}
+                disabled={!isDirty}
+                loading={saveMutation.isPending}
+              >
+                Lưu thay đổi
+              </Button>
+            </Space>
           )}
         </div>
       </Card>
@@ -325,7 +391,7 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
             }
             className="border-border/80 shadow-xs"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-4 py-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-4 py-2">
               {commonProperties.map((prop) => (
                 <Form.Item
                   key={prop.id}
@@ -421,6 +487,15 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
           </Card>
         )}
       </Form>
+
+      {/* Reset Confirmation Modal */}
+      <UnsavedChangesModal
+        open={showResetModal}
+        onConfirm={handleConfirmReset}
+        onCancel={() => setShowResetModal(false)}
+        title="Hủy các thay đổi đã nhập"
+        description="Bạn có chắc muốn khôi phục về các giá trị ban đầu? Mọi thông số vừa nhập sẽ bị hủy."
+      />
     </div>
   )
 }
