@@ -21,10 +21,12 @@ import {
 
 export interface StandardCriteriaTabProps {
   form: FormInstance
+  readOnly?: boolean
 }
 
 export const StandardCriteriaTab: React.FC<StandardCriteriaTabProps> = ({
   form,
+  readOnly = false,
 }) => {
   const { data: properties = [] } = propertyQueries.useList({ limit: 500 })
 
@@ -103,15 +105,17 @@ export const StandardCriteriaTab: React.FC<StandardCriteriaTabProps> = ({
                                 </Tag>
                               )}
                             </div>
-                            <Button
-                              type="text"
-                              size="small"
-                              danger
-                              icon={<Trash2 className="size-3.5" />}
-                              onClick={() => remove(name)}
-                            >
-                              Xóa
-                            </Button>
+                            {!readOnly && (
+                              <Button
+                                type="text"
+                                size="small"
+                                danger
+                                icon={<Trash2 className="size-3.5" />}
+                                onClick={() => remove(name)}
+                              >
+                                Xóa
+                              </Button>
+                            )}
                           </div>
 
                           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -210,18 +214,26 @@ export const StandardCriteriaTab: React.FC<StandardCriteriaTabProps> = ({
               )
             })}
 
-            <Button
-              type="dashed"
-              onClick={() =>
-                add({
-                  conditionOperator: "BETWEEN",
-                })
-              }
-              block
-              icon={<Plus className="size-4" />}
-            >
-              Thêm điều kiện lọc
-            </Button>
+            {fields.length === 0 && readOnly && (
+              <div className="text-center py-6 text-muted-foreground text-xs border border-dashed rounded-lg">
+                Không có điều kiện lọc bổ sung (Áp dụng cho mọi quy mô dự án).
+              </div>
+            )}
+
+            {!readOnly && (
+              <Button
+                type="dashed"
+                onClick={() =>
+                  add({
+                    conditionOperator: "BETWEEN",
+                  })
+                }
+                block
+                icon={<Plus className="size-4" />}
+              >
+                Thêm điều kiện lọc
+              </Button>
+            )}
           </div>
         )}
       </Form.List>

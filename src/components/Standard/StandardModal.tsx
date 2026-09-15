@@ -1,6 +1,6 @@
 "use client"
 
-import { Form, Modal, Tabs } from "antd"
+import { Button, Form, Modal, Tabs } from "antd"
 import { Calendar, Layers, SlidersHorizontal, Users } from "lucide-react"
 import React, { useEffect, useState } from "react"
 import { standardQueries } from "@/hooks/server/standards"
@@ -19,14 +19,17 @@ export interface StandardModalProps {
   open: boolean
   onCancel: () => void
   standard?: HeadcountStandardResponse | null
+  readOnly?: boolean
 }
 
 export const StandardModal: React.FC<StandardModalProps> = ({
   open,
   onCancel,
   standard,
+  readOnly = false,
 }) => {
-  const isEdit = Boolean(standard)
+  const isEdit = Boolean(standard) && !readOnly
+  const isView = Boolean(standard) && readOnly
   const createMutation = standardQueries.useCreate()
   const updateMutation = standardQueries.useUpdate()
 
@@ -155,9 +158,11 @@ export const StandardModal: React.FC<StandardModalProps> = ({
         <div className="flex items-center gap-2">
           <Layers className="size-5 text-primary" />
           <span>
-            {isEdit
-              ? `Chỉnh sửa định biên chuẩn: ${standard?.role?.name}`
-              : "Thêm khung định biên chuẩn mới"}
+            {isView
+              ? `Chi tiết định biên chuẩn: ${standard?.role?.name || ""}`
+              : isEdit
+                ? `Chỉnh sửa định biên chuẩn: ${standard?.role?.name || ""}`
+                : "Thêm khung định biên chuẩn mới"}
           </span>
         </div>
       }
@@ -170,8 +175,17 @@ export const StandardModal: React.FC<StandardModalProps> = ({
       width={1200}
       okText={isEdit ? "Lưu thay đổi" : "Tạo mới"}
       cancelText="Hủy"
+      footer={
+        readOnly ? (
+          <div className="flex justify-end">
+            <Button type="primary" onClick={onCancel}>
+              Đóng
+            </Button>
+          </div>
+        ) : undefined
+      }
     >
-      <Form form={form} layout="vertical" className="mt-3">
+      <Form form={form} layout="vertical" disabled={readOnly} className="mt-3">
         <Tabs
           activeKey={activeTab}
           onChange={setActiveTab}
@@ -194,7 +208,7 @@ export const StandardModal: React.FC<StandardModalProps> = ({
                   Khung định biên
                 </span>
               ),
-              children: <StandardCriteriaTab form={form} />,
+              children: <StandardCriteriaTab form={form} readOnly={readOnly} />,
             },
             {
               key: "factors",
@@ -204,7 +218,9 @@ export const StandardModal: React.FC<StandardModalProps> = ({
                   Hệ số tối ưu
                 </span>
               ),
-              children: <StandardMonthlyFactorsTab form={form} />,
+              children: (
+                <StandardMonthlyFactorsTab form={form} readOnly={readOnly} />
+              ),
             },
           ]}
         />

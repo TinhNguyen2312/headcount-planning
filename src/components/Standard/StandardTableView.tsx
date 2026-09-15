@@ -1,35 +1,36 @@
 "use client"
 
-import {
-  Button,
-  Input,
-  Popconfirm,
-  Select,
-  Space,
-  Table,
-  Tag,
-  Tooltip,
-} from "antd"
+import { Button, Select, Tag, Tooltip } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import { Edit, RotateCcw, Search, Trash2 } from "lucide-react"
-import React, { useMemo, useState } from "react"
+import { Edit, Eye, RotateCcw, Trash2 } from "lucide-react"
+import React, { useState } from "react"
+import { ActionMenu, type ActionMenuItem } from "@/components/Common/ActionMenu"
+import { DataTable } from "@/components/Common/DataTable"
+import InfiniteSelect from "@/components/Common/InfiniteSelect"
 import { milestoneQueries } from "@/hooks/server/milestones"
+import { propertyQueries } from "@/hooks/server/properties"
 import { roleQueries } from "@/hooks/server/roles"
 import { standardQueries } from "@/hooks/server/standards"
+import { useListPageState } from "@/hooks/useListPageState"
 import {
   type HeadcountStandardResponse,
+  type PropertyResponse,
   STANDARD_PROJECT_TYPE_OPTIONS,
   type StandardProjectType,
 } from "@/types"
 import { formatCriteriaDisplay } from "./criteriaRules"
+import { StandardModal } from "./StandardModal"
 
 interface StandardTableViewProps {
-  onEditStandard: (standard: HeadcountStandardResponse) => void
+  onEditStandard?: (standard: HeadcountStandardResponse) => void
+  onViewStandard?: (standard: HeadcountStandardResponse) => void
 }
 export const StandardTableView: React.FC<StandardTableViewProps> = ({
   onEditStandard,
+  onViewStandard,
 }) => {
-  const [keyword, setKeyword] = useState("")
+  const [internalViewingStandard, setInternalViewingStandard] =
+    useState<HeadcountStandardResponse | null>(null)
   const [selectedRoleId, setSelectedRoleId] = useState<number | undefined>(
     undefined,
   )
@@ -39,72 +40,48 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
   const [selectedProjectType, setSelectedProjectType] = useState<
     StandardProjectType | undefined
   >(undefined)
+  const [selectedPropertyId, setSelectedPropertyId] = useState<
+    number | undefined
+  >(undefined)
 
-  const { data: standards = [], isLoading } = standardQueries.useList()
-  const { data: roles = [] } = roleQueries.useList({ limit: 500 })
-  const { data: milestones = [] } = milestoneQueries.useList({ limit: 500 })
+  const {
+    page,
+    setPage,
+    limit,
+    setLimit,
+    queryParams,
+  } = useListPageState({
+    persistKey: "standards-table",
+    initialLimit: 15,
+    initialSort: { sort: { sortBy: "id", order: "DESC" } },
+    resetPageOn: [
+      selectedRoleId,
+      selectedMilestoneId,
+      selectedProjectType,
+      selectedPropertyId,
+    ],
+  })
+
+  const {
+    data: standards = [],
+    meta,
+    isLoading,
+    isFetching,
+  } = standardQueries.useList(
+    {
+      ...queryParams,
+      roleId: selectedRoleId,
+      milestoneId: selectedMilestoneId,
+      projectType: selectedProjectType,
+      propertyId: selectedPropertyId,
+    },
+    {
+      placeholderData: (previousData) => previousData,
+    },
+  )
+
+  const total = meta?.totalElements ?? standards.length
   const deleteMutation = standardQueries.useDelete()
-
-  const roleOptions = useMemo(
-    () =>
-      roles.map((r) => ({
-        value: r.id,
-        label: `${r.name}`,
-      })),
-    [roles],
-  )
-
-  const milestoneOptions = useMemo(
-    () =>
-      milestones.map((m) => ({
-        value: m.id,
-        label: `${m.name}`,
-      })),
-    [milestones],
-  )
-
-  const filteredStandards = useMemo(() => {
-    return standards.filter((item) => {
-      if (selectedRoleId && item.roleId !== selectedRoleId) return false
-      if (
-        selectedProjectType &&
-        (item.projectType || "ALL") !== selectedProjectType
-      )
-        return false
-      if (selectedMilestoneId) {
-        const matchFrom = item.fromMilestoneId === selectedMilestoneId
-        const matchTo = item.toMilestoneId === selectedMilestoneId
-        if (!matchFrom && !matchTo) return false
-      }
-      if (keyword.trim()) {
-        const lower = keyword.toLowerCase()
-        const matchRole =
-          item.role?.name?.toLowerCase().includes(lower) ||
-          item.role?.code?.toLowerCase().includes(lower)
-        const matchFromMilestone =
-          item.fromMilestone?.name?.toLowerCase().includes(lower) ||
-          item.fromMilestone?.code?.toLowerCase().includes(lower)
-        const matchToMilestone =
-          item.toMilestone?.name?.toLowerCase().includes(lower) ||
-          item.toMilestone?.code?.toLowerCase().includes(lower)
-        const matchNote = item.note?.toLowerCase().includes(lower)
-        if (
-          !matchRole &&
-          !matchFromMilestone &&
-          !matchToMilestone &&
-          !matchNote
-        )
-          return false
-      }
-      return true
-    })
-  }, [
-    standards,
-    selectedRoleId,
-    selectedProjectType,
-    selectedMilestoneId,
-    keyword,
-  ])
 
   const columns: ColumnsType<HeadcountStandardResponse> = [
     {
@@ -221,7 +198,7 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
       ),
     },
     {
-      title: "Cơ sơ sở định biên",
+      title: "Cơ sở định biên",
       key: "criteria",
       width: 260,
       render: (_, record) => {
@@ -319,96 +296,114 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
     {
       title: "Thao tác",
       key: "actions",
-      width: 100,
+      width: 90,
       align: "center",
-      render: (_, record) => (
-        <Space size="small">
-          <Tooltip title="Chỉnh sửa định biên">
-            <Button
-              type="text"
-              size="small"
-              icon={<Edit className="size-4 text-blue-600" />}
-              onClick={() => onEditStandard(record)}
-            />
-          </Tooltip>
-          <Popconfirm
-            title="Xác nhận xóa định biên chuẩn?"
-            description="Thao tác này sẽ xóa toàn bộ điều kiện lọc và hệ số phân bổ tháng liên quan."
-            okText="Xóa"
-            cancelText="Hủy"
-            okButtonProps={{ danger: true, loading: deleteMutation.isPending }}
-            onConfirm={() => deleteMutation.mutate(record.id)}
-          >
-            <Tooltip title="Xóa">
-              <Button
-                type="text"
-                size="small"
-                danger
-                icon={<Trash2 className="size-4" />}
-              />
-            </Tooltip>
-          </Popconfirm>
-        </Space>
-      ),
+      render: (_, record) => {
+        const actionItems: ActionMenuItem<HeadcountStandardResponse>[] = [
+          {
+            key: "view",
+            label: "Xem chi tiết",
+            icon: <Eye className="size-4 text-blue-500" />,
+            onClick: () => {
+              if (onViewStandard) {
+                onViewStandard(record)
+              } else {
+                setInternalViewingStandard(record)
+              }
+            },
+          },
+          {
+            key: "edit",
+            label: "Chỉnh sửa",
+            icon: <Edit className="size-4 text-amber-500" />,
+            onClick: () => onEditStandard?.(record),
+          },
+          {
+            type: "divider",
+          },
+          {
+            key: "delete",
+            label: "Xóa định biên",
+            icon: <Trash2 className="size-4" />,
+            danger: true,
+            confirm: {
+              title: "Xác nhận xóa định biên chuẩn?",
+              content:
+                "Thao tác này sẽ xóa toàn bộ điều kiện lọc và hệ số phân bổ tháng liên quan.",
+              okText: "Xóa",
+              cancelText: "Hủy",
+              okType: "danger",
+            },
+            onClick: () => deleteMutation.mutate(record.id),
+          },
+        ]
+
+        return <ActionMenu record={record} items={actionItems} />
+      },
     },
   ]
 
   return (
     <div className="space-y-4">
-      {/* Search & Filter Bar */}
+      {/* Filter Bar */}
       <div className="flex flex-wrap items-center gap-3 bg-card p-3 rounded-lg border border-border">
-        <Input
-          placeholder="Tìm theo chức danh, mốc tiến độ, ghi chú..."
-          prefix={<Search className="size-4 text-muted-foreground" />}
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          className="w-72"
-          allowClear
-        />
-
-        <Select
-          placeholder="Lọc theo chức danh"
-          value={selectedRoleId}
-          onChange={setSelectedRoleId}
-          options={roleOptions}
-          className="w-64"
-          allowClear
-          showSearch
-          optionFilterProp="label"
-        />
-
-        <Select
-          placeholder="Lọc theo mốc tiến độ"
-          value={selectedMilestoneId}
-          onChange={setSelectedMilestoneId}
-          options={milestoneOptions}
-          className="w-64"
-          allowClear
-          showSearch
-          optionFilterProp="label"
-        />
+        <div className="w-60">
+          <InfiniteSelect
+            placeholder="Lọc theo chức danh"
+            value={selectedRoleId}
+            onChange={(val) => setSelectedRoleId(val as number | undefined)}
+            useList={roleQueries.useList}
+            allowClear
+          />
+        </div>
 
         <Select
           placeholder="Lọc loại dự án"
           value={selectedProjectType}
           onChange={setSelectedProjectType}
           options={STANDARD_PROJECT_TYPE_OPTIONS}
-          className="w-52"
+          className="w-48"
           allowClear
         />
 
-        {(keyword ||
-          selectedRoleId ||
+        <div className="w-60">
+          <InfiniteSelect
+            placeholder="Lọc theo mốc tiến độ"
+            value={selectedMilestoneId}
+            onChange={(val) => setSelectedMilestoneId(val)}
+            useList={milestoneQueries.useList}
+            allowClear
+          />
+        </div>
+
+        <div className="w-60">
+          <InfiniteSelect<PropertyResponse>
+            placeholder="Lọc cơ sở định biên"
+            value={selectedPropertyId}
+            onChange={(val) => setSelectedPropertyId(Number(val))}
+            useList={propertyQueries.useList}
+            transformItem={(item) => ({
+              value: item.id,
+              label: item.name,
+              id: item.id,
+              name: item.name,
+            })}
+            allowClear
+          />
+        </div>
+
+        {(selectedRoleId ||
           selectedMilestoneId ||
-          selectedProjectType) && (
+          selectedProjectType ||
+          selectedPropertyId) && (
           <Button
             type="dashed"
             icon={<RotateCcw className="size-3.5" />}
             onClick={() => {
-              setKeyword("")
               setSelectedRoleId(undefined)
               setSelectedMilestoneId(undefined)
               setSelectedProjectType(undefined)
+              setSelectedPropertyId(undefined)
             }}
           >
             Đặt lại
@@ -417,18 +412,31 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
       </div>
 
       {/* Table View */}
-      <Table
-        loading={isLoading}
-        dataSource={filteredStandards}
+      <DataTable<HeadcountStandardResponse>
         columns={columns}
+        dataSource={standards}
+        loading={isLoading || isFetching}
+        totalItemLabel="định biên"
         rowKey="id"
         pagination={{
-          pageSize: 15,
-          showSizeChanger: true,
-          pageSizeOptions: ["10", "15", "30", "50"],
-          showTotal: (total) => `Tổng cộng ${total} mục`,
+          current: page,
+          pageSize: limit,
+          total,
+          onChange: (newPage, newPageSize) => {
+            setPage(newPage)
+            setLimit(newPageSize)
+          },
         }}
       />
+
+      {internalViewingStandard && (
+        <StandardModal
+          open={Boolean(internalViewingStandard)}
+          standard={internalViewingStandard}
+          readOnly
+          onCancel={() => setInternalViewingStandard(null)}
+        />
+      )}
     </div>
   )
 }

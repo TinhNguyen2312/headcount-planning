@@ -17,6 +17,8 @@ export default function StandardsPage() {
   const [isAddProjectOpen, setIsAddProjectOpen] = useState(false)
   const [editingStandard, setEditingStandard] =
     useState<HeadcountStandardResponse | null>(null)
+  const [viewingStandard, setViewingStandard] =
+    useState<HeadcountStandardResponse | null>(null)
 
   const tabItems = [
     {
@@ -31,6 +33,7 @@ export default function StandardsPage() {
         <div className="pt-2">
           <StandardTableView
             onEditStandard={(std) => setEditingStandard(std)}
+            onViewStandard={(std) => setViewingStandard(std)}
           />
         </div>
       ),
@@ -85,11 +88,17 @@ export default function StandardsPage() {
       </div>
 
       <StandardModal
-        standard={editingStandard}
-        open={isAddStandardOpen || Boolean(editingStandard)}
+        standard={viewingStandard || editingStandard}
+        open={
+          isAddStandardOpen ||
+          Boolean(editingStandard) ||
+          Boolean(viewingStandard)
+        }
+        readOnly={Boolean(viewingStandard)}
         onCancel={() => {
           setIsAddStandardOpen(false)
           setEditingStandard(null)
+          setViewingStandard(null)
         }}
       />
 

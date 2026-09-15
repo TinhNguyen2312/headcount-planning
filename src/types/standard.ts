@@ -175,6 +175,8 @@ export interface HeadcountStandardQueryParams {
   roleId?: number
   fromMilestoneId?: number
   toMilestoneId?: number
+  milestoneId?: number
+  propertyId?: number
   projectType?: StandardProjectType
   keyword?: string
   page?: number

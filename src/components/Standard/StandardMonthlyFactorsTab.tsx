@@ -16,11 +16,12 @@ import React, { useCallback, useMemo } from "react"
 
 export interface StandardMonthlyFactorsTabProps {
   form: FormInstance
+  readOnly?: boolean
 }
 
 export const StandardMonthlyFactorsTab: React.FC<
   StandardMonthlyFactorsTabProps
-> = ({ form }) => {
+> = ({ form, readOnly = false }) => {
   const watchedDuration = Form.useWatch("durationMonths", form)
   const watchedFactors = Form.useWatch("monthlyFactors", form)
 
@@ -95,6 +96,7 @@ export const StandardMonthlyFactorsTab: React.FC<
                 step={0.1}
                 precision={2}
                 controls={false}
+                disabled={readOnly}
                 value={factorVal}
                 onChange={(val) => handleFactorChange(index, val)}
                 className="w-14 text-center font-mono text-xs"
@@ -105,7 +107,7 @@ export const StandardMonthlyFactorsTab: React.FC<
       })
     }
     return cols
-  }, [durationMonths, factors, handleFactorChange])
+  }, [durationMonths, factors, handleFactorChange, readOnly])
 
   return (
     <div className="space-y-3 pt-1">
@@ -126,6 +128,7 @@ export const StandardMonthlyFactorsTab: React.FC<
               size="small"
               min={6}
               max={60}
+              disabled={readOnly}
               onChange={handleDurationChange}
               placeholder="Từ 6 đến 60"
               addonAfter="tháng"
@@ -134,16 +137,18 @@ export const StandardMonthlyFactorsTab: React.FC<
           </Form.Item>
         </Space>
 
-        <Tooltip title="Đặt lại toàn bộ hệ số các tháng về 1.0 (100%)">
-          <Button
-            size="small"
-            type="text"
-            icon={<RotateCcw className="size-3.5 text-muted-foreground" />}
-            onClick={handleResetToOne}
-          >
-            Mặc định 1.0
-          </Button>
-        </Tooltip>
+        {!readOnly && (
+          <Tooltip title="Đặt lại toàn bộ hệ số các tháng về 1.0 (100%)">
+            <Button
+              size="small"
+              type="text"
+              icon={<RotateCcw className="size-3.5 text-muted-foreground" />}
+              onClick={handleResetToOne}
+            >
+              Mặc định 1.0
+            </Button>
+          </Tooltip>
+        )}
       </div>
 
       {/* Hidden form item to register monthlyFactors in form store */}

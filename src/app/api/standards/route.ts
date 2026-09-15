@@ -1,5 +1,15 @@
 import { NextRequest } from "next/server"
-import { ilike, or, and, count, desc, asc, eq, type SQL } from "drizzle-orm"
+import {
+  ilike,
+  or,
+  and,
+  count,
+  desc,
+  asc,
+  eq,
+  inArray,
+  type SQL,
+} from "drizzle-orm"
 import {
   db,
   headcountStandards,
@@ -129,8 +139,11 @@ export async function GET(req: NextRequest) {
     const roleIdParam = searchParams.get("roleId")
     const fromMilestoneIdParam = searchParams.get("fromMilestoneId")
     const toMilestoneIdParam = searchParams.get("toMilestoneId")
+    const milestoneIdParam = searchParams.get("milestoneId")
+    const propertyIdParam = searchParams.get("propertyId")
     const projectTypeParam = searchParams.get("projectType")
-    const page = parseInt(searchParams.get("page") || "0", 10)
+    const pageParam = parseInt(searchParams.get("page") || "1", 10)
+    const page = Math.max(0, pageParam > 0 ? pageParam - 1 : 0)
     const limit = Math.min(500, parseInt(searchParams.get("limit") || "50", 10))
     const order =
       searchParams.get("order")?.toLowerCase() === "asc" ? "asc" : "desc"
@@ -152,6 +165,34 @@ export async function GET(req: NextRequest) {
       conditions.push(
         eq(headcountStandards.toMilestoneId, parseInt(toMilestoneIdParam, 10)),
       )
+    }
+    if (milestoneIdParam) {
+      const mId = parseInt(milestoneIdParam, 10)
+      const milestoneCondition = or(
+        eq(headcountStandards.fromMilestoneId, mId),
+        eq(headcountStandards.toMilestoneId, mId),
+      )
+      if (milestoneCondition) {
+        conditions.push(milestoneCondition)
+      }
+    }
+    if (propertyIdParam) {
+      const propId = parseInt(propertyIdParam, 10)
+      const matchingCriteria = await db
+        .select({ standardId: headcountCriteria.standardId })
+        .from(headcountCriteria)
+        .where(eq(headcountCriteria.propertyId, propId))
+
+      const standardIds = matchingCriteria.map((c) => c.standardId)
+      if (standardIds.length > 0) {
+        conditions.push(inArray(headcountStandards.id, standardIds))
+      } else {
+        return apiSuccess(
+          [],
+          "Lấy danh sách định biên chuẩn thành công",
+          createPaginationMeta(page, limit, 0),
+        )
+      }
     }
     if (
       projectTypeParam &&
@@ -209,7 +250,7 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    const pagination = createPaginationMeta(page, limit, total)
+    const pagination = createPaginationMeta(pageParam, limit, total)
     return apiSuccess(
       formatted,
       "Lấy danh sách định biên chuẩn thành công",
