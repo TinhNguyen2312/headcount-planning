@@ -2,11 +2,13 @@ import { Form, Input, Modal, Select, Switch } from "antd"
 import React, { useEffect } from "react"
 import { propertyQueries } from "@/hooks/server/properties"
 import { applyApiFieldErrors } from "@/lib/errors"
-import type {
-  PropertyCreate,
-  PropertyDataType,
-  PropertyResponse,
-  PropertyUpdate,
+import {
+  PROPERTY_SCOPE_OPTIONS,
+  type PropertyCreate,
+  type PropertyDataType,
+  type PropertyResponse,
+  type PropertyScope,
+  type PropertyUpdate,
 } from "@/types"
 
 export interface PropertyModalProps {
@@ -21,6 +23,7 @@ interface PropertyFormValues {
   description?: string | null
   unit?: string | null
   dataType: PropertyDataType
+  scope: PropertyScope
   options?: string[] | null
   isActive: boolean
 }
@@ -52,6 +55,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
           description: property.description ?? "",
           unit: property.unit ?? "",
           dataType: property.dataType,
+          scope: property.scope || "COMMON",
           options: property.options ?? [],
           isActive: property.isActive,
         })
@@ -59,6 +63,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
         form.resetFields()
         form.setFieldsValue({
           dataType: "NUMBER",
+          scope: "COMMON",
           isActive: true,
           options: [],
         })
@@ -75,6 +80,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
         description: values.description?.trim() || null,
         unit: values.unit?.trim() || null,
         dataType: values.dataType,
+        scope: values.scope || "COMMON",
         options:
           values.dataType === "SELECT" && values.options?.length
             ? values.options
@@ -92,7 +98,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
       }
 
       onCancel()
-    } catch (error: any) {
+    } catch (error) {
       applyApiFieldErrors(form, error)
     }
   }
@@ -125,7 +131,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
 
           <Form.Item
             name="code"
-            label="Mã định danh (Code)"
+            label="Mã định danh"
             rules={[
               { required: true, message: "Vui lòng nhập mã định danh" },
               {
@@ -157,6 +163,15 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
             <Input placeholder="Ví dụ: ha, m2, căn, robot..." />
           </Form.Item>
         </div>
+
+        <Form.Item
+          name="scope"
+          label="Phạm vi áp dụng"
+          tooltip="Quy định chỉ số này dùng chung toàn dự án hay tách riêng theo Thấp tầng / Cao tầng"
+          rules={[{ required: true, message: "Vui lòng chọn phạm vi áp dụng" }]}
+        >
+          <Select options={PROPERTY_SCOPE_OPTIONS} />
+        </Form.Item>
 
         {selectedDataType === "SELECT" && (
           <Form.Item

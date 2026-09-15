@@ -21,6 +21,7 @@ export async function GET(
         code: properties.code,
         name: properties.name,
         dataType: properties.dataType,
+        scope: properties.scope,
         unit: properties.unit,
         options: properties.options,
         description: properties.description,
@@ -53,7 +54,16 @@ export async function PATCH(
     if (isNaN(propertyId)) return apiError("ID thuộc tính không hợp lệ", 400)
 
     const body = await req.json()
-    const { code, name, dataType, unit, options, description, isActive } = body
+    const {
+      code,
+      name,
+      dataType,
+      scope,
+      unit,
+      options,
+      description,
+      isActive,
+    } = body
 
     if (code !== undefined && !code.trim()) {
       return apiError("Mã thuộc tính không được để trống", 422)
@@ -78,6 +88,7 @@ export async function PATCH(
         code: code !== undefined ? code.trim() : undefined,
         name: name !== undefined ? name.trim() : undefined,
         dataType: dataType !== undefined ? dataType : undefined,
+        scope: scope !== undefined ? scope : undefined,
         unit: unit !== undefined ? (unit ? unit.trim() : null) : undefined,
         options: options !== undefined ? options : undefined,
         description: description !== undefined ? description : undefined,

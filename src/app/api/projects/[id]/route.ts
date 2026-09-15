@@ -25,6 +25,7 @@ export async function GET(
         status: projects.status,
         startDate: projects.startDate,
         endDate: projects.endDate,
+        projectTypes: projects.projectTypes,
         thumbnail: projects.thumbnail,
         createdAt: projects.createdAt,
         regionName: regions.name,
@@ -69,6 +70,8 @@ export async function PATCH(
         status: body.status !== undefined ? body.status : undefined,
         startDate: body.startDate !== undefined ? body.startDate : undefined,
         endDate: body.endDate !== undefined ? body.endDate : undefined,
+        projectTypes:
+          body.projectTypes !== undefined ? body.projectTypes : undefined,
         thumbnail: body.thumbnail !== undefined ? body.thumbnail : undefined,
       })
       .where(eq(projects.id, projectId))

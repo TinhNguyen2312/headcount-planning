@@ -3,6 +3,7 @@
 import {
   Button,
   Card,
+  Checkbox,
   DatePicker,
   Form,
   Input,
@@ -19,6 +20,8 @@ import UnsavedChangesModal from "@/components/Common/UnsavedChangesModal"
 import { projectQueries } from "@/hooks/server/projects"
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges"
 import {
+  DEVELOPMENT_TYPE_OPTIONS,
+  type DevelopmentType,
   PROJECT_REGION_OPTIONS,
   PROJECT_SECTOR_OPTIONS,
   type ProjectRegion,
@@ -41,6 +44,7 @@ export interface ProjectEditFormValues {
   region?: ProjectRegion
   sector?: ProjectSector
   status: ProjectStatus
+  projectTypes?: DevelopmentType[]
   startDate?: Dayjs | null
   endDate?: Dayjs | null
   accProjectId?: string | null
@@ -53,6 +57,7 @@ const getProjectFormValues = (p: ProjectResponse): ProjectEditFormValues => ({
   region: p.region ?? undefined,
   sector: p.sector ?? undefined,
   status: p.status,
+  projectTypes: p.projectTypes || ["HIGH_RISE"],
   startDate: p.startDate ? dayjs(p.startDate) : null,
   endDate: p.endDate ? dayjs(p.endDate) : null,
   accProjectId: p.accProjectId ?? null,
@@ -94,6 +99,7 @@ const ProjectEditForm = ({ project, viewOnly }: ProjectEditFormProps) => {
   const [form] = Form.useForm<ProjectEditFormValues>()
   Form.useWatch([], form)
   const watchedGeneralInfo = Form.useWatch("generalInfo", form)
+  const watchedProjectTypes = Form.useWatch("projectTypes", form)
 
   const currentGeneralInfo =
     watchedGeneralInfo !== undefined ? watchedGeneralInfo : project.generalInfo
@@ -118,6 +124,7 @@ const ProjectEditForm = ({ project, viewOnly }: ProjectEditFormProps) => {
           region: values.region ?? undefined,
           sector: values.sector ?? undefined,
           status: values.status,
+          projectTypes: values.projectTypes || ["HIGH_RISE"],
           startDate: values.startDate ?? null,
           endDate: values.endDate ?? null,
           accProjectId: values.accProjectId ?? null,
@@ -143,6 +150,10 @@ const ProjectEditForm = ({ project, viewOnly }: ProjectEditFormProps) => {
           region: values.region || null,
           sector: values.sector || null,
           status: values.status,
+          projectTypes:
+            values.projectTypes && values.projectTypes.length > 0
+              ? values.projectTypes
+              : ["HIGH_RISE"],
           startDate: values.startDate
             ? values.startDate.format("YYYY-MM-DD")
             : null,
@@ -276,6 +287,24 @@ const ProjectEditForm = ({ project, viewOnly }: ProjectEditFormProps) => {
           project={project}
           disabled={viewOnly}
         /> */}
+
+        <Form.Item
+          label="Loại hình phát triển"
+          name="projectTypes"
+          className="mb-0"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng chọn ít nhất một loại hình phát triển",
+            },
+          ]}
+          tooltip="Dự án có thể gồm hạng mục Thấp tầng, Cao tầng hoặc cả hai"
+        >
+          <Checkbox.Group
+            options={DEVELOPMENT_TYPE_OPTIONS}
+            disabled={viewOnly}
+          />
+        </Form.Item>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:max-w-full">
           <Form.Item label="Vùng" name="region" className="mb-0">

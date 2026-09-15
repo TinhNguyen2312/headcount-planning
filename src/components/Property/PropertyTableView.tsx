@@ -14,7 +14,7 @@ import type { ColumnsType } from "antd/es/table"
 import { Edit, Search, Trash2 } from "lucide-react"
 import React, { useMemo, useState } from "react"
 import { propertyQueries } from "@/hooks/server/properties"
-import type { PropertyDataType, PropertyResponse } from "@/types"
+import type { PropertyDataType, PropertyResponse, PropertyScope } from "@/types"
 
 interface PropertyTableViewProps {
   onEditProperty: (property: PropertyResponse) => void
@@ -28,6 +28,13 @@ const DATA_TYPE_BADGES: Record<
   STRING: { label: "Văn bản (String)", color: "cyan" },
   BOOLEAN: { label: "Đúng / Sai", color: "purple" },
   SELECT: { label: "Chọn (Select)", color: "orange" },
+}
+
+const SCOPE_BADGES: Record<PropertyScope, { label: string; color: string }> = {
+  COMMON: { label: "Toàn dự án", color: "blue" },
+  PER_TYPE: { label: "Thấp và Cao tầng", color: "geekblue" },
+  LOW_RISE_ONLY: { label: "Thấp tầng", color: "green" },
+  HIGH_RISE_ONLY: { label: "Cao tầng", color: "purple" },
 }
 
 export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
@@ -61,7 +68,7 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
       ),
     },
     {
-      title: "Tên chỉ số / Cơ sở",
+      title: "Tên chỉ số",
       dataIndex: "name",
       key: "name",
       render: (name: string, record) => (
@@ -82,6 +89,19 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
       width: 140,
       render: (dt: PropertyDataType) => {
         const badge = DATA_TYPE_BADGES[dt] || { label: dt, color: "default" }
+        return <Tag color={badge.color}>{badge.label}</Tag>
+      },
+    },
+    {
+      title: "Phạm vi áp dụng",
+      dataIndex: "scope",
+      key: "scope",
+      width: 170,
+      render: (scope?: PropertyScope) => {
+        const badge = (scope && SCOPE_BADGES[scope]) || {
+          label: "Toàn dự án",
+          color: "blue",
+        }
         return <Tag color={badge.color}>{badge.label}</Tag>
       },
     },

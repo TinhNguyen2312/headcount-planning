@@ -59,6 +59,7 @@ export async function GET(req: NextRequest) {
         status: projects.status,
         startDate: projects.startDate,
         endDate: projects.endDate,
+        projectTypes: projects.projectTypes,
         thumbnail: projects.thumbnail,
         createdAt: projects.createdAt,
         regionName: regions.name,
@@ -101,6 +102,7 @@ export async function POST(req: NextRequest) {
       status,
       startDate,
       endDate,
+      projectTypes,
       thumbnail,
     } = body
 
@@ -126,6 +128,10 @@ export async function POST(req: NextRequest) {
         status: status || "ACTIVE",
         startDate: startDate || null,
         endDate: endDate || null,
+        projectTypes:
+          projectTypes && Array.isArray(projectTypes) && projectTypes.length > 0
+            ? projectTypes
+            : ["HIGH_RISE"],
         thumbnail: thumbnail || null,
       })
       .returning()

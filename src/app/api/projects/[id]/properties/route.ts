@@ -29,6 +29,7 @@ export async function GET(
         code: properties.code,
         name: properties.name,
         dataType: properties.dataType,
+        scope: properties.scope,
         unit: properties.unit,
         options: properties.options,
         description: properties.description,
@@ -46,6 +47,7 @@ export async function GET(
         id: propertyValues.id,
         projectId: propertyValues.projectId,
         propertyId: propertyValues.propertyId,
+        projectType: propertyValues.projectType,
         valueText: propertyValues.valueText,
         valueNumber: propertyValues.valueNumber,
         updatedAt: propertyValues.updatedAt,
@@ -61,9 +63,11 @@ export async function GET(
         id: val.id,
         projectId: val.projectId,
         propertyId: val.propertyId,
+        projectType: val.projectType || "COMMON",
         propertyCode: prop?.code || "",
         propertyName: prop?.name || "",
         dataType: (prop?.dataType as any) || "NUMBER",
+        scope: (prop?.scope as any) || "COMMON",
         unit: prop?.unit || null,
         options: (prop?.options as any) || null,
         valueText: val.valueText,
@@ -74,6 +78,7 @@ export async function GET(
 
     return apiSuccess({
       projectId,
+      projectTypes: (project.projectTypes as any) || ["HIGH_RISE"],
       properties: activeProperties,
       values: formattedValues,
     })
@@ -123,12 +128,14 @@ export async function PUT(
             ? String(item.valueText).trim()
             : null
 
+        const targetProjectType = item.projectType || "COMMON"
+
         await db
           .insert(propertyValues)
           .values({
             projectId,
             propertyId: item.propertyId,
-            projectType: "COMMON",
+            projectType: targetProjectType,
             valueNumber: valNum as any,
             valueText: valTxt,
           })

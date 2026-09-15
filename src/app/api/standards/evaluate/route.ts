@@ -22,9 +22,11 @@ export async function POST(req: NextRequest) {
     const pValues = await db
       .select({
         propertyId: propertyValues.propertyId,
+        projectType: propertyValues.projectType,
         propertyCode: properties.code,
         propertyName: properties.name,
         dataType: properties.dataType,
+        scope: properties.scope,
         valueNumber: propertyValues.valueNumber,
         valueText: propertyValues.valueText,
       })
@@ -40,17 +42,40 @@ export async function POST(req: NextRequest) {
         dataType: string
         valueNumber: number | null
         valueText: string | null
+        valuesByType: Record<
+          string,
+          { valueNumber: number | null; valueText: string | null }
+        >
       }
     >()
 
     for (const pv of pValues) {
-      projectPropMap.set(pv.propertyId, {
-        propertyCode: pv.propertyCode,
-        propertyName: pv.propertyName,
-        dataType: pv.dataType,
-        valueNumber: pv.valueNumber !== null ? Number(pv.valueNumber) : null,
-        valueText: pv.valueText,
-      })
+      const numVal = pv.valueNumber !== null ? Number(pv.valueNumber) : null
+      const pType = pv.projectType || "COMMON"
+      const existing = projectPropMap.get(pv.propertyId)
+
+      if (!existing) {
+        projectPropMap.set(pv.propertyId, {
+          propertyCode: pv.propertyCode,
+          propertyName: pv.propertyName,
+          dataType: pv.dataType,
+          valueNumber: numVal,
+          valueText: pv.valueText,
+          valuesByType: {
+            [pType]: { valueNumber: numVal, valueText: pv.valueText },
+          },
+        })
+      } else {
+        if (existing.dataType === "NUMBER") {
+          existing.valueNumber = (existing.valueNumber || 0) + (numVal || 0)
+        } else if (!existing.valueText && pv.valueText) {
+          existing.valueText = pv.valueText
+        }
+        existing.valuesByType[pType] = {
+          valueNumber: numVal,
+          valueText: pv.valueText,
+        }
+      }
     }
 
     // 2. Fetch target candidate standards

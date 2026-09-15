@@ -86,6 +86,21 @@ export const PROJECT_REGION_OPTIONS: { value: ProjectRegion; label: string }[] =
     label: PROJECT_REGION_LABELS[key],
   }))
 
+export type DevelopmentType = "LOW_RISE" | "HIGH_RISE"
+
+export const DEVELOPMENT_TYPE_LABELS: Record<DevelopmentType, string> = {
+  LOW_RISE: "Thấp tầng",
+  HIGH_RISE: "Cao tầng",
+}
+
+export const DEVELOPMENT_TYPE_OPTIONS: {
+  value: DevelopmentType
+  label: string
+}[] = [
+  { value: "LOW_RISE", label: "Thấp tầng" },
+  { value: "HIGH_RISE", label: "Cao tầng" },
+]
+
 export interface ProjectResponse {
   id: number
   name: string
@@ -96,6 +111,7 @@ export interface ProjectResponse {
   status: ProjectStatus
   startDate: string | null
   endDate: string | null
+  projectTypes: DevelopmentType[]
   createdAt: string
   zonesCount?: number
   membersCount?: number
@@ -114,6 +130,7 @@ export interface ProjectCreate {
   status?: ProjectStatus
   startDate?: string | null
   endDate?: string | null
+  projectTypes?: DevelopmentType[]
   thumbnail?: string
   accProjectId?: string | null
 }

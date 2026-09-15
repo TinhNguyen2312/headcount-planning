@@ -11,12 +11,14 @@ export const properties = pgTable("properties", {
 	unit: varchar({ length: 20 }),
 	options: jsonb(),
 	description: text(),
+	scope: varchar("scope", { length: 20 }).default('COMMON').notNull(),
 	isActive: boolean("is_active").default(true).notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	unique("properties_code_key").on(table.code),
 	check("properties_data_type_check", sql`(data_type)::text = ANY ((ARRAY['NUMBER'::character varying, 'STRING'::character varying, 'BOOLEAN'::character varying, 'SELECT'::character varying])::text[])`),
+	check("properties_scope_check", sql`(scope)::text = ANY ((ARRAY['COMMON'::character varying, 'PER_TYPE'::character varying, 'LOW_RISE_ONLY'::character varying, 'HIGH_RISE_ONLY'::character varying])::text[])`),
 ]);
 
 export const projects = pgTable("projects", {
@@ -30,6 +32,7 @@ export const projects = pgTable("projects", {
 	startDate: date("start_date"),
 	endDate: date("end_date"),
 	thumbnail: text(),
+	projectTypes: jsonb("project_types").$type<string[]>().default(["HIGH_RISE"]).notNull(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	foreignKey({
