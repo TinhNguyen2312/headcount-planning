@@ -1,17 +1,5 @@
-"use client"
-
-import dynamic from "next/dynamic"
-import { Skeleton } from "antd"
-
-const SectorRegionPage = dynamic(() => import("@/views/SectorRegionPage"), {
-  ssr: false,
-  loading: () => (
-    <div className="p-6">
-      <Skeleton active paragraph={{ rows: 10 }} />
-    </div>
-  ),
-})
+import { redirect } from "next/navigation"
 
 export default function Page() {
-  return <SectorRegionPage />
+  redirect("/admin?tab=regions")
 }
