@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-assignment */
 import { BaseEdge, type EdgeProps, Position } from "@xyflow/react"
 
 const RoleBusEdge = ({
