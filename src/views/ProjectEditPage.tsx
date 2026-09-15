@@ -13,7 +13,7 @@ import { useState } from "react"
 import PageContainer from "@/components/Common/PageContainer"
 import { ProjectPlanManagement } from "@/components/Projects/Plan"
 import ProjectEditForm from "@/components/Projects/ProjectEditForm"
-import ProjectPropertiesDrawer from "@/components/Projects/ProjectPropertiesDrawer"
+import ProjectPropertiesTab from "@/components/Projects/ProjectPropertiesTab"
 import ProjectUsersTab from "@/components/Projects/ProjectUsersTab"
 import { projectQueries } from "@/hooks/server/projects"
 import { uploadMutations } from "@/hooks/server/uploads"
@@ -35,7 +35,6 @@ export default function ProjectEditPage({
   const uploadMutation = uploadMutations.useUploadFile()
   const updateMutation = projectQueries.useUpdate()
   const { message } = useUI()
-  const [isPropertiesDrawerOpen, setIsPropertiesDrawerOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<string>("general")
 
   const handleHeaderFileUpload = async (file: File) => {
@@ -68,6 +67,18 @@ export default function ProjectEditPage({
         </span>
       ),
       children: <ProjectEditForm project={project!} viewOnly={!canEdit} />,
+    },
+    {
+      key: "properties",
+      label: (
+        <span className="flex items-center gap-1.5 font-medium">
+          <SlidersHorizontal className="size-4" />
+          Quy mô & Cơ sở định biên
+        </span>
+      ),
+      children: (
+        <ProjectPropertiesTab projectId={projectId} viewOnly={!canEdit} />
+      ),
     },
     {
       key: "plans",
@@ -103,32 +114,24 @@ export default function ProjectEditPage({
       title={`${canEdit ? "Sửa dự án : " : ""} ${project?.name || ""} `}
       onBack={canEdit ? onBack : undefined}
       rightSlot={
-        <>
-          {canEdit && (
-            <Upload
-              showUploadList={false}
-              accept="image/*"
-              beforeUpload={(file) => {
-                handleHeaderFileUpload(file as File)
-                return false
-              }}
-              disabled={uploadMutation.isPending || updateMutation.isPending}
-            >
-              <Button
-                icon={<UploadCloud className="size-4" />}
-                loading={uploadMutation.isPending || updateMutation.isPending}
-              >
-                Tải ảnh đại diện
-              </Button>
-            </Upload>
-          )}
-          <Button
-            icon={<SlidersHorizontal className="size-4" />}
-            onClick={() => setIsPropertiesDrawerOpen(true)}
+        canEdit ? (
+          <Upload
+            showUploadList={false}
+            accept="image/*"
+            beforeUpload={(file) => {
+              handleHeaderFileUpload(file as File)
+              return false
+            }}
+            disabled={uploadMutation.isPending || updateMutation.isPending}
           >
-            Quy mô & Cơ sở định biên
-          </Button>
-        </>
+            <Button
+              icon={<UploadCloud className="size-4" />}
+              loading={uploadMutation.isPending || updateMutation.isPending}
+            >
+              Tải ảnh đại diện
+            </Button>
+          </Upload>
+        ) : undefined
       }
     >
       <div className="pt-1">
@@ -140,13 +143,6 @@ export default function ProjectEditPage({
           className="project-edit-tabs"
         />
       </div>
-
-      <ProjectPropertiesDrawer
-        projectId={projectId}
-        open={isPropertiesDrawerOpen}
-        onClose={() => setIsPropertiesDrawerOpen(false)}
-        viewOnly={!canEdit}
-      />
     </PageContainer>
   )
 }

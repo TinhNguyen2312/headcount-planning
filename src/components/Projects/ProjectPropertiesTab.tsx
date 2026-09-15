@@ -1,8 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import {
-  Alert,
-  Badge,
   Button,
   Card,
   Empty,
@@ -14,19 +13,13 @@ import {
   Switch,
   Tag,
 } from "antd"
-import {
-  Building,
-  Building2,
-  Home,
-  Layers,
-  Save,
-  SlidersHorizontal,
-} from "lucide-react"
+import { Building2, Home, Save, SlidersHorizontal } from "lucide-react"
 import React, { useEffect, useMemo } from "react"
 
 import { propertyQueries } from "@/hooks/server/properties"
 import type {
   DevelopmentType,
+  PropertyDataType,
   PropertyResponse,
   PropertyValueItem,
 } from "@/types"
@@ -36,12 +29,29 @@ interface ProjectPropertiesTabProps {
   viewOnly?: boolean
 }
 
+const DATA_TYPE_SORT_ORDER: Record<PropertyDataType, number> = {
+  NUMBER: 1,
+  SELECT: 2,
+  STRING: 3,
+  BOOLEAN: 4,
+}
+
+const sortPropertiesByType = (list: PropertyResponse[]): PropertyResponse[] => {
+  return [...list].sort((a, b) => {
+    const orderA = DATA_TYPE_SORT_ORDER[a.dataType] ?? 99
+    const orderB = DATA_TYPE_SORT_ORDER[b.dataType] ?? 99
+    if (orderA !== orderB) {
+      return orderA - orderB
+    }
+    return a.name.localeCompare(b.name, "vi")
+  })
+}
+
 export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
   projectId,
   viewOnly = false,
 }) => {
   const [form] = Form.useForm()
-  Form.useWatch([], form)
 
   const { data: matrixData, isLoading } =
     propertyQueries.useProjectProperties(projectId)
@@ -50,7 +60,6 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
   const properties: PropertyResponse[] = useMemo(() => {
     return matrixData?.result?.properties || []
   }, [matrixData])
-
   const values: PropertyValueItem[] = useMemo(() => {
     return matrixData?.result?.values || []
   }, [matrixData])
@@ -65,37 +74,34 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
   const hasHighRise = projectTypes.includes("HIGH_RISE")
   const isMixedUse = hasLowRise && hasHighRise
 
-  // Group properties
   const commonProperties = useMemo(
-    () => properties.filter((p) => !p.scope || p.scope === "COMMON"),
+    () =>
+      sortPropertiesByType(
+        properties.filter((p) => !p.scope || p.scope === "COMMON"),
+      ),
     [properties],
   )
 
   const lowRiseProperties = useMemo(
     () =>
-      properties.filter(
-        (p) => p.scope === "PER_TYPE" || p.scope === "LOW_RISE_ONLY",
+      sortPropertiesByType(
+        properties.filter(
+          (p) => p.scope === "PER_TYPE" || p.scope === "LOW_RISE_ONLY",
+        ),
       ),
     [properties],
   )
 
   const highRiseProperties = useMemo(
     () =>
-      properties.filter(
-        (p) => p.scope === "PER_TYPE" || p.scope === "HIGH_RISE_ONLY",
+      sortPropertiesByType(
+        properties.filter(
+          (p) => p.scope === "PER_TYPE" || p.scope === "HIGH_RISE_ONLY",
+        ),
       ),
     [properties],
   )
 
-  const perTypeProperties = useMemo(
-    () =>
-      properties.filter(
-        (p) => p.scope === "PER_TYPE" && p.dataType === "NUMBER",
-      ),
-    [properties],
-  )
-
-  // Pre-fill form values
   useEffect(() => {
     if (!properties || properties.length === 0) return
 
@@ -114,7 +120,6 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
     }
 
     for (const prop of properties) {
-      // 1. Common
       const commonMatch = values.find(
         (v) =>
           v.propertyId === prop.id &&
@@ -124,25 +129,21 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
         formFields[`prop_${prop.id}_COMMON`] = getVal(prop, commonMatch)
       }
 
-      // 2. Low Rise
       const lowMatch = values.find(
         (v) => v.propertyId === prop.id && v.projectType === "LOW_RISE",
       )
       if (lowMatch) {
         formFields[`prop_${prop.id}_LOW_RISE`] = getVal(prop, lowMatch)
       } else if (!hasHighRise && commonMatch && prop.scope === "PER_TYPE") {
-        // Fallback if previously saved as COMMON
         formFields[`prop_${prop.id}_LOW_RISE`] = getVal(prop, commonMatch)
       }
 
-      // 3. High Rise
       const highMatch = values.find(
         (v) => v.propertyId === prop.id && v.projectType === "HIGH_RISE",
       )
       if (highMatch) {
         formFields[`prop_${prop.id}_HIGH_RISE`] = getVal(prop, highMatch)
       } else if (!hasLowRise && commonMatch && prop.scope === "PER_TYPE") {
-        // Fallback if previously saved as COMMON
         formFields[`prop_${prop.id}_HIGH_RISE`] = getVal(prop, commonMatch)
       }
     }
@@ -201,7 +202,6 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
     }
   }
 
-  // Helper renderer for dynamic inputs
   const renderFieldInput = (prop: PropertyResponse) => {
     switch (prop.dataType) {
       case "NUMBER":
@@ -232,11 +232,13 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
       }
       case "BOOLEAN":
         return (
-          <Switch
-            checkedChildren="Có"
-            unCheckedChildren="Không"
-            disabled={viewOnly}
-          />
+          <div className="flex items-center h-8">
+            <Switch
+              checkedChildren="Có"
+              unCheckedChildren="Không"
+              disabled={viewOnly}
+            />
+          </div>
         )
       case "STRING":
       default:
@@ -252,87 +254,91 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
 
   if (isLoading) {
     return (
-      <div className="p-6">
-        <Skeleton active paragraph={{ rows: 8 }} />
-      </div>
+      <Card size="small" className="shadow-xs">
+        <div className="p-4">
+          <Skeleton active paragraph={{ rows: 8 }} />
+        </div>
+      </Card>
     )
   }
 
   if (!properties || properties.length === 0) {
     return (
-      <Card className="p-8 text-center border-dashed">
-        <Empty description="Chưa có thuộc tính cơ sở định biên nào được khai báo trong hệ thống." />
+      <Card size="small" className="shadow-xs">
+        <div className="p-8 text-center">
+          <Empty description="Chưa có thuộc tính cơ sở định biên nào được khai báo trong hệ thống." />
+        </div>
       </Card>
     )
   }
 
   return (
-    <div className="space-y-6 w-full pb-10">
-      {/* Mixed-use notification banner */}
-      {isMixedUse ? (
-        <Alert
-          type="info"
-          showIcon
-          className="rounded-lg border-blue-200 bg-blue-50/70 dark:bg-blue-950/30"
-          message={
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-sm">
-                Dự án hỗn hợp (Mixed-use: Thấp tầng & Cao tầng)
-              </span>
-              <Tag color="purple" className="m-0 text-[11px]">
-                Đa phân khúc
-              </Tag>
-            </div>
-          }
-          description="Hệ thống đã tự động phân nhóm các chỉ số quy mô thành Khối Thấp tầng và Khối Cao tầng để nhập liệu độc lập, phục vụ tính toán định biên chính xác cho từng hạng mục công trình."
-        />
-      ) : (
-        <Alert
-          type="success"
-          showIcon
-          className="rounded-lg border-emerald-200 bg-emerald-50/70 dark:bg-emerald-950/30"
-          message={
-            <span className="font-semibold text-sm">
-              Dự án đơn loại hình:{" "}
-              {hasLowRise ? "Hạng mục Thấp tầng" : "Hạng mục Cao tầng"}
+    <div className="flex flex-col gap-4">
+      <Card size="small" className="shadow-xs">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-semibold text-base text-foreground flex items-center gap-1.5">
+              <SlidersHorizontal className="size-4 text-primary" />
+              Quy mô & Cơ sở định biên
             </span>
-          }
-          description="Chỉ số quy mô được tùy biến hiển thị tương ứng với loại hình công trình đang kích hoạt của dự án."
-        />
-      )}
+            {isMixedUse && (
+              <Tag color="purple" className="text-[11px] font-normal">
+                Thấp tầng và Cao tầng
+              </Tag>
+            )}
+            {hasLowRise && !isMixedUse && (
+              <Tag color="green" className="text-[11px] font-normal">
+                Thấp tầng
+              </Tag>
+            )}
+            {hasHighRise && !isMixedUse && (
+              <Tag color="purple" className="text-[11px] font-normal">
+                Cao tầng
+              </Tag>
+            )}
+          </div>
 
-      <Form form={form} layout="vertical" className="space-y-6">
-        {/* SECTION 1: COMMON PROPERTIES */}
+          {!viewOnly && (
+            <Button
+              type="primary"
+              icon={<Save className="size-4" />}
+              onClick={handleSave}
+              loading={saveMutation.isPending}
+            >
+              Lưu thay đổi
+            </Button>
+          )}
+        </div>
+      </Card>
+
+      <Form form={form} layout="vertical" className="w-full space-y-4">
         {commonProperties.length > 0 && (
           <Card
+            size="small"
             title={
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
-                  <Building className="size-4 text-blue-600" />
+                <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 dark:text-slate-200">
+                  <Building2 className="size-3.5 text-blue-600" />
                   <span>Thông số chung toàn dự án</span>
                 </div>
-                <Badge count="Chung" style={{ backgroundColor: "#1890ff" }} />
+                <Tag color="blue" className="m-0 text-[11px]">
+                  Chung
+                </Tag>
               </div>
             }
-            className="shadow-xs border-border/80"
+            className="border-border/80 shadow-xs"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-4 py-2">
               {commonProperties.map((prop) => (
                 <Form.Item
                   key={prop.id}
                   name={`prop_${prop.id}_COMMON`}
-                  label={
-                    <span className="font-medium text-xs">
-                      {prop.name}
-                      <span className="ml-1 text-muted-foreground font-mono text-[11px]">
-                        ({prop.code})
-                      </span>
-                    </span>
-                  }
+                  label={prop.name}
                   tooltip={prop.description || undefined}
                   valuePropName={
                     prop.dataType === "BOOLEAN" ? "checked" : "value"
                   }
+                  className="mb-0"
                 >
                   {renderFieldInput(prop)}
                 </Form.Item>
@@ -341,45 +347,39 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
           </Card>
         )}
 
-        {/* SECTION 2: LOW-RISE PROPERTIES */}
         {hasLowRise && (
           <Card
+            size="small"
             title={
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm font-semibold text-emerald-800 dark:text-emerald-300">
-                  <Home className="size-4 text-emerald-600" />
-                  <span>Hạng mục Thấp tầng (Low-rise)</span>
+                <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+                  <Home className="size-3.5 text-emerald-600" />
+                  <span>Hạng mục Thấp tầng</span>
                 </div>
-                <Tag color="green" className="m-0 font-medium">
-                  🏠 Thấp tầng
+                <Tag color="green" className="m-0 text-[11px]">
+                  Thấp tầng
                 </Tag>
               </div>
             }
-            className="shadow-xs border-emerald-200/80 dark:border-emerald-900/40 bg-emerald-50/20 dark:bg-emerald-950/10"
+            className="border-emerald-200/80 dark:border-emerald-900/40 bg-emerald-50/20 dark:bg-emerald-950/10 shadow-xs"
           >
             {lowRiseProperties.length === 0 ? (
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description="Chưa có thuộc tính nào cho Thấp tầng"
+                description="Chưa có thuộc tính cho Thấp tầng"
               />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-4 py-2">
                 {lowRiseProperties.map((prop) => (
                   <Form.Item
                     key={prop.id}
                     name={`prop_${prop.id}_LOW_RISE`}
-                    label={
-                      <span className="font-medium text-xs">
-                        {prop.name}
-                        <span className="ml-1 text-muted-foreground font-mono text-[11px]">
-                          ({prop.code})
-                        </span>
-                      </span>
-                    }
+                    label={prop.name}
                     tooltip={prop.description || undefined}
                     valuePropName={
                       prop.dataType === "BOOLEAN" ? "checked" : "value"
                     }
+                    className="mb-0"
                   >
                     {renderFieldInput(prop)}
                   </Form.Item>
@@ -389,45 +389,39 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
           </Card>
         )}
 
-        {/* SECTION 3: HIGH-RISE PROPERTIES */}
         {hasHighRise && (
           <Card
+            size="small"
             title={
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm font-semibold text-indigo-800 dark:text-indigo-300">
-                  <Building2 className="size-4 text-indigo-600" />
-                  <span>Hạng mục Cao tầng (High-rise)</span>
+                <div className="flex items-center gap-2 text-xs font-semibold text-indigo-800 dark:text-indigo-300">
+                  <Building2 className="size-3.5 text-indigo-600" />
+                  <span>Hạng mục Cao tầng</span>
                 </div>
-                <Tag color="purple" className="m-0 font-medium">
-                  🏢 Cao tầng
+                <Tag color="purple" className="m-0 text-[11px]">
+                  Cao tầng
                 </Tag>
               </div>
             }
-            className="shadow-xs border-indigo-200/80 dark:border-indigo-900/40 bg-indigo-50/20 dark:bg-indigo-950/10"
+            className="border-indigo-200/80 dark:border-indigo-900/40 bg-indigo-50/20 dark:bg-indigo-950/10 shadow-xs"
           >
             {highRiseProperties.length === 0 ? (
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description="Chưa có thuộc tính nào cho Cao tầng"
+                description="Chưa có thuộc tính cho Cao tầng"
               />
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-4 py-2">
                 {highRiseProperties.map((prop) => (
                   <Form.Item
                     key={prop.id}
                     name={`prop_${prop.id}_HIGH_RISE`}
-                    label={
-                      <span className="font-medium text-xs">
-                        {prop.name}
-                        <span className="ml-1 text-muted-foreground font-mono text-[11px]">
-                          ({prop.code})
-                        </span>
-                      </span>
-                    }
+                    label={prop.name}
                     tooltip={prop.description || undefined}
                     valuePropName={
                       prop.dataType === "BOOLEAN" ? "checked" : "value"
                     }
+                    className="mb-0"
                   >
                     {renderFieldInput(prop)}
                   </Form.Item>
@@ -435,69 +429,6 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
               </div>
             )}
           </Card>
-        )}
-
-        {/* SECTION 4: MIXED-USE SUMMARY (Auto-Calculated Totals) */}
-        {isMixedUse && perTypeProperties.length > 0 && (
-          <Card
-            size="small"
-            title={
-              <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
-                <Layers className="size-3.5 text-primary" />
-                <span>
-                  Bảng đối soát & Tổng quy mô toàn dự án (Tự động tính)
-                </span>
-              </div>
-            }
-            className="bg-slate-50/70 dark:bg-slate-900/40 border-dashed"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {perTypeProperties.map((prop) => {
-                const lowVal =
-                  Number(form.getFieldValue(`prop_${prop.id}_LOW_RISE`)) || 0
-                const highVal =
-                  Number(form.getFieldValue(`prop_${prop.id}_HIGH_RISE`)) || 0
-                const total = lowVal + highVal
-
-                return (
-                  <div
-                    key={prop.id}
-                    className="p-3 bg-white dark:bg-slate-800 rounded-md border border-border/70 flex flex-col justify-between"
-                  >
-                    <div className="text-xs text-muted-foreground font-medium truncate mb-1">
-                      {prop.name}
-                    </div>
-                    <div className="flex items-baseline justify-between">
-                      <div className="text-[11px] text-muted-foreground space-x-1">
-                        <span>Thấp: {lowVal.toLocaleString()}</span>
-                        <span>•</span>
-                        <span>Cao: {highVal.toLocaleString()}</span>
-                      </div>
-                      <div className="text-sm font-bold text-primary font-mono">
-                        {total.toLocaleString()} {prop.unit || ""}
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </Card>
-        )}
-
-        {/* Save Button Bar */}
-        {!viewOnly && (
-          <div className="flex items-center justify-end gap-3 pt-2">
-            <Button
-              type="primary"
-              icon={<Save className="size-4" />}
-              onClick={handleSave}
-              loading={saveMutation.isPending}
-              size="large"
-              className="px-6"
-            >
-              Lưu cơ sở định biên dự án
-            </Button>
-          </div>
         )}
       </Form>
     </div>
