@@ -1,4 +1,4 @@
-import { Card, Spin, Table, Tag, Tooltip } from "antd"
+import { Card, Spin, Table, Tag } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import dayjs from "dayjs"
 import { ArrowDown, ArrowUp, Pencil, Trash2 } from "lucide-react"
@@ -87,53 +87,22 @@ export const PhaseTable: React.FC<PhaseTableProps> = ({
               <span className="font-semibold text-foreground">
                 {dayjs(val).format("DD/MM/YYYY")}
               </span>
-              {r.executionType === "OVERLAPPING" && (
-                <Tooltip title="Mốc gối đầu: Bắt đầu trước khi mốc trước hoàn tất">
-                  <Tag
-                    color="orange"
-                    className="text-[10px] m-0 px-1 leading-4"
-                  >
-                    Gối đầu
-                  </Tag>
-                </Tooltip>
-              )}
-              {r.executionType === "PARALLEL" && (
-                <Tooltip title="Mốc chạy song song: Cùng ngày bắt đầu với mốc trước">
-                  <Tag
-                    color="purple"
-                    className="text-[10px] m-0 px-1 leading-4"
-                  >
-                    Song song
-                  </Tag>
-                </Tooltip>
-              )}
             </div>
           </div>
         ),
       },
       {
-        title: "Ngày kết thúc",
+        title: "Ngày dự kiến hoàn thành",
         dataIndex: "endDate",
         width: 150,
-        render: (val) => (
-          <span className="font-semibold text-foreground">
-            {dayjs(val).format("DD/MM/YYYY")}
-          </span>
-        ),
-      },
-      {
-        title: "Thời lượng",
-        key: "duration",
-        width: 140,
-        align: "center",
-        render: (_, r) => (
-          <div className="flex flex-col items-center">
+        render: (val, r) => (
+          <div>
+            <div className="font-semibold text-foreground">
+              {dayjs(val).format("DD/MM/YYYY")}
+            </div>
             <Tag color="blue" className="font-semibold text-xs m-0 px-2 py-0.5">
               {r.durationMonths} tháng
             </Tag>
-            <span className="text-[11px] text-muted-foreground mt-0.5">
-              ({r.durationDays} ngày)
-            </span>
           </div>
         ),
       },
@@ -173,7 +142,7 @@ export const PhaseTable: React.FC<PhaseTableProps> = ({
             },
           ]
 
-          return <ActionMenu record={r} items={actionItems} mode="dropdown" />
+          return <ActionMenu record={r} items={actionItems} mode="inline" />
         },
       },
     ],

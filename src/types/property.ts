@@ -48,9 +48,7 @@ export interface PropertyResponse {
   options?: string[] | null
   description?: string | null
   isActive: boolean
-  /** Danh sách ID phòng ban đã gán (rỗng = áp dụng chung tất cả) */
   departmentIds: number[]
-  /** Tên phòng ban đã gán (kèm theo khi API include) */
   departments?: PropertyDepartmentItem[]
   createdAt: string
   updatedAt: string

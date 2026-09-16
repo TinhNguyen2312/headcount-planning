@@ -310,7 +310,7 @@ export const MOCK_MATRIX_ROWS: MatrixRowItem[] = [
       phaseName: "Quản trị chiến lược & Điều hành cụm dự án Vùng Đồng Nai 1",
       milestoneName: "Khởi đầu đến Bàn giao (M01 -> M19)",
       leadTimeMonths: 0,
-      projectScale: "Phân vùng Đồng Nai 1 (Định biên chia đều 0.5/DA)",
+      projectScale: "Phân vùng Đồng Nai 1 ",
       baseHeadcount: 0.5,
       monthlyFactor: 1.0,
     },
@@ -835,17 +835,16 @@ export const buildMatrixWithSubTotals = (
           totalTT += row.months[mIdx]?.actualHeadcount ?? 0
         }
 
-        // Tính Thiếu/Thừa từ net tổng (không cộng từng dòng riêng lẻ)
         const shortage = Math.max(0, totalDB - totalTT)
         const surplus = Math.max(0, totalTT - totalDB)
 
         return {
           monthIndex: mIdx + 1,
           monthLabel: label,
-          standardHeadcount: totalDB, // ĐB = Σ ĐB
-          actualHeadcount: totalTT, // TT = Σ TT
-          surplus, // Thừa = dư ròng toàn nhóm
-          shortage, // Thiếu = thiếu ròng toàn nhóm
+          standardHeadcount: totalDB,
+          actualHeadcount: totalTT,
+          surplus,
+          shortage,
         }
       },
     )

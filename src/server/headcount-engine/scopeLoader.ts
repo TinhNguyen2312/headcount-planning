@@ -1,7 +1,16 @@
 import { and, eq, inArray, or, type SQL } from "drizzle-orm"
-import { db, headcountProjects, plans, projects, regions, sectors } from "@/db"
+import {
+  db,
+  headcountProjects,
+  headcountStandards,
+  plans,
+  projects,
+  regions,
+  roles,
+  sectors,
+} from "@/db"
 import type { PlanningMethod } from "@/types"
-import type { HeadcountCalculationParams } from "./types"
+import type { HeadcountCalculationParams, MonthPeriod } from "./types"
 
 // Inferred nested types trực tiếp từ Drizzle query relations
 export type LoadedProject = Awaited<ReturnType<typeof queryProjects>>[number]
@@ -104,16 +113,34 @@ export async function queryProjects(projectIds: number[]) {
   })
 }
 
-export async function queryRoles() {
+export async function queryRoles(scopeType: PlanningMethod) {
   return db.query.roles.findMany({
+    where: eq(roles.planningMethod, scopeType),
     with: {
       department: true,
     },
   })
 }
 
-export async function queryStandards() {
+export async function queryStandards(
+  roleIds: number[],
+  projectTypes?: string[],
+) {
+  if (roleIds.length === 0) return []
+
+  const conditions: SQL[] = [inArray(headcountStandards.roleId, roleIds)]
+
+  if (projectTypes && projectTypes.length > 0) {
+    conditions.push(
+      or(
+        eq(headcountStandards.projectType, "ALL"),
+        inArray(headcountStandards.projectType, projectTypes),
+      )!,
+    )
+  }
+
   return db.query.headcountStandards.findMany({
+    where: and(...conditions),
     with: {
       role: {
         with: {
@@ -134,6 +161,7 @@ export async function queryStandards() {
 
 export async function loadProjectScopeData(
   params: HeadcountCalculationParams,
+  _months?: MonthPeriod[],
 ): Promise<{
   scopeName: string
   projects: LoadedProject[]
@@ -141,12 +169,10 @@ export async function loadProjectScopeData(
   standards: LoadedStandard[]
 }> {
   const { scopeType, scopeId } = params
-  const { scopeName, projectIds: targetProjectIds } = await resolveScope(
-    scopeType,
-    scopeId,
-  )
 
-  if (targetProjectIds.length === 0) {
+  const { scopeName, projectIds } = await resolveScope(scopeType, scopeId)
+
+  if (projectIds.length === 0) {
     return { scopeName, projects: [], roles: [], standards: [] }
   }
 
@@ -155,7 +181,7 @@ export async function loadProjectScopeData(
     .from(headcountProjects)
     .where(
       and(
-        inArray(headcountProjects.projectId, targetProjectIds),
+        inArray(headcountProjects.projectId, projectIds),
         eq(headcountProjects.isActive, true),
       ),
     )
@@ -165,11 +191,22 @@ export async function loadProjectScopeData(
     return { scopeName, projects: [], roles: [], standards: [] }
   }
 
-  const [loadedProjects, loadedRoles, loadedStandards] = await Promise.all([
+  const [loadedProjects, loadedRoles] = await Promise.all([
     queryProjects(activeProjectIds),
-    queryRoles(),
-    queryStandards(),
+    queryRoles(scopeType),
   ])
+
+  const targetRoleIds = loadedRoles.map((r) => r.id)
+
+  const allProjectTypes = Array.from(
+    new Set(
+      loadedProjects.flatMap((p) =>
+        Array.isArray(p.projectTypes) ? p.projectTypes : ["HIGH_RISE"],
+      ),
+    ),
+  )
+
+  const loadedStandards = await queryStandards(targetRoleIds, allProjectTypes)
 
   return {
     scopeName,

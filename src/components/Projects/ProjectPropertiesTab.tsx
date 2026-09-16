@@ -106,7 +106,6 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
 
   const hasLowRise = projectTypes.includes("LOW_RISE")
   const hasHighRise = projectTypes.includes("HIGH_RISE")
-  const isMixedUse = hasLowRise && hasHighRise
 
   const commonProperties = useMemo(
     () =>
@@ -325,21 +324,6 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
               <SlidersHorizontal className="size-4 text-primary" />
               Quy mô & Cơ sở định biên
             </span>
-            {isMixedUse && (
-              <Tag color="purple" className="text-[11px] font-normal">
-                Thấp tầng và Cao tầng
-              </Tag>
-            )}
-            {hasLowRise && !isMixedUse && (
-              <Tag color="green" className="text-[11px] font-normal">
-                Thấp tầng
-              </Tag>
-            )}
-            {hasHighRise && !isMixedUse && (
-              <Tag color="purple" className="text-[11px] font-normal">
-                Cao tầng
-              </Tag>
-            )}
 
             {isDirty && (
               <Badge

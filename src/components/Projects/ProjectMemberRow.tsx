@@ -151,12 +151,6 @@ export const useProjectMemberColumns = (
         ),
       },
       {
-        title: "KHU VỰC",
-        key: "zone",
-        width: skipsCol > 0 ? "0%" : "13.7%",
-        render: (_, record) => renderMemberZone(record, zones),
-      },
-      {
         ...createTextColumn<GroupedUserProjectRoleDetail>(
           "userFullName",
           "NHÂN SỰ PHỤ TRÁCH",
@@ -176,18 +170,6 @@ export const useProjectMemberColumns = (
             </span>
           </div>
         ),
-      },
-      {
-        title: "NHÂN SỰ THAY THẾ",
-        key: "replacement_user",
-        width: skipsCol > 0 ? "27.0%" : "19.6%",
-        render: (_, record) => renderReplacementUser(record),
-      },
-      {
-        title: "HIỆU LỰC THAY THẾ",
-        key: "replacement_period",
-        width: skipsCol > 0 ? "24.3%" : "17.6%",
-        render: (_, record) => renderReplacementPeriod(record),
       },
       {
         title: "THAO TÁC",

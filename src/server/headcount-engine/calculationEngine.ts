@@ -112,35 +112,48 @@ export function calculateMonthlyFactor(
   return 1.0 // fallback chuẩn BRD
 }
 
-// 4. Đánh giá standard phù hợp với quy mô dự án (Logic AND criteria & OR lấy max)
-export function evaluateStandard(
+/**
+ * 4. Chạy định biên theo dự án trong 1 tháng cụ thể:
+ * 4.1: Với mỗi dự án lọc headcount_standard theo roleId, theo projectType, from_milestone và to_milestone
+ * 4.2: Lấy property values của dự án
+ * 4.2.1: Đối chiếu criteria (Logic AND). Khớp hết mới giữ lại.
+ * 4.2.2: Lấy hệ số tối ưu factor theo duration_months và monthNoInPhase
+ * 4.2.3: rawDB = headcount * factor
+ * 4.3: Nếu có nhiều standard thỏa mãn => lấy cái tối ưu nhân sự hơn (max rawDB)
+ */
+export function calculateRoleMonthlyHeadcount(
   project: LoadedProject,
   roleId: number,
-  milestoneId: number,
-  allStandards: LoadedStandard[],
-): {
-  isMatch: boolean
-  standard?: LoadedStandard | null
-  baseHeadcount: number
-} {
+  month: MonthPeriod,
+  standards: LoadedStandard[],
+): number {
+  // Bước 2: Xác định Phase & Milestone của dự án trong tháng T
+  const phaseRes = resolvePhaseMilestone(project, month)
+  if (!phaseRes.hasActivePhase || !phaseRes.phase) return 0
+
+  const { phase, monthNoInPhase } = phaseRes
+  const milestoneId = phase.milestoneId
+
   const projectTypes = (
     Array.isArray(project.projectTypes) ? project.projectTypes : ["HIGH_RISE"]
   ) as string[]
 
-  const candidateStandards = allStandards.filter((std) => {
+  // 4.1 Lọc standards theo role bước 3, theo projectType, from_milestone và to_milestone
+  const candidateStandards = standards.filter((std) => {
     if (std.roleId !== roleId) return false
+
     if (std.projectType !== "ALL" && !projectTypes.includes(std.projectType)) {
       return false
     }
+
     const matchFrom = std.fromMilestoneId <= milestoneId
     const matchTo = !std.toMilestoneId || milestoneId <= std.toMilestoneId
     return matchFrom && matchTo
   })
 
-  if (candidateStandards.length === 0)
-    return { isMatch: false, baseHeadcount: 0 }
+  if (candidateStandards.length === 0) return 0
 
-  // Gom nhóm property values theo propertyId
+  // 4.2 Lấy các properties - values của dự án (gom nhóm theo propertyId)
   const propValuesMap = new Map<number, LoadedPropertyValue[]>()
   for (const pv of project.propertyValues) {
     const list = propValuesMap.get(pv.propertyId) || []
@@ -148,60 +161,37 @@ export function evaluateStandard(
     propValuesMap.set(pv.propertyId, list)
   }
 
-  const matchedStandards: LoadedStandard[] = []
+  // 4.2 & 4.3: Duyệt từng standard, kiểm tra criteria và tính rawDB
+  let bestHeadcount = 0
+
   for (const std of candidateStandards) {
     const criteriaList = std.headcountCriteria || []
-    if (criteriaList.length === 0) {
-      matchedStandards.push(std)
-      continue
+
+    // 4.2.1: Dựa trên headcount_criteria kiểm tra có match không. Không match loại.
+    const allPassed =
+      criteriaList.length === 0 ||
+      criteriaList.every((crit) => {
+        const propValues = propValuesMap.get(crit.propertyId)
+        return matchesCriterion(crit, propValues)
+      })
+
+    if (!allPassed) continue
+
+    // 4.2.2: Lấy hệ số tối ưu thông qua headcount_monthly_factors
+    const factor = calculateMonthlyFactor(
+      std,
+      phase.durationMonths,
+      monthNoInPhase,
+    )
+
+    // 4.2.3: Từ hệ số tối ưu nhân với headcount => định biên thô của role
+    const rawDB = Number(std.headcount) * factor
+
+    // 4.3: Tổng hợp nếu có nhiều standard => lấy cái tối ưu nhân sự hơn (max)
+    if (rawDB > bestHeadcount) {
+      bestHeadcount = rawDB
     }
-
-    const allPassed = criteriaList.every((crit) => {
-      const propValues = propValuesMap.get(crit.propertyId)
-      return matchesCriterion(crit, propValues)
-    })
-
-    if (allPassed) matchedStandards.push(std)
   }
 
-  if (matchedStandards.length === 0) return { isMatch: false, baseHeadcount: 0 }
-
-  // Logic OR: chọn standard định biên lớn nhất
-  matchedStandards.sort((a, b) => Number(b.headcount) - Number(a.headcount))
-  const bestStandard = matchedStandards[0]
-
-  return {
-    isMatch: true,
-    standard: bestStandard,
-    baseHeadcount: Number(bestStandard.headcount),
-  }
-}
-
-// 5. Tính định biên 1 role của dự án trong 1 tháng
-export function calculateRoleMonthlyHeadcount(
-  project: LoadedProject,
-  roleId: number,
-  month: MonthPeriod,
-  standards: LoadedStandard[],
-): number {
-  const phaseRes = resolvePhaseMilestone(project, month)
-  if (!phaseRes.hasActivePhase || !phaseRes.phase) return 0
-
-  const { phase, monthNoInPhase } = phaseRes
-  const evalRes = evaluateStandard(
-    project,
-    roleId,
-    phase.milestoneId,
-    standards,
-  )
-  if (!evalRes.isMatch || !evalRes.standard) return 0
-
-  const factor = calculateMonthlyFactor(
-    evalRes.standard,
-    phase.durationMonths,
-    monthNoInPhase,
-  )
-
-  const standardHeadcount = evalRes.baseHeadcount * factor
-  return Math.round(standardHeadcount * 100) / 100
+  return Math.round(bestHeadcount * 100) / 100
 }

@@ -47,7 +47,7 @@ export const HeadcountReportMatrixTable = ({
       fixed: "left",
       width: 130,
       onCell: (record) => ({
-        colSpan: record.isSubTotal ? 5 : 1,
+        colSpan: record.isSubTotal ? 4 : 1,
       }),
       render: (regionName: string, record: MatrixRowItem) => {
         if (record.isSubTotal) {
@@ -153,7 +153,7 @@ export const HeadcountReportMatrixTable = ({
             if (row.isSubTotal) {
               return (
                 <span className="font-bold text-xs text-blue-700 dark:text-blue-300">
-                  {val.toFixed(1)}
+                  {val}
                 </span>
               )
             }
@@ -270,22 +270,6 @@ export const HeadcountReportMatrixTable = ({
       ],
     })),
   ]
-
-  // Tính tổng cộng cho Summary Row (chỉ cộng các dòng gốc, bỏ qua isSubTotal để không cộng trùng)
-  const calculateMonthTotals = (mIdx: number) => {
-    let db = 0
-    let tt = 0
-    let thua = 0
-    let thieu = 0
-    for (const r of matrixRows) {
-      if (r.isSubTotal) continue
-      db += r.months[mIdx]?.standardHeadcount ?? 0
-      tt += r.months[mIdx]?.actualHeadcount ?? 0
-      thua += r.months[mIdx]?.surplus ?? 0
-      thieu += r.months[mIdx]?.shortage ?? 0
-    }
-    return { db, tt, thua, thieu }
-  }
 
   return (
     <Card

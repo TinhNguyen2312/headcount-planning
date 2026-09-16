@@ -1,4 +1,4 @@
-import { Briefcase, Pencil, UserCheck, UserMinus, UserX } from "lucide-react"
+import { UserMinus } from "lucide-react"
 import { useState } from "react"
 
 import { ActionMenu, type ActionMenuItem } from "@/components/Common/ActionMenu"
@@ -29,46 +29,46 @@ const ProjectUserActionsMenu = ({
   const cancelReplacementMutation = userQueries.useCancelReplacement(projectId)
 
   const items: ActionMenuItem<UserProjectRoleDetailResponse>[] = [
-    {
-      key: "edit",
-      label: "Sửa phân công khu vực",
-      icon: <Pencil className="size-4" />,
-      hidden: !canManage,
-      onClick: () => setEditOpen(true),
-    },
-    {
-      key: "assign-replacement",
-      label: (m) =>
-        m.replacementUserId ? "Đổi nhân sự thay thế" : "Gán nhân sự thay thế",
-      icon: <UserCheck className="size-4 text-emerald-600" />,
-      hidden: !canManage,
-      onClick: () => setReplacementOpen(true),
-    },
-    {
-      key: "concurrent-role",
-      label: "Kiêm nhiệm chức danh",
-      icon: <Briefcase className="size-4" />,
-      hidden: !canManage,
-      onClick: () => setConcurrentRoleOpen(true),
-    },
-    {
-      key: "cancel-replacement",
-      label: "Hủy nhân sự thay thế",
-      icon: <UserX className="size-4 text-amber-600" />,
-      hidden: (m) => !canManage || !m.replacementUserId,
-      confirm: (m) => ({
-        title: "Hủy nhân sự thay thế",
-        content: `Bạn có chắc chắn muốn hủy nhân sự thay thế "${m.replacementUserName}" cho "${m.userFullName}"?`,
-        okText: "Hủy thay thế",
-        okType: "danger",
-      }),
-      onClick: (m) => {
-        cancelReplacementMutation.mutate(m.id)
-      },
-    },
-    {
-      type: "divider",
-    },
+    // {
+    //   key: "edit",
+    //   label: "Sửa phân công khu vực",
+    //   icon: <Pencil className="size-4" />,
+    //   hidden: !canManage,
+    //   onClick: () => setEditOpen(true),
+    // },
+    // {
+    //   key: "assign-replacement",
+    //   label: (m) =>
+    //     m.replacementUserId ? "Đổi nhân sự thay thế" : "Gán nhân sự thay thế",
+    //   icon: <UserCheck className="size-4 text-emerald-600" />,
+    //   hidden: !canManage,
+    //   onClick: () => setReplacementOpen(true),
+    // },
+    // {
+    //   key: "concurrent-role",
+    //   label: "Kiêm nhiệm chức danh",
+    //   icon: <Briefcase className="size-4" />,
+    //   hidden: !canManage,
+    //   onClick: () => setConcurrentRoleOpen(true),
+    // },
+    // {
+    //   key: "cancel-replacement",
+    //   label: "Hủy nhân sự thay thế",
+    //   icon: <UserX className="size-4 text-amber-600" />,
+    //   hidden: (m) => !canManage || !m.replacementUserId,
+    //   confirm: (m) => ({
+    //     title: "Hủy nhân sự thay thế",
+    //     content: `Bạn có chắc chắn muốn hủy nhân sự thay thế "${m.replacementUserName}" cho "${m.userFullName}"?`,
+    //     okText: "Hủy thay thế",
+    //     okType: "danger",
+    //   }),
+    //   onClick: (m) => {
+    //     cancelReplacementMutation.mutate(m.id)
+    //   },
+    // },
+    // {
+    //   type: "divider",
+    // },
     {
       key: "remove",
       label: "Gỡ khỏi dự án",
