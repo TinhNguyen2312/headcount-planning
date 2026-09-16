@@ -1,35 +1,34 @@
-import type { DevelopmentType } from "./project"
+import type { DevelopmentType, ProjectType } from "./project"
 
 export type PropertyDataType = "NUMBER" | "STRING" | "BOOLEAN" | "SELECT"
 
-export type PropertyScope =
-  | "COMMON"
-  | "PER_TYPE"
-  | "LOW_RISE_ONLY"
-  | "HIGH_RISE_ONLY"
+export type PropertyScope = ProjectType
 
-export const PROPERTY_SCOPE_LABELS: Record<PropertyScope, string> = {
-  COMMON: "Chung toàn dự án",
-  PER_TYPE: "Ap dụng riêng theo Thấp tầng / Cao tầng",
-  LOW_RISE_ONLY: "Chỉ áp dụng Thấp tầng",
-  HIGH_RISE_ONLY: "Chỉ áp dụng Cao tầng",
+export const PROPERTY_PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
+  ALL: "Chung toàn dự án",
+  MIXED: "Áp dụng cho Thấp tầng và Cao tầng",
+  LOW_RISE: "Chỉ áp dụng Thấp tầng",
+  HIGH_RISE: "Chỉ áp dụng Cao tầng",
 }
 
-export const PROPERTY_SCOPE_OPTIONS: { value: PropertyScope; label: string }[] =
-  [
-    { value: "COMMON", label: "Chung toàn dự án" },
-    {
-      value: "PER_TYPE",
-      label: "Áp dụng cho Thấp tầng và Cao tầng",
-    },
-    { value: "LOW_RISE_ONLY", label: "Chỉ áp dụng Thấp tầng" },
-    { value: "HIGH_RISE_ONLY", label: "Chỉ áp dụng Cao tầng" },
-  ]
+export const PROPERTY_PROJECT_TYPE_OPTIONS: {
+  value: ProjectType
+  label: string
+}[] = [
+  { value: "ALL", label: "Chung toàn dự án" },
+  { value: "LOW_RISE", label: "Chỉ áp dụng Thấp tầng" },
+  { value: "HIGH_RISE", label: "Chỉ áp dụng Cao tầng" },
+  { value: "MIXED", label: "Áp dụng cho Thấp tầng và Cao tầng" },
+]
+
+export const PROPERTY_SCOPE_LABELS = PROPERTY_PROJECT_TYPE_LABELS
+export const PROPERTY_SCOPE_OPTIONS = PROPERTY_PROJECT_TYPE_OPTIONS
 
 export interface PropertyQueryParams {
   keyword?: string
   dataType?: PropertyDataType
-  scope?: PropertyScope
+  projectType?: ProjectType
+  scope?: any
   isActive?: boolean | string
   /** Lọc theo phòng ban — chỉ trả về properties đã gán cho dept này HOẶC chưa gán dept nào */
   departmentId?: number | string
@@ -43,7 +42,8 @@ export interface PropertyResponse {
   code: string
   name: string
   dataType: PropertyDataType
-  scope: PropertyScope
+  projectType: ProjectType
+  scope?: any
   unit?: string | null
   options?: string[] | null
   description?: string | null
@@ -58,7 +58,8 @@ export interface PropertyCreate {
   code: string
   name: string
   dataType: PropertyDataType
-  scope?: PropertyScope
+  projectType?: ProjectType
+  scope?: any
   unit?: string | null
   options?: string[] | null
   description?: string | null
@@ -84,7 +85,6 @@ export interface PropertyValueItem {
   propertyCode: string
   propertyName: string
   dataType: PropertyDataType
-  scope?: PropertyScope
   unit?: string | null
   options?: string[] | null
   valueText?: string | null
@@ -94,7 +94,8 @@ export interface PropertyValueItem {
 
 export interface ProjectPropertiesMatrixResponse {
   projectId: number
-  projectTypes: DevelopmentType[]
+  projectType: ProjectType
+  projectTypes?: ProjectType[]
   properties: PropertyResponse[]
   values: PropertyValueItem[]
 }

@@ -26,7 +26,9 @@ export const properties = pgTable(
     unit: varchar({ length: 20 }),
     options: jsonb(),
     description: text(),
-    scope: varchar("scope", { length: 20 }).default("COMMON").notNull(),
+    projectType: varchar("project_type", { length: 30 })
+      .default("ALL")
+      .notNull(),
     isActive: boolean("is_active").default(true).notNull(),
     createdAt: timestamp("created_at", { mode: "string" })
       .defaultNow()
@@ -42,8 +44,8 @@ export const properties = pgTable(
       sql`(data_type)::text = ANY ((ARRAY['NUMBER'::character varying, 'STRING'::character varying, 'BOOLEAN'::character varying, 'SELECT'::character varying])::text[])`,
     ),
     check(
-      "properties_scope_check",
-      sql`(scope)::text = ANY ((ARRAY['COMMON'::character varying, 'PER_TYPE'::character varying, 'LOW_RISE_ONLY'::character varying, 'HIGH_RISE_ONLY'::character varying])::text[])`,
+      "properties_project_type_check",
+      sql`(project_type)::text = ANY ((ARRAY['ALL'::character varying, 'LOW_RISE'::character varying, 'HIGH_RISE'::character varying, 'MIXED'::character varying])::text[])`,
     ),
   ],
 )
@@ -89,9 +91,8 @@ export const projects = pgTable(
     startDate: date("start_date"),
     endDate: date("end_date"),
     thumbnail: text(),
-    projectTypes: jsonb("project_types")
-      .$type<string[]>()
-      .default(["HIGH_RISE"])
+    projectType: varchar("project_type", { length: 30 })
+      .default("HIGH_RISE")
       .notNull(),
     createdAt: timestamp("created_at", { mode: "string" })
       .defaultNow()
@@ -107,6 +108,10 @@ export const projects = pgTable(
     check(
       "projects_status_check",
       sql`(status)::text = ANY ((ARRAY['PLANNING'::character varying, 'ACTIVE'::character varying, 'PAUSED'::character varying, 'COMPLETED'::character varying])::text[])`,
+    ),
+    check(
+      "projects_project_type_check",
+      sql`(project_type)::text = ANY ((ARRAY['ALL'::character varying, 'LOW_RISE'::character varying, 'HIGH_RISE'::character varying, 'MIXED'::character varying])::text[])`,
     ),
   ],
 )
@@ -141,7 +146,9 @@ export const propertyValues = pgTable(
     id: serial().primaryKey().notNull(),
     projectId: integer("project_id").notNull(),
     propertyId: integer("property_id").notNull(),
-    projectType: varchar("project_type", { length: 50 }),
+    projectType: varchar("project_type", { length: 50 })
+      .default("ALL")
+      .notNull(),
     valueText: text("value_text"),
     valueNumber: numeric("value_number", { precision: 15, scale: 4 }),
     createdAt: timestamp("created_at", { mode: "string" })

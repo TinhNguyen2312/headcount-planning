@@ -1,4 +1,5 @@
 import type { MilestoneResponse } from "./milestone"
+import type { ProjectType } from "./project"
 import type { PropertyResponse } from "./property"
 import type { RoleResponse } from "./role"
 
@@ -79,7 +80,7 @@ export interface MonthlyFactorCurve {
   }>
 }
 
-export type StandardProjectType = "ALL" | "LOW_RISE" | "HIGH_RISE" | "MIXED"
+export type StandardProjectType = ProjectType
 
 export const STANDARD_PROJECT_TYPE_OPTIONS: {
   value: StandardProjectType

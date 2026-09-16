@@ -86,20 +86,27 @@ export const PROJECT_REGION_OPTIONS: { value: ProjectRegion; label: string }[] =
     label: PROJECT_REGION_LABELS[key],
   }))
 
-export type DevelopmentType = "LOW_RISE" | "HIGH_RISE"
+export type ProjectType = "ALL" | "LOW_RISE" | "HIGH_RISE" | "MIXED"
+export type DevelopmentType = ProjectType
 
-export const DEVELOPMENT_TYPE_LABELS: Record<DevelopmentType, string> = {
+export const PROJECT_TYPE_LABELS: Record<ProjectType, string> = {
+  ALL: "Tất cả",
   LOW_RISE: "Thấp tầng",
   HIGH_RISE: "Cao tầng",
+  MIXED: "Hỗn hợp",
 }
 
-export const DEVELOPMENT_TYPE_OPTIONS: {
-  value: DevelopmentType
+export const PROJECT_TYPE_OPTIONS: {
+  value: ProjectType
   label: string
 }[] = [
   { value: "LOW_RISE", label: "Thấp tầng" },
   { value: "HIGH_RISE", label: "Cao tầng" },
+  { value: "MIXED", label: "Hỗn hợp (Thấp tầng & Cao tầng)" },
 ]
+
+export const DEVELOPMENT_TYPE_LABELS = PROJECT_TYPE_LABELS
+export const DEVELOPMENT_TYPE_OPTIONS = PROJECT_TYPE_OPTIONS
 
 export interface ProjectResponse {
   id: number
@@ -111,7 +118,8 @@ export interface ProjectResponse {
   status: ProjectStatus
   startDate: string | null
   endDate: string | null
-  projectTypes: DevelopmentType[]
+  projectType: ProjectType
+  projectTypes?: ProjectType[]
   createdAt: string
   zonesCount?: number
   membersCount?: number
@@ -130,7 +138,8 @@ export interface ProjectCreate {
   status?: ProjectStatus
   startDate?: string | null
   endDate?: string | null
-  projectTypes?: DevelopmentType[]
+  projectType?: ProjectType
+  projectTypes?: ProjectType[]
   thumbnail?: string
   accProjectId?: string | null
 }
