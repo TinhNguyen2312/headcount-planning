@@ -15,13 +15,7 @@ import {
   Switch,
   Tag,
 } from "antd"
-import {
-  Building2,
-  Home,
-  RotateCcw,
-  Save,
-  SlidersHorizontal,
-} from "lucide-react"
+import { Building2, Home, RotateCcw, Save } from "lucide-react"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import UnsavedChangesModal from "@/components/Common/UnsavedChangesModal"
@@ -317,63 +311,53 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
 
   return (
     <div className="flex flex-col gap-4">
-      <Card size="small" className="shadow-xs">
-        <div className="flex items-center justify-between gap-3 flex-wrap">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-base text-foreground flex items-center gap-1.5">
-              <SlidersHorizontal className="size-4 text-primary" />
-              Quy mô & Cơ sở định biên
-            </span>
-
-            {isDirty && (
-              <Badge
-                status="processing"
-                text={
-                  <span className="text-xs text-amber-600 font-medium">
-                    Có thay đổi chưa lưu
-                  </span>
-                }
-              />
-            )}
-          </div>
-
-          {!viewOnly && (
-            <Space>
-              {isDirty && (
-                <Button
-                  icon={<RotateCcw className="size-4" />}
-                  onClick={() => setShowResetModal(true)}
-                >
-                  Hủy thay đổi
-                </Button>
-              )}
-              <Button
-                type="primary"
-                icon={<Save className="size-4" />}
-                onClick={handleSave}
-                disabled={!isDirty}
-                loading={saveMutation.isPending}
-              >
-                Lưu thay đổi
-              </Button>
-            </Space>
-          )}
-        </div>
-      </Card>
-
       <Form form={form} layout="vertical" className="w-full space-y-4">
         {commonProperties.length > 0 && (
           <Card
             size="small"
             title={
-              <div className="flex items-center gap-2 justify-start">
-                <Building2 className="size-3.5 text-blue-600" />
-                <Tag color="blue" className="m-0 text-base">
-                  Thông số chung toàn dự án
-                </Tag>
+              <div className="flex items-center gap-2 justify-between">
+                <div className="flex items-center gap-2 justify-start">
+                  <Building2 className="size-3.5 text-blue-600" />
+                  <Tag color="blue" className="m-0 text-base">
+                    Thông số chung toàn dự án
+                  </Tag>
+                </div>
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  {isDirty && (
+                    <Badge
+                      status="processing"
+                      text={
+                        <span className="text-xs text-amber-600 font-medium">
+                          Có thay đổi chưa lưu
+                        </span>
+                      }
+                    />
+                  )}
+                  {!viewOnly && (
+                    <Space>
+                      {isDirty && (
+                        <Button
+                          icon={<RotateCcw className="size-4" />}
+                          onClick={() => setShowResetModal(true)}
+                        >
+                          Hủy thay đổi
+                        </Button>
+                      )}
+                      <Button
+                        type="primary"
+                        icon={<Save className="size-4" />}
+                        onClick={handleSave}
+                        disabled={!isDirty}
+                        loading={saveMutation.isPending}
+                      >
+                        Lưu thay đổi
+                      </Button>
+                    </Space>
+                  )}
+                </div>
               </div>
             }
-            className="border-border/80 shadow-xs"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-4 py-2">
               {commonProperties.map((prop) => (
