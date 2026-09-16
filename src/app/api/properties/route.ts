@@ -84,6 +84,21 @@ export async function GET(req: NextRequest) {
     if (dataType) {
       conditions.push(eq(properties.dataType, dataType))
     }
+    const projectTypeParam =
+      searchParams.get("projectType") || searchParams.get("scope")
+    if (projectTypeParam) {
+      const resolved =
+        projectTypeParam === "COMMON"
+          ? "ALL"
+          : projectTypeParam === "LOW_RISE_ONLY"
+            ? "LOW_RISE"
+            : projectTypeParam === "HIGH_RISE_ONLY"
+              ? "HIGH_RISE"
+              : projectTypeParam === "PER_TYPE"
+                ? "MIXED"
+                : projectTypeParam
+      conditions.push(eq(properties.projectType, resolved))
+    }
     if (
       isActiveParam !== null &&
       isActiveParam !== undefined &&
@@ -134,7 +149,7 @@ export async function GET(req: NextRequest) {
         code: properties.code,
         name: properties.name,
         dataType: properties.dataType,
-        scope: properties.scope,
+        projectType: properties.projectType,
         unit: properties.unit,
         options: properties.options,
         description: properties.description,
@@ -152,6 +167,7 @@ export async function GET(req: NextRequest) {
     const deptMap = await getPropertyDeptMap(items.map((i) => i.id))
     const result = items.map((item) => ({
       ...item,
+      scope: item.projectType,
       departmentIds: (deptMap.get(item.id) ?? []).map((d) => d.departmentId),
       departments: deptMap.get(item.id) ?? [],
     }))
@@ -178,7 +194,8 @@ export async function POST(req: NextRequest) {
       code,
       name,
       dataType = "NUMBER",
-      scope = "COMMON",
+      projectType,
+      scope,
       unit,
       options,
       description,
@@ -202,13 +219,25 @@ export async function POST(req: NextRequest) {
       return apiError("Mã thuộc tính định biên đã tồn tại", 409)
     }
 
+    const resolvedType =
+      projectType &&
+      ["ALL", "LOW_RISE", "HIGH_RISE", "MIXED"].includes(projectType)
+        ? projectType
+        : scope === "LOW_RISE_ONLY"
+          ? "LOW_RISE"
+          : scope === "HIGH_RISE_ONLY"
+            ? "HIGH_RISE"
+            : scope === "PER_TYPE"
+              ? "MIXED"
+              : "ALL"
+
     const [created] = await db
       .insert(properties)
       .values({
         code: code.trim(),
         name: name.trim(),
         dataType,
-        scope: scope || "COMMON",
+        projectType: resolvedType,
         unit: unit?.trim() || null,
         options: options || null,
         description: description || null,

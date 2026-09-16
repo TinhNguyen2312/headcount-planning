@@ -4,11 +4,11 @@ import DepartmentSelect from "@/components/Common/DepartmentSelect"
 import { propertyQueries } from "@/hooks/server/properties"
 import { applyApiFieldErrors } from "@/lib/errors"
 import {
-  PROPERTY_SCOPE_OPTIONS,
+  PROPERTY_PROJECT_TYPE_OPTIONS,
+  type ProjectType,
   type PropertyCreate,
   type PropertyDataType,
   type PropertyResponse,
-  type PropertyScope,
   type PropertyUpdate,
 } from "@/types"
 
@@ -24,7 +24,8 @@ interface PropertyFormValues {
   description?: string | null
   unit?: string | null
   dataType: PropertyDataType
-  scope: PropertyScope
+  projectType: ProjectType
+  scope?: any
   options?: string[] | null
   isActive: boolean
   /** Danh sách departmentId đã chọn (rỗng = áp dụng chung tất cả) */
@@ -52,13 +53,25 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
   useEffect(() => {
     if (open) {
       if (property) {
+        const pType =
+          property.projectType ||
+          (property.scope === "COMMON"
+            ? "ALL"
+            : property.scope === "PER_TYPE"
+              ? "MIXED"
+              : property.scope === "LOW_RISE_ONLY"
+                ? "LOW_RISE"
+                : property.scope === "HIGH_RISE_ONLY"
+                  ? "HIGH_RISE"
+                  : "ALL")
         form.setFieldsValue({
           code: property.code,
           name: property.name,
           description: property.description ?? "",
           unit: property.unit ?? "",
           dataType: property.dataType,
-          scope: property.scope || "COMMON",
+          projectType: pType,
+          scope: pType,
           options: property.options ?? [],
           isActive: property.isActive,
           departmentIds: property.departmentIds ?? [],
@@ -67,7 +80,8 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
         form.resetFields()
         form.setFieldsValue({
           dataType: "NUMBER",
-          scope: "COMMON",
+          projectType: "ALL",
+          scope: "ALL",
           isActive: true,
           options: [],
           departmentIds: [],
@@ -85,7 +99,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
         description: values.description?.trim() || null,
         unit: values.unit?.trim() || null,
         dataType: values.dataType,
-        scope: values.scope || "COMMON",
+        projectType: values.projectType || values.scope || "ALL",
         options:
           values.dataType === "SELECT" && values.options?.length
             ? values.options
@@ -172,12 +186,12 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
         </div>
 
         <Form.Item
-          name="scope"
-          label="Phạm vi áp dụng"
+          name="projectType"
+          label="Loại dự án áp dụng"
           tooltip="Quy định chỉ số này dùng chung toàn dự án hay tách riêng theo Thấp tầng / Cao tầng"
-          rules={[{ required: true, message: "Vui lòng chọn phạm vi áp dụng" }]}
+          rules={[{ required: true, message: "Vui lòng chọn loại dự án áp dụng" }]}
         >
-          <Select options={PROPERTY_SCOPE_OPTIONS} />
+          <Select options={PROPERTY_PROJECT_TYPE_OPTIONS} />
         </Form.Item>
 
         {/* FIELD MỚI: Gán phòng ban */}

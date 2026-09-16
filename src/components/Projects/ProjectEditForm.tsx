@@ -20,14 +20,14 @@ import UnsavedChangesModal from "@/components/Common/UnsavedChangesModal"
 import { projectQueries } from "@/hooks/server/projects"
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges"
 import {
-  DEVELOPMENT_TYPE_OPTIONS,
-  type DevelopmentType,
   PROJECT_REGION_OPTIONS,
   PROJECT_SECTOR_OPTIONS,
+  PROJECT_TYPE_OPTIONS,
   type ProjectRegion,
   type ProjectResponse,
   type ProjectSector,
   type ProjectStatus,
+  type ProjectType,
 } from "@/types"
 
 const statusOptions: { value: ProjectStatus; label: string }[] = [
@@ -44,7 +44,7 @@ export interface ProjectEditFormValues {
   region?: ProjectRegion
   sector?: ProjectSector
   status: ProjectStatus
-  projectTypes?: DevelopmentType[]
+  projectType?: ProjectType
   startDate?: Dayjs | null
   endDate?: Dayjs | null
   accProjectId?: string | null
@@ -57,7 +57,7 @@ const getProjectFormValues = (p: ProjectResponse): ProjectEditFormValues => ({
   region: p.region ?? undefined,
   sector: p.sector ?? undefined,
   status: p.status,
-  projectTypes: p.projectTypes || ["HIGH_RISE"],
+  projectType: p.projectType || "HIGH_RISE",
   startDate: p.startDate ? dayjs(p.startDate) : null,
   endDate: p.endDate ? dayjs(p.endDate) : null,
   accProjectId: p.accProjectId ?? null,
@@ -99,7 +99,6 @@ const ProjectEditForm = ({ project, viewOnly }: ProjectEditFormProps) => {
   const [form] = Form.useForm<ProjectEditFormValues>()
   Form.useWatch([], form)
   const watchedGeneralInfo = Form.useWatch("generalInfo", form)
-  const watchedProjectTypes = Form.useWatch("projectTypes", form)
 
   const currentGeneralInfo =
     watchedGeneralInfo !== undefined ? watchedGeneralInfo : project.generalInfo
@@ -124,7 +123,7 @@ const ProjectEditForm = ({ project, viewOnly }: ProjectEditFormProps) => {
           region: values.region ?? undefined,
           sector: values.sector ?? undefined,
           status: values.status,
-          projectTypes: values.projectTypes || ["HIGH_RISE"],
+          projectType: values.projectType || "HIGH_RISE",
           startDate: values.startDate ?? null,
           endDate: values.endDate ?? null,
           accProjectId: values.accProjectId ?? null,
@@ -150,10 +149,7 @@ const ProjectEditForm = ({ project, viewOnly }: ProjectEditFormProps) => {
           region: values.region || null,
           sector: values.sector || null,
           status: values.status,
-          projectTypes:
-            values.projectTypes && values.projectTypes.length > 0
-              ? values.projectTypes
-              : ["HIGH_RISE"],
+          projectType: values.projectType || "HIGH_RISE",
           startDate: values.startDate
             ? values.startDate.format("YYYY-MM-DD")
             : null,
@@ -290,19 +286,21 @@ const ProjectEditForm = ({ project, viewOnly }: ProjectEditFormProps) => {
 
         <Form.Item
           label="Loại hình phát triển"
-          name="projectTypes"
+          name="projectType"
           className="mb-0"
           rules={[
             {
               required: true,
-              message: "Vui lòng chọn ít nhất một loại hình phát triển",
+              message: "Vui lòng chọn loại hình phát triển",
             },
           ]}
-          tooltip="Dự án có thể gồm hạng mục Thấp tầng, Cao tầng hoặc cả hai"
+          tooltip="Dự án có thể gồm hạng mục Thấp tầng, Cao tầng hoặc Hỗn hợp cả hai"
         >
-          <Checkbox.Group
-            options={DEVELOPMENT_TYPE_OPTIONS}
+          <Select
+            options={PROJECT_TYPE_OPTIONS}
+            placeholder="Chọn loại hình phát triển"
             disabled={viewOnly}
+            className="w-full"
           />
         </Form.Item>
 

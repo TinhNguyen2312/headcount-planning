@@ -22,7 +22,7 @@ import UnsavedChangesModal from "@/components/Common/UnsavedChangesModal"
 import { propertyQueries } from "@/hooks/server/properties"
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges"
 import type {
-  DevelopmentType,
+  ProjectType,
   PropertyDataType,
   PropertyResponse,
   PropertyValueItem,
@@ -92,19 +92,24 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
     return matrixData?.result?.values || []
   }, [matrixData])
 
-  const projectTypes: DevelopmentType[] = useMemo(() => {
-    const raw = matrixData?.result?.projectTypes
-    if (Array.isArray(raw) && raw.length > 0) return raw
-    return ["HIGH_RISE"]
+  const projectType: ProjectType = useMemo(() => {
+    const raw =
+      matrixData?.result?.projectType || matrixData?.result?.projectTypes?.[0]
+    return raw || "HIGH_RISE"
   }, [matrixData])
 
-  const hasLowRise = projectTypes.includes("LOW_RISE")
-  const hasHighRise = projectTypes.includes("HIGH_RISE")
+  const hasLowRise = projectType === "LOW_RISE" || projectType === "MIXED"
+  const hasHighRise = projectType === "HIGH_RISE" || projectType === "MIXED"
 
   const commonProperties = useMemo(
     () =>
       sortPropertiesByType(
-        properties.filter((p) => !p.scope || p.scope === "COMMON"),
+        properties.filter(
+          (p) =>
+            !p.projectType ||
+            p.projectType === "ALL" ||
+            p.scope === "COMMON",
+        ),
       ),
     [properties],
   )
@@ -113,7 +118,11 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
     () =>
       sortPropertiesByType(
         properties.filter(
-          (p) => p.scope === "PER_TYPE" || p.scope === "LOW_RISE_ONLY",
+          (p) =>
+            p.projectType === "LOW_RISE" ||
+            p.projectType === "MIXED" ||
+            p.scope === "PER_TYPE" ||
+            p.scope === "LOW_RISE_ONLY",
         ),
       ),
     [properties],
@@ -123,7 +132,11 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
     () =>
       sortPropertiesByType(
         properties.filter(
-          (p) => p.scope === "PER_TYPE" || p.scope === "HIGH_RISE_ONLY",
+          (p) =>
+            p.projectType === "HIGH_RISE" ||
+            p.projectType === "MIXED" ||
+            p.scope === "PER_TYPE" ||
+            p.scope === "HIGH_RISE_ONLY",
         ),
       ),
     [properties],
@@ -150,9 +163,12 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
       const commonMatch = values.find(
         (v) =>
           v.propertyId === prop.id &&
-          (v.projectType === "COMMON" || !v.projectType),
+          (v.projectType === "ALL" ||
+            v.projectType === "COMMON" ||
+            !v.projectType),
       )
       if (commonMatch) {
+        formFields[`prop_${prop.id}_ALL`] = getVal(prop, commonMatch)
         formFields[`prop_${prop.id}_COMMON`] = getVal(prop, commonMatch)
       }
 
@@ -161,7 +177,11 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
       )
       if (lowMatch) {
         formFields[`prop_${prop.id}_LOW_RISE`] = getVal(prop, lowMatch)
-      } else if (!hasHighRise && commonMatch && prop.scope === "PER_TYPE") {
+      } else if (
+        !hasHighRise &&
+        commonMatch &&
+        (prop.projectType === "MIXED" || prop.scope === "PER_TYPE")
+      ) {
         formFields[`prop_${prop.id}_LOW_RISE`] = getVal(prop, commonMatch)
       }
 
@@ -170,7 +190,11 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
       )
       if (highMatch) {
         formFields[`prop_${prop.id}_HIGH_RISE`] = getVal(prop, highMatch)
-      } else if (!hasLowRise && commonMatch && prop.scope === "PER_TYPE") {
+      } else if (
+        !hasLowRise &&
+        commonMatch &&
+        (prop.projectType === "MIXED" || prop.scope === "PER_TYPE")
+      ) {
         formFields[`prop_${prop.id}_HIGH_RISE`] = getVal(prop, commonMatch)
       }
     }
@@ -193,11 +217,11 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
       for (const [key, rawVal] of Object.entries(formVals)) {
         if (rawVal === undefined || rawVal === null || rawVal === "") continue
 
-        const match = key.match(/^prop_(\d+)_(COMMON|LOW_RISE|HIGH_RISE)$/)
+        const match = key.match(/^prop_(\d+)_(ALL|COMMON|LOW_RISE|HIGH_RISE)$/)
         if (!match) continue
 
         const propertyId = parseInt(match[1], 10)
-        const projectType = match[2]
+        const projectType = match[2] === "COMMON" ? "ALL" : match[2]
         const prop = properties.find((p) => p.id === propertyId)
         if (!prop) continue
 
@@ -363,7 +387,7 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
               {commonProperties.map((prop) => (
                 <Form.Item
                   key={prop.id}
-                  name={`prop_${prop.id}_COMMON`}
+                  name={`prop_${prop.id}_ALL`}
                   label={prop.name}
                   tooltip={prop.description || undefined}
                   valuePropName={

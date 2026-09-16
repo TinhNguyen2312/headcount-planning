@@ -25,7 +25,7 @@ export async function GET(
         status: projects.status,
         startDate: projects.startDate,
         endDate: projects.endDate,
-        projectTypes: projects.projectTypes,
+        projectType: projects.projectType,
         thumbnail: projects.thumbnail,
         createdAt: projects.createdAt,
         regionName: regions.name,
@@ -58,6 +58,16 @@ export async function PATCH(
     const projectId = parseInt(id, 10)
     const body = await req.json()
 
+    const resolvedType =
+      body.projectType !== undefined
+        ? body.projectType
+        : Array.isArray(body.projectTypes) && body.projectTypes.length > 0
+          ? body.projectTypes.includes("LOW_RISE") &&
+            body.projectTypes.includes("HIGH_RISE")
+            ? "MIXED"
+            : body.projectTypes[0]
+          : undefined
+
     const [updated] = await db
       .update(projects)
       .set({
@@ -70,8 +80,7 @@ export async function PATCH(
         status: body.status !== undefined ? body.status : undefined,
         startDate: body.startDate !== undefined ? body.startDate : undefined,
         endDate: body.endDate !== undefined ? body.endDate : undefined,
-        projectTypes:
-          body.projectTypes !== undefined ? body.projectTypes : undefined,
+        projectType: resolvedType,
         thumbnail: body.thumbnail !== undefined ? body.thumbnail : undefined,
       })
       .where(eq(projects.id, projectId))

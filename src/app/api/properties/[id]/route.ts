@@ -63,7 +63,7 @@ export async function GET(
         code: properties.code,
         name: properties.name,
         dataType: properties.dataType,
-        scope: properties.scope,
+        projectType: properties.projectType,
         unit: properties.unit,
         options: properties.options,
         description: properties.description,
@@ -79,6 +79,7 @@ export async function GET(
     const depts = await getPropertyDepts(propertyId)
     return apiSuccess({
       ...prop,
+      scope: prop.projectType,
       departmentIds: depts.map((d) => d.departmentId),
       departments: depts.map((d) => ({
         departmentId: d.departmentId,
@@ -110,6 +111,7 @@ export async function PATCH(
       code,
       name,
       dataType,
+      projectType,
       scope,
       unit,
       options,
@@ -135,13 +137,26 @@ export async function PATCH(
       }
     }
 
+    const resolvedType =
+      projectType !== undefined
+        ? projectType
+        : scope !== undefined
+          ? scope === "LOW_RISE_ONLY"
+            ? "LOW_RISE"
+            : scope === "HIGH_RISE_ONLY"
+              ? "HIGH_RISE"
+              : scope === "PER_TYPE"
+                ? "MIXED"
+                : "ALL"
+          : undefined
+
     const [updated] = await db
       .update(properties)
       .set({
         code: code !== undefined ? code.trim() : undefined,
         name: name !== undefined ? name.trim() : undefined,
         dataType: dataType !== undefined ? dataType : undefined,
-        scope: scope !== undefined ? scope : undefined,
+        projectType: resolvedType,
         unit: unit !== undefined ? (unit ? unit.trim() : null) : undefined,
         options: options !== undefined ? options : undefined,
         description: description !== undefined ? description : undefined,

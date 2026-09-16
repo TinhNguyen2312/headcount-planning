@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
         status: projects.status,
         startDate: projects.startDate,
         endDate: projects.endDate,
-        projectTypes: projects.projectTypes,
+        projectType: projects.projectType,
         thumbnail: projects.thumbnail,
         createdAt: projects.createdAt,
         regionName: regions.name,
@@ -102,6 +102,7 @@ export async function POST(req: NextRequest) {
       status,
       startDate,
       endDate,
+      projectType,
       projectTypes,
       thumbnail,
     } = body
@@ -117,6 +118,17 @@ export async function POST(req: NextRequest) {
       if (existing) return apiError("Mã dự án đã tồn tại", 409)
     }
 
+    const resolvedType =
+      projectType &&
+      ["ALL", "LOW_RISE", "HIGH_RISE", "MIXED"].includes(projectType)
+        ? projectType
+        : Array.isArray(projectTypes) && projectTypes.length > 0
+          ? projectTypes.includes("LOW_RISE") &&
+            projectTypes.includes("HIGH_RISE")
+            ? "MIXED"
+            : projectTypes[0]
+          : "HIGH_RISE"
+
     const [created] = await db
       .insert(projects)
       .values({
@@ -128,10 +140,7 @@ export async function POST(req: NextRequest) {
         status: status || "ACTIVE",
         startDate: startDate || null,
         endDate: endDate || null,
-        projectTypes:
-          projectTypes && Array.isArray(projectTypes) && projectTypes.length > 0
-            ? projectTypes
-            : ["HIGH_RISE"],
+        projectType: resolvedType,
         thumbnail: thumbnail || null,
       })
       .returning()

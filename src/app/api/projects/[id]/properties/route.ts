@@ -23,13 +23,13 @@ export async function GET(
     if (!project) return apiError("Không tìm thấy dự án", 404)
 
     // 1. Fetch all active properties
-    const activeProperties = await db
+    const rawProperties = await db
       .select({
         id: properties.id,
         code: properties.code,
         name: properties.name,
         dataType: properties.dataType,
-        scope: properties.scope,
+        projectType: properties.projectType,
         unit: properties.unit,
         options: properties.options,
         description: properties.description,
@@ -40,6 +40,11 @@ export async function GET(
       .from(properties)
       .where(eq(properties.isActive, true))
       .orderBy(properties.id)
+
+    const activeProperties = rawProperties.map((p) => ({
+      ...p,
+      scope: p.projectType,
+    }))
 
     // 2. Fetch existing values for this project
     const existingValues = await db
@@ -63,11 +68,12 @@ export async function GET(
         id: val.id,
         projectId: val.projectId,
         propertyId: val.propertyId,
-        projectType: val.projectType || "COMMON",
+        projectType:
+          val.projectType === "COMMON" ? "ALL" : val.projectType || "ALL",
         propertyCode: prop?.code || "",
         propertyName: prop?.name || "",
         dataType: (prop?.dataType as any) || "NUMBER",
-        scope: (prop?.scope as any) || "COMMON",
+        projectTypeProperty: (prop?.projectType as any) || "ALL",
         unit: prop?.unit || null,
         options: (prop?.options as any) || null,
         valueText: val.valueText,
@@ -78,7 +84,7 @@ export async function GET(
 
     return apiSuccess({
       projectId,
-      projectTypes: (project.projectTypes as any) || ["HIGH_RISE"],
+      projectType: (project.projectType as any) || "HIGH_RISE",
       properties: activeProperties,
       values: formattedValues,
     })
@@ -128,7 +134,10 @@ export async function PUT(
             ? String(item.valueText).trim()
             : null
 
-        const targetProjectType = item.projectType || "COMMON"
+        const targetProjectType =
+          item.projectType === "COMMON"
+            ? "ALL"
+            : item.projectType || "ALL"
 
         await db
           .insert(propertyValues)

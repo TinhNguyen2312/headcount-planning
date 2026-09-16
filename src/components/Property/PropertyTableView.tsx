@@ -16,7 +16,12 @@ import { Building2, Edit, Search, Trash2 } from "lucide-react"
 import React, { useMemo, useState } from "react"
 import DepartmentSelect from "@/components/Common/DepartmentSelect"
 import { propertyQueries } from "@/hooks/server/properties"
-import type { PropertyDataType, PropertyResponse, PropertyScope } from "@/types"
+import type {
+  ProjectType,
+  PropertyDataType,
+  PropertyResponse,
+  PropertyScope,
+} from "@/types"
 
 interface PropertyTableViewProps {
   onEditProperty: (property: PropertyResponse) => void
@@ -32,12 +37,17 @@ const DATA_TYPE_BADGES: Record<
   SELECT: { label: "Chọn", color: "orange" },
 }
 
-const SCOPE_BADGES: Record<PropertyScope, { label: string; color: string }> = {
-  COMMON: { label: "Toàn dự án", color: "blue" },
-  PER_TYPE: { label: "Thấp và Cao tầng", color: "geekblue" },
-  LOW_RISE_ONLY: { label: "Thấp tầng", color: "green" },
-  HIGH_RISE_ONLY: { label: "Cao tầng", color: "purple" },
+const PROJECT_TYPE_BADGES: Record<
+  ProjectType,
+  { label: string; color: string }
+> = {
+  ALL: { label: "Toàn dự án", color: "blue" },
+  MIXED: { label: "Thấp và Cao tầng", color: "geekblue" },
+  LOW_RISE: { label: "Thấp tầng", color: "green" },
+  HIGH_RISE: { label: "Cao tầng", color: "purple" },
 }
+
+const SCOPE_BADGES = PROJECT_TYPE_BADGES
 
 export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
   onEditProperty,
@@ -141,11 +151,12 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
     },
     {
       title: "Loại dự án",
-      dataIndex: "scope",
-      key: "scope",
+      dataIndex: "projectType",
+      key: "projectType",
       width: 160,
-      render: (scope?: PropertyScope) => {
-        const badge = (scope && SCOPE_BADGES[scope]) || {
+      render: (_: any, record: PropertyResponse) => {
+        const pType = (record.projectType || record.scope || "ALL") as ProjectType
+        const badge = (pType && PROJECT_TYPE_BADGES[pType]) || {
           label: "Toàn dự án",
           color: "blue",
         }
