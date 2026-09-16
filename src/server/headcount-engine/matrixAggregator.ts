@@ -93,9 +93,8 @@ export function aggregateHeadcountMatrix(
         startDate: project.startDate,
         endDate: project.endDate,
         thumbnail: project.thumbnail || "",
-        projectTypes: (Array.isArray(project.projectTypes)
-          ? project.projectTypes
-          : ["HIGH_RISE"]) as any,
+        projectType: (project.projectType as any) || "HIGH_RISE",
+        projectTypes: [(project.projectType as any) || "HIGH_RISE"],
         createdAt: project.createdAt,
         region: regionResponse,
       }

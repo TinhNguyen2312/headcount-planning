@@ -18,17 +18,14 @@ import type {
 
 function isStandardApplicable(
   standardProjectType: string | null | undefined,
-  projectTypes: string[],
+  projectType: string,
 ): boolean {
   if (!standardProjectType || standardProjectType === "ALL") return true
-  if (standardProjectType === "LOW_RISE")
-    return projectTypes.includes("LOW_RISE")
-  if (standardProjectType === "HIGH_RISE")
-    return projectTypes.includes("HIGH_RISE")
-  if (standardProjectType === "MIXED")
-    return (
-      projectTypes.includes("LOW_RISE") && projectTypes.includes("HIGH_RISE")
-    )
+  if (standardProjectType === projectType) return true
+  if (projectType === "MIXED") {
+    // Dự án hỗn hợp có thể áp dụng chuẩn cho LOW_RISE, HIGH_RISE, MIXED, ALL
+    return true
+  }
   return false
 }
 
@@ -41,9 +38,9 @@ export async function POST(req: NextRequest) {
       return apiError("Vui lòng cung cấp projectId", 400, 400)
     }
 
-    // 0. Fetch project info (especially projectTypes)
+    // 0. Fetch project info (projectType)
     const [project] = await db
-      .select({ id: projects.id, projectTypes: projects.projectTypes })
+      .select({ id: projects.id, projectType: projects.projectType })
       .from(projects)
       .where(eq(projects.id, projectId))
       .limit(1)
@@ -52,9 +49,7 @@ export async function POST(req: NextRequest) {
       return apiError("Dự án không tồn tại trong hệ thống", 404, 404)
     }
 
-    const projectTypes: string[] = Array.isArray(project.projectTypes)
-      ? project.projectTypes
-      : ["HIGH_RISE"]
+    const projectType: string = project.projectType || "HIGH_RISE"
 
     // 1. Fetch project property values
     const pValues = await db
@@ -64,7 +59,7 @@ export async function POST(req: NextRequest) {
         propertyCode: properties.code,
         propertyName: properties.name,
         dataType: properties.dataType,
-        scope: properties.scope,
+        projectTypeProperty: properties.projectType,
         valueNumber: propertyValues.valueNumber,
         valueText: propertyValues.valueText,
       })
@@ -89,7 +84,8 @@ export async function POST(req: NextRequest) {
 
     for (const pv of pValues) {
       const numVal = pv.valueNumber !== null ? Number(pv.valueNumber) : null
-      const pType = pv.projectType || "COMMON"
+      const pType =
+        pv.projectType === "COMMON" ? "ALL" : pv.projectType || "ALL"
       const existing = projectPropMap.get(pv.propertyId)
 
       if (!existing) {
@@ -165,8 +161,8 @@ export async function POST(req: NextRequest) {
       let isMatch = false
 
       for (const std of standards) {
-        // Filter out standards not applicable to the project's development types
-        if (!isStandardApplicable(std.projectType, projectTypes)) {
+        // Filter out standards not applicable to the project's development type
+        if (!isStandardApplicable(std.projectType, projectType)) {
           continue
         }
 
@@ -189,7 +185,15 @@ export async function POST(req: NextRequest) {
 
           if (projectProp) {
             if (projectProp.dataType === "NUMBER") {
-              const num = projectProp.valueNumber
+              const num =
+                std.projectType &&
+                std.projectType !== "ALL" &&
+                std.projectType !== "MIXED"
+                  ? (projectProp.valuesByType[std.projectType]?.valueNumber ??
+                    projectProp.valuesByType["ALL"]?.valueNumber ??
+                    projectProp.valueNumber)
+                  : (projectProp.valuesByType["ALL"]?.valueNumber ??
+                    projectProp.valueNumber)
               projectVal = num
               if (num !== null) {
                 switch (crit.conditionOperator) {

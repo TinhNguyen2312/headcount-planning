@@ -8,22 +8,80 @@ import type {
 } from "./scopeLoader"
 import type { MonthPeriod } from "./types"
 
-// 1. So khớp toán tử cho Criteria
+/**
+ * Các loại hình áp dụng cho Property Value & Standard:
+ * - "ALL": Áp dụng chung cho mọi loại hình
+ * - "LOW_RISE": Áp dụng riêng cho Thấp tầng
+ * - "HIGH_RISE": Áp dụng riêng cho Cao tầng
+ * - "MIXED": Áp dụng cho Dự án hỗn hợp
+ */
+export type ProjectTypeScope = "ALL" | "LOW_RISE" | "HIGH_RISE" | "MIXED"
+
+export function isStandardApplicable(
+  standardProjectType: string | null | undefined,
+  projectType: string,
+): boolean {
+  if (!standardProjectType || standardProjectType === "ALL") return true
+  if (standardProjectType === projectType) return true
+  if (projectType === "MIXED") {
+    // Dự án hỗn hợp có thể thỏa mãn cả LOW_RISE, HIGH_RISE, MIXED, ALL
+    return true
+  }
+  return false
+}
+
+// 1. So khớp toán tử cho Criteria với ngữ cảnh projectType (string)
 export function matchesCriterion(
   criterion: LoadedCriterion,
   projectValues: LoadedPropertyValue[] | undefined,
+  contextProjectType?: string,
 ): boolean {
   if (!projectValues || projectValues.length === 0) return false
 
+  // Lọc propertyValues theo ngữ cảnh: ưu tiên đúng contextProjectType, nếu không có lấy ALL
+  let relevantValues = projectValues
+  if (
+    contextProjectType &&
+    contextProjectType !== "ALL" &&
+    contextProjectType !== "MIXED"
+  ) {
+    const specificValues = projectValues.filter(
+      (pv) => pv.projectType === contextProjectType,
+    )
+    if (specificValues.length > 0) {
+      relevantValues = specificValues
+    } else {
+      // Fallback lấy giá trị ALL
+      relevantValues = projectValues.filter(
+        (pv) =>
+          !pv.projectType ||
+          pv.projectType === "ALL" ||
+          pv.projectType === "COMMON",
+      )
+    }
+  } else {
+    const allValues = projectValues.filter(
+      (pv) =>
+        !pv.projectType ||
+        pv.projectType === "ALL" ||
+        pv.projectType === "COMMON",
+    )
+    if (allValues.length > 0) {
+      relevantValues = allValues
+    }
+  }
+
+  if (relevantValues.length === 0) return false
+
   const isNumberType =
     criterion.property?.dataType === "NUMBER" ||
-    projectValues.some((pv) => pv.valueNumber !== null)
+    relevantValues.some((pv) => pv.valueNumber !== null)
 
   const min = criterion.minValue !== null ? Number(criterion.minValue) : null
   const max = criterion.maxValue !== null ? Number(criterion.maxValue) : null
   const op = criterion.conditionOperator.trim().toUpperCase()
 
-  for (const pv of projectValues) {
+  for (const pv of relevantValues) {
     if (isNumberType) {
       const actual = pv.valueNumber !== null ? Number(pv.valueNumber) : null
       if (actual === null) continue
@@ -114,9 +172,9 @@ export function calculateMonthlyFactor(
 
 /**
  * 4. Chạy định biên theo dự án trong 1 tháng cụ thể:
- * 4.1: Với mỗi dự án lọc headcount_standard theo roleId, theo projectType, from_milestone và to_milestone
+ * 4.1: Với mỗi dự án lọc headcount_standard theo roleId, theo projectType (chuỗi: ALL, LOW_RISE, HIGH_RISE, COMMON), from_milestone và to_milestone
  * 4.2: Lấy property values của dự án
- * 4.2.1: Đối chiếu criteria (Logic AND). Khớp hết mới giữ lại.
+ * 4.2.1: Đối chiếu criteria theo đúng projectType (Logic AND). Khớp hết mới giữ lại.
  * 4.2.2: Lấy hệ số tối ưu factor theo duration_months và monthNoInPhase
  * 4.2.3: rawDB = headcount * factor
  * 4.3: Nếu có nhiều standard thỏa mãn => lấy cái tối ưu nhân sự hơn (max rawDB)
@@ -134,15 +192,18 @@ export function calculateRoleMonthlyHeadcount(
   const { phase, monthNoInPhase } = phaseRes
   const milestoneId = phase.milestoneId
 
-  const projectTypes = (
-    Array.isArray(project.projectTypes) ? project.projectTypes : ["HIGH_RISE"]
-  ) as string[]
+  // 4.1 Lọc standards theo role bước 3, theo projectType (chuỗi), from_milestone và to_milestone
+  const projectType =
+    (project as any).projectType ||
+    (Array.isArray((project as any).projectTypes)
+      ? (project as any).projectTypes[0]
+      : "HIGH_RISE")
 
-  // 4.1 Lọc standards theo role bước 3, theo projectType, from_milestone và to_milestone
   const candidateStandards = standards.filter((std) => {
     if (std.roleId !== roleId) return false
 
-    if (std.projectType !== "ALL" && !projectTypes.includes(std.projectType)) {
+    // Khớp projectType dạng string
+    if (!isStandardApplicable(std.projectType, projectType)) {
       return false
     }
 
@@ -161,18 +222,19 @@ export function calculateRoleMonthlyHeadcount(
     propValuesMap.set(pv.propertyId, list)
   }
 
-  // 4.2 & 4.3: Duyệt từng standard, kiểm tra criteria và tính rawDB
+  // 4.2 & 4.3: Duyệt từng standard, kiểm tra criteria theo context projectType và tính rawDB
   let bestHeadcount = 0
 
   for (const std of candidateStandards) {
     const criteriaList = std.headcountCriteria || []
+    const stdProjectType = std.projectType || "ALL"
 
-    // 4.2.1: Dựa trên headcount_criteria kiểm tra có match không. Không match loại.
+    // 4.2.1: Đối chiếu criteria có match theo context projectType (ALL / LOW_RISE / HIGH_RISE / MIXED)
     const allPassed =
       criteriaList.length === 0 ||
       criteriaList.every((crit) => {
         const propValues = propValuesMap.get(crit.propertyId)
-        return matchesCriterion(crit, propValues)
+        return matchesCriterion(crit, propValues, stdProjectType)
       })
 
     if (!allPassed) continue

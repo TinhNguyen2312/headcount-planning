@@ -113,6 +113,12 @@ export async function queryProjects(projectIds: number[]) {
   })
 }
 
+/**
+ * Bước 3: Lọc Role theo đúng scopeType đang chạy:
+ * - scopeType = 'BY_PROJECT' => planning_method = 'BY_PROJECT'
+ * - scopeType = 'BY_REGION'  => planning_method = 'BY_REGION'
+ * - scopeType = 'BY_SECTOR'  => planning_method = 'BY_SECTOR'
+ */
 export async function queryRoles(scopeType: PlanningMethod) {
   return db.query.roles.findMany({
     where: eq(roles.planningMethod, scopeType),
@@ -122,25 +128,14 @@ export async function queryRoles(scopeType: PlanningMethod) {
   })
 }
 
-export async function queryStandards(
-  roleIds: number[],
-  projectTypes?: string[],
-) {
+/**
+ * Bước 4.1: Lọc headcount_standards từ DB theo danh sách roleIds
+ */
+export async function queryStandards(roleIds: number[]) {
   if (roleIds.length === 0) return []
 
-  const conditions: SQL[] = [inArray(headcountStandards.roleId, roleIds)]
-
-  if (projectTypes && projectTypes.length > 0) {
-    conditions.push(
-      or(
-        eq(headcountStandards.projectType, "ALL"),
-        inArray(headcountStandards.projectType, projectTypes),
-      )!,
-    )
-  }
-
   return db.query.headcountStandards.findMany({
-    where: and(...conditions),
+    where: inArray(headcountStandards.roleId, roleIds),
     with: {
       role: {
         with: {
@@ -170,6 +165,7 @@ export async function loadProjectScopeData(
 }> {
   const { scopeType, scopeId } = params
 
+  // 1. scopeType => chọn các dự án trong scope đó ở bảng headcount_projects.active = true
   const { scopeName, projectIds } = await resolveScope(scopeType, scopeId)
 
   if (projectIds.length === 0) {
@@ -191,6 +187,8 @@ export async function loadProjectScopeData(
     return { scopeName, projects: [], roles: [], standards: [] }
   }
 
+  // 2. Query projects (kèm active plans, phases, milestone, propertyValues)
+  // và Bước 3: lọc role theo scopeType
   const [loadedProjects, loadedRoles] = await Promise.all([
     queryProjects(activeProjectIds),
     queryRoles(scopeType),
@@ -198,15 +196,8 @@ export async function loadProjectScopeData(
 
   const targetRoleIds = loadedRoles.map((r) => r.id)
 
-  const allProjectTypes = Array.from(
-    new Set(
-      loadedProjects.flatMap((p) =>
-        Array.isArray(p.projectTypes) ? p.projectTypes : ["HIGH_RISE"],
-      ),
-    ),
-  )
-
-  const loadedStandards = await queryStandards(targetRoleIds, allProjectTypes)
+  // 4.1: Query headcount_standards theo các roles bước 3
+  const loadedStandards = await queryStandards(targetRoleIds)
 
   return {
     scopeName,
