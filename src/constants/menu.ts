@@ -1,5 +1,6 @@
 import {
   Building2,
+  FileSpreadsheet,
   LayoutDashboard,
   type LucideIcon,
   Scale,
@@ -87,6 +88,16 @@ export const MENU_ITEMS: MenuItemConfig[] = [
     position: "top",
     shortcut: "mod+alt+b",
     category: "Quản trị",
+  },
+  {
+    key: "headcount-reports",
+    icon: FileSpreadsheet,
+    label: "Báo cáo định biên",
+    path: "/headcount-reports",
+    roles: ["SUPER_ADMIN"],
+    position: "top",
+    shortcut: "mod+alt+r",
+    category: "Báo cáo",
   },
   // {
   //   key: "settings",
