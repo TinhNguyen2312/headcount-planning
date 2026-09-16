@@ -1,5 +1,16 @@
 import { NextRequest } from "next/server"
-import { ilike, or, and, count, desc, asc, eq, inArray, type SQL, notExists } from "drizzle-orm"
+import {
+  ilike,
+  or,
+  and,
+  count,
+  desc,
+  asc,
+  eq,
+  inArray,
+  type SQL,
+  notExists,
+} from "drizzle-orm"
 import { db, properties, propertyDepartments, departments } from "@/db"
 import { getCurrentUserFromSession } from "@/lib/session"
 import { apiError, apiSuccess, createPaginationMeta } from "@/lib/apiResponse"
@@ -9,7 +20,12 @@ const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || "JSESSIONID"
 /** Helper: lấy departmentIds đã gán cho danh sách properties */
 async function getPropertyDeptMap(
   propertyIds: number[],
-): Promise<Map<number, { departmentId: number; departmentCode: string; departmentName: string }[]>> {
+): Promise<
+  Map<
+    number,
+    { departmentId: number; departmentCode: string; departmentName: string }[]
+  >
+> {
   if (propertyIds.length === 0) return new Map()
 
   const rows = await db
@@ -20,10 +36,16 @@ async function getPropertyDeptMap(
       departmentName: departments.name,
     })
     .from(propertyDepartments)
-    .innerJoin(departments, eq(propertyDepartments.departmentId, departments.id))
+    .innerJoin(
+      departments,
+      eq(propertyDepartments.departmentId, departments.id),
+    )
     .where(inArray(propertyDepartments.propertyId, propertyIds))
 
-  const map = new Map<number, { departmentId: number; departmentCode: string; departmentName: string }[]>()
+  const map = new Map<
+    number,
+    { departmentId: number; departmentCode: string; departmentName: string }[]
+  >()
   for (const row of rows) {
     const list = map.get(row.propertyId) ?? []
     list.push({
@@ -196,7 +218,9 @@ export async function POST(req: NextRequest) {
 
     // Gán departments nếu có
     if (Array.isArray(departmentIds) && departmentIds.length > 0) {
-      const validIds = departmentIds.filter((id): id is number => typeof id === "number" && !isNaN(id))
+      const validIds = departmentIds.filter(
+        (id): id is number => typeof id === "number" && !isNaN(id),
+      )
       if (validIds.length > 0) {
         await db.insert(propertyDepartments).values(
           validIds.map((deptId) => ({

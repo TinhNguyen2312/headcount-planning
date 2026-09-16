@@ -1,6 +1,8 @@
 ﻿import type { DefaultOptionType } from "antd/es/select"
 import { useMemo } from "react"
-import InfiniteSelect, { type InfiniteSelectProps } from "@/components/Common/InfiniteSelect"
+import InfiniteSelect, {
+  type InfiniteSelectProps,
+} from "@/components/Common/InfiniteSelect"
 import { departmentQueries } from "@/hooks/server/departments"
 import type { DepartmentResponse } from "@/types"
 

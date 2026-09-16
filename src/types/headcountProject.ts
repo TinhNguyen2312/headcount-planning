@@ -7,20 +7,7 @@ export interface HeadcountProjectResponse {
   note: string | null
   createdAt: string
   updatedAt: string
-  project?: {
-    id: number
-    code: string | null
-    name: string
-    address?: string | null
-    startDate?: string | null
-    endDate?: string | null
-    status: string
-    thumbnail?: string | null
-    regionId?: number | null
-    regionName?: string | null
-    sectorId?: number | null
-    sectorName?: string | null
-  }
+  project: ProjectResponse
 }
 
 export interface HeadcountProjectCreatePayload {

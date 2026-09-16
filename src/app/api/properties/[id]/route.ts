@@ -1,6 +1,12 @@
 import { NextRequest } from "next/server"
 import { eq, inArray } from "drizzle-orm"
-import { db, properties, propertyValues, propertyDepartments, departments } from "@/db"
+import {
+  db,
+  properties,
+  propertyValues,
+  propertyDepartments,
+  departments,
+} from "@/db"
 import { getCurrentUserFromSession } from "@/lib/session"
 import { apiError, apiSuccess } from "@/lib/apiResponse"
 
@@ -15,12 +21,18 @@ async function getPropertyDepts(propertyId: number) {
       departmentName: departments.name,
     })
     .from(propertyDepartments)
-    .innerJoin(departments, eq(propertyDepartments.departmentId, departments.id))
+    .innerJoin(
+      departments,
+      eq(propertyDepartments.departmentId, departments.id),
+    )
     .where(eq(propertyDepartments.propertyId, propertyId))
 }
 
 /** Helper: đồng bộ danh sách departments của property (delete-then-insert) */
-async function syncPropertyDepartments(propertyId: number, newDeptIds: number[]) {
+async function syncPropertyDepartments(
+  propertyId: number,
+  newDeptIds: number[],
+) {
   // Xóa tất cả gán cũ
   await db
     .delete(propertyDepartments)
@@ -28,9 +40,11 @@ async function syncPropertyDepartments(propertyId: number, newDeptIds: number[])
 
   // Insert mới nếu có
   if (newDeptIds.length > 0) {
-    await db.insert(propertyDepartments).values(
-      newDeptIds.map((deptId) => ({ propertyId, departmentId: deptId })),
-    )
+    await db
+      .insert(propertyDepartments)
+      .values(
+        newDeptIds.map((deptId) => ({ propertyId, departmentId: deptId })),
+      )
   }
 }
 

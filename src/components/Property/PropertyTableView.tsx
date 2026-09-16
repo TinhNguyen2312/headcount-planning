@@ -43,7 +43,9 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
   onEditProperty,
 }) => {
   const [searchText, setSearchText] = useState("")
-  const [filterDeptId, setFilterDeptId] = useState<number | undefined>(undefined)
+  const [filterDeptId, setFilterDeptId] = useState<number | undefined>(
+    undefined,
+  )
 
   // Gọi API với departmentId filter (server-side)
   const { data: properties = [], isLoading } = propertyQueries.useList(

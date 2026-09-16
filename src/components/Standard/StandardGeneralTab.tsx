@@ -107,7 +107,7 @@ export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Form.Item
           name="headcount"
-          label="Định biên chuẩn (Baseline)"
+          label="Baseline"
           rules={[{ required: true, message: "Nhập định biên chuẩn" }]}
         >
           <InputNumber
@@ -120,7 +120,7 @@ export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = () => {
 
         <Form.Item
           name="headcountMin"
-          label="Ngưỡng sàn (Min)"
+          label="Min"
           tooltip="Số nhân sự tối thiểu cho phép khi điều chỉnh"
         >
           <InputNumber
@@ -133,7 +133,7 @@ export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = () => {
 
         <Form.Item
           name="headcountMax"
-          label="Ngưỡng trần (Max)"
+          label="Max"
           tooltip="Số nhân sự tối đa cho phép khi điều chỉnh"
         >
           <InputNumber

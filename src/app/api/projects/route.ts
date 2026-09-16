@@ -1,8 +1,8 @@
+import { and, asc, count, desc, eq, ilike, or, type SQL } from "drizzle-orm"
 import { NextRequest } from "next/server"
-import { ilike, or, count, desc, asc, eq, and, type SQL } from "drizzle-orm"
 import { db, projects, regions, sectors } from "@/db"
-import { getCurrentUserFromSession } from "@/lib/session"
 import { apiError, apiSuccess, createPaginationMeta } from "@/lib/apiResponse"
+import { getCurrentUserFromSession } from "@/lib/session"
 
 const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || "JSESSIONID"
 

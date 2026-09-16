@@ -6,7 +6,6 @@ import {
   Input,
   Modal,
   Popconfirm,
-  Select,
   Space,
   Switch,
   Table,
@@ -15,20 +14,16 @@ import {
 } from "antd"
 import type { ColumnsType } from "antd/es/table"
 import {
-  Building2,
   CheckCircle2,
   Edit,
   ExternalLink,
-  MapPin,
   PauseCircle,
-  RotateCcw,
-  Search,
   Trash2,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import React, { useMemo, useState } from "react"
+import React, { useState } from "react"
 import { headcountProjectQueries } from "@/hooks/server/headcountProjects"
-import type { HeadcountProjectResponse, ProjectStatus } from "@/types"
+import type { HeadcountProjectResponse } from "@/types"
 
 const statusLabel: Record<string, string> = {
   PLANNING: "Lên kế hoạch",
@@ -46,8 +41,6 @@ const statusTagColor: Record<string, string> = {
 
 export const HeadcountProjectTableView: React.FC = () => {
   const router = useRouter()
-  const [keyword, setKeyword] = useState("")
-  const [activeFilter, setActiveFilter] = useState<string>("ALL")
   const [editingNoteRecord, setEditingNoteRecord] =
     useState<HeadcountProjectResponse | null>(null)
   const [editingNoteValue, setEditingNoteValue] = useState("")
@@ -56,30 +49,6 @@ export const HeadcountProjectTableView: React.FC = () => {
     headcountProjectQueries.useList()
   const updateMutation = headcountProjectQueries.useUpdate()
   const deleteMutation = headcountProjectQueries.useDelete()
-
-  const filteredProjects = useMemo(() => {
-    return headcountProjects.filter((item) => {
-      if (activeFilter === "ACTIVE" && !item.isActive) return false
-      if (activeFilter === "INACTIVE" && item.isActive) return false
-
-      if (keyword.trim()) {
-        const lower = keyword.toLowerCase()
-        const matchName = item.project?.name?.toLowerCase().includes(lower)
-        const matchCode = item.project?.code?.toLowerCase().includes(lower)
-        const matchNote = item.note?.toLowerCase().includes(lower)
-        const matchRegion = item.project?.regionName
-          ?.toLowerCase()
-          .includes(lower)
-        if (!matchName && !matchCode && !matchNote && !matchRegion) return false
-      }
-      return true
-    })
-  }, [headcountProjects, activeFilter, keyword])
-
-  const activeCount = useMemo(
-    () => headcountProjects.filter((p) => p.isActive).length,
-    [headcountProjects],
-  )
 
   const handleToggleActive = (
     record: HeadcountProjectResponse,
@@ -107,7 +76,7 @@ export const HeadcountProjectTableView: React.FC = () => {
 
   const columns: ColumnsType<HeadcountProjectResponse> = [
     {
-      title: "Mã & Tên dự án",
+      title: "Tên dự án",
       key: "projectName",
       width: 280,
       render: (_, record) => (
@@ -117,54 +86,9 @@ export const HeadcountProjectTableView: React.FC = () => {
               className="font-semibold text-sm text-foreground hover:text-primary cursor-pointer transition-colors"
               onClick={() => router.push(`/projects/${record.projectId}/edit`)}
             >
-              {record.project?.name || `Dự án #${record.projectId}`}
+              {record.project.name}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-            {record.project?.code && (
-              <Tag className="text-[11px] font-mono m-0">
-                {record.project.code}
-              </Tag>
-            )}
-            {record.project?.address && (
-              <span
-                className="text-xs text-muted-foreground truncate max-w-[200px]"
-                title={record.project.address}
-              >
-                {record.project.address}
-              </span>
-            )}
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "Khu vực / Vùng",
-      key: "region",
-      width: 200,
-      render: (_, record) => (
-        <div className="flex flex-col gap-1 text-xs">
-          {record.project?.regionName && (
-            <div className="flex items-center gap-1">
-              <span className="text-muted-foreground text-[11px]">Vùng:</span>
-              <span className="font-medium text-foreground">
-                {record.project.regionName}
-              </span>
-            </div>
-          )}
-          {record.project?.sectorName && (
-            <div className="flex items-center gap-1">
-              <span className="text-muted-foreground text-[11px]">
-                Khu vực:
-              </span>
-              <span className="text-muted-foreground">
-                {record.project.sectorName}
-              </span>
-            </div>
-          )}
-          {!record.project?.regionName && !record.project?.sectorName && (
-            <span className="text-muted-foreground">—</span>
-          )}
         </div>
       ),
     },
@@ -182,7 +106,7 @@ export const HeadcountProjectTableView: React.FC = () => {
       },
     },
     {
-      title: "Kích hoạt chạy định biên",
+      title: "Trạng thái",
       key: "isActive",
       width: 220,
       render: (_, record) => (
@@ -209,6 +133,18 @@ export const HeadcountProjectTableView: React.FC = () => {
                 Tạm dừng
               </span>
             )}
+          </span>
+        </div>
+      ),
+    },
+    {
+      title: "Phương thức định biên",
+      key: "isActive",
+      width: 250,
+      render: (_, record) => (
+        <div className="flex items-center gap-3">
+          <span className="text-muted-foreground inline-flex items-center gap-1">
+            {record.id % 2 == 0 ? "Min" : "Max"}
           </span>
         </div>
       ),
@@ -277,57 +213,10 @@ export const HeadcountProjectTableView: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      {/* Filter toolbar */}
-      <div className="flex flex-wrap items-center gap-3 bg-card p-3 rounded-lg border border-border/60">
-        <Input
-          placeholder="Tìm theo tên dự án, mã, ghi chú..."
-          prefix={<Search className="size-4 text-muted-foreground" />}
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          className="w-72"
-          allowClear
-        />
-
-        <Select
-          value={activeFilter}
-          onChange={setActiveFilter}
-          className="w-48"
-          options={[
-            { value: "ALL", label: "Tất cả trạng thái ĐB" },
-            { value: "ACTIVE", label: "Đang áp dụng định biên" },
-            { value: "INACTIVE", label: "Tạm dừng định biên" },
-          ]}
-        />
-
-        {(keyword || activeFilter !== "ALL") && (
-          <Button
-            type="dashed"
-            icon={<RotateCcw className="size-3.5" />}
-            onClick={() => {
-              setKeyword("")
-              setActiveFilter("ALL")
-            }}
-          >
-            Đặt lại
-          </Button>
-        )}
-
-        <div className="ml-auto flex items-center gap-3 text-xs text-muted-foreground">
-          <span>
-            Đang áp dụng:{" "}
-            <strong className="text-emerald-600 dark:text-emerald-400 font-semibold">
-              {activeCount}
-            </strong>
-            /{headcountProjects.length} dự án
-          </span>
-        </div>
-      </div>
-
-      {/* Table view */}
       <div className="bg-card rounded-lg border border-border overflow-hidden">
         <Table
           rowKey="id"
-          dataSource={filteredProjects}
+          dataSource={headcountProjects}
           columns={columns}
           loading={isLoading}
           pagination={{
@@ -347,7 +236,6 @@ export const HeadcountProjectTableView: React.FC = () => {
         />
       </div>
 
-      {/* Quick Edit Note Modal */}
       <Modal
         title="Chỉnh sửa ghi chú chạy định biên"
         open={Boolean(editingNoteRecord)}
@@ -360,8 +248,6 @@ export const HeadcountProjectTableView: React.FC = () => {
         <div className="space-y-3 pt-2">
           <p className="text-sm text-foreground">
             Dự án: <strong>{editingNoteRecord?.project?.name}</strong>{" "}
-            {editingNoteRecord?.project?.code &&
-              `(${editingNoteRecord.project.code})`}
           </p>
           <Input.TextArea
             rows={4}

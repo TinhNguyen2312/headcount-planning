@@ -1,15 +1,6 @@
 "use client"
 
-import {
-  Alert,
-  Button,
-  Card,
-  Form,
-  type FormInstance,
-  Input,
-  Select,
-  Tag,
-} from "antd"
+import { Button, Card, Form, type FormInstance, Input, Select, Tag } from "antd"
 import { Plus, Trash2 } from "lucide-react"
 import React, { useMemo } from "react"
 import { propertyQueries } from "@/hooks/server/properties"
@@ -47,14 +38,6 @@ export const StandardCriteriaTab: React.FC<StandardCriteriaTabProps> = ({
 
   return (
     <div className="pt-2">
-      <Alert
-        type="info"
-        showIcon
-        className="mb-3 text-xs"
-        title="Quy tắc lọc AND"
-        description="Định biên này sẽ được áp dụng cho dự án nếu thỏa mãn tất cả các điều kiện bên dưới. Phép toán so sánh và kiểu giá trị tự động điều chỉnh theo Cơ sở định biên."
-      />
-
       <Form.List name="criteria">
         {(fields, { add, remove }) => (
           <div className="space-y-3">
@@ -216,7 +199,7 @@ export const StandardCriteriaTab: React.FC<StandardCriteriaTabProps> = ({
 
             {fields.length === 0 && readOnly && (
               <div className="text-center py-6 text-muted-foreground text-xs border border-dashed rounded-lg">
-                Không có điều kiện lọc bổ sung (Áp dụng cho mọi quy mô dự án).
+                Không có cơ sở định biên bổ sung (Áp dụng cho mọi quy mô dự án).
               </div>
             )}
 
@@ -231,7 +214,7 @@ export const StandardCriteriaTab: React.FC<StandardCriteriaTabProps> = ({
                 block
                 icon={<Plus className="size-4" />}
               >
-                Thêm điều kiện lọc
+                Thêm cơ sở định biên
               </Button>
             )}
           </div>

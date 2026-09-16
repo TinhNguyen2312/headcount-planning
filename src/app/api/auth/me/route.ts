@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server"
+import { apiError, apiSuccess } from "@/lib/apiResponse"
 import { getCurrentUserFromSession, touchSession } from "@/lib/session"
 import { formatUserResponse } from "@/lib/userHelpers"
-import { apiError, apiSuccess } from "@/lib/apiResponse"
 
 const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || "JSESSIONID"
 

@@ -139,7 +139,12 @@ export default function HeadcountReportsPage() {
       children: (
         <div className="pt-1">
           <HeadcountRunConfigView
-            onRun={({ scopeType: st, scopeId: sid, fromMonth: fm, toMonth: tm }) => {
+            onRun={({
+              scopeType: st,
+              scopeId: sid,
+              fromMonth: fm,
+              toMonth: tm,
+            }) => {
               // Cập nhật phạm vi & kỳ sang tab Báo cáo
               setScopeType(st)
               setScopeId(sid)
@@ -147,7 +152,9 @@ export default function HeadcountReportsPage() {
               setToMonth(tm)
               // Chuyển sang tab Báo cáo
               setActiveTab("matrix")
-              message.success("Đã tính toán xong! Xem kết quả tại tab Báo cáo Định biên.")
+              message.success(
+                "Đã tính toán xong! Xem kết quả tại tab Báo cáo Định biên.",
+              )
             }}
           />
         </div>

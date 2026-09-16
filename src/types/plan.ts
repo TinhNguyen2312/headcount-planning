@@ -1,3 +1,5 @@
+import { MilestoneResponse } from "./milestone"
+
 export type PlanStatus = "DRAFT" | "ACTIVE" | "ARCHIVED"
 
 export interface PhaseResponse {
@@ -10,14 +12,13 @@ export interface PhaseResponse {
   durationMonths: number
   description: string | null
   createdAt: string
-  updatedAt: string
   milestone?: {
     id: number
     code?: string | null
     name?: string | null
     description?: string | null
   } | null
-  // Computed / Helper fields
+  updatedAt?: string
   durationDays?: number
 }
 
@@ -40,7 +41,7 @@ export interface PlanResponse {
   note: string | null
   createdAt: string
   updatedAt: string
-  phases?: PhaseResponse[]
+  phases: PhaseResponse[]
   phasesCount?: number
 }
 
