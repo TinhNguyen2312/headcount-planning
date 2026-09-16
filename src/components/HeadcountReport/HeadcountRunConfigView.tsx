@@ -130,8 +130,6 @@ export const HeadcountRunConfigView = ({
     }, 800)
   }
 
-  const currentScopeInfo = SCOPE_TYPE_INFO[scopeType]
-
   return (
     <div className="flex flex-col gap-5">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -229,16 +227,16 @@ export const HeadcountRunConfigView = ({
 
               <div className="flex items-center gap-2 rounded-lg bg-muted/50 px-4 py-2.5">
                 <CheckCircle2 className="size-4 shrink-0 text-emerald-500" />
-                <span className="text-base">
-                  Tháng chạy định biên:{" "}
-                  <span className="font-semibold text-foreground">
+                <div className="flex text-base items-center">
+                  Tháng chạy định biên:{"    "}
+                  <span className=" ml-2 font-semibold text-foreground">
                     {startMonth.format("MM/YYYY")}
                   </span>
                   <ArrowRight className="size-4 mx-1 text-muted-foreground" />
                   <span className="font-semibold text-foreground">
                     {endMonth.format("MM/YYYY")}
                   </span>
-                </span>
+                </div>
               </div>
             </div>
           </div>
