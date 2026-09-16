@@ -1,5 +1,6 @@
 import { Form, Input, Modal, Select, Switch } from "antd"
 import React, { useEffect } from "react"
+import DepartmentSelect from "@/components/Common/DepartmentSelect"
 import { propertyQueries } from "@/hooks/server/properties"
 import { applyApiFieldErrors } from "@/lib/errors"
 import {
@@ -26,6 +27,8 @@ interface PropertyFormValues {
   scope: PropertyScope
   options?: string[] | null
   isActive: boolean
+  /** Danh sách departmentId đã chọn (rỗng = áp dụng chung tất cả) */
+  departmentIds: number[]
 }
 
 const DATA_TYPE_OPTIONS: { value: PropertyDataType; label: string }[] = [
@@ -58,6 +61,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
           scope: property.scope || "COMMON",
           options: property.options ?? [],
           isActive: property.isActive,
+          departmentIds: property.departmentIds ?? [],
         })
       } else {
         form.resetFields()
@@ -66,6 +70,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
           scope: "COMMON",
           isActive: true,
           options: [],
+          departmentIds: [],
         })
       }
     }
@@ -86,6 +91,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
             ? values.options
             : null,
         isActive: values.isActive,
+        departmentIds: values.departmentIds ?? [],
       }
 
       if (isEdit && property) {
@@ -116,7 +122,7 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
       onOk={handleSubmit}
       confirmLoading={createMutation.isPending || updateMutation.isPending}
       destroyOnHidden
-      width={560}
+      width={600}
       okText={isEdit ? "Lưu thay đổi" : "Tạo mới"}
       cancelText="Hủy"
     >
@@ -172,6 +178,24 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
           rules={[{ required: true, message: "Vui lòng chọn phạm vi áp dụng" }]}
         >
           <Select options={PROPERTY_SCOPE_OPTIONS} />
+        </Form.Item>
+
+        {/* FIELD MỚI: Gán phòng ban */}
+        <Form.Item
+          name="departmentIds"
+          label="Áp dụng cho Phòng ban"
+          tooltip="Chọn phòng ban sử dụng chỉ số này khi nhập liệu dự án. Để trống = chỉ số dùng chung cho tất cả phòng ban."
+        >
+          <DepartmentSelect
+            mode="multiple"
+            placeholder="Để trống = áp dụng chung tất cả phòng ban..."
+            options={property?.departments?.map((d) => ({
+              value: d.departmentId,
+              label: `${d.departmentCode} — ${d.departmentName}`,
+              id: d.departmentId,
+              name: d.departmentName,
+            }))}
+          />
         </Form.Item>
 
         {selectedDataType === "SELECT" && (

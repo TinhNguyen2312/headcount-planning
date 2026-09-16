@@ -5,14 +5,16 @@ import {
   Empty,
   Input,
   Popconfirm,
+  Select,
   Space,
   Table,
   Tag,
   Tooltip,
 } from "antd"
 import type { ColumnsType } from "antd/es/table"
-import { Edit, Search, Trash2 } from "lucide-react"
+import { Building2, Edit, Search, Trash2 } from "lucide-react"
 import React, { useMemo, useState } from "react"
+import DepartmentSelect from "@/components/Common/DepartmentSelect"
 import { propertyQueries } from "@/hooks/server/properties"
 import type { PropertyDataType, PropertyResponse, PropertyScope } from "@/types"
 
@@ -41,9 +43,16 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
   onEditProperty,
 }) => {
   const [searchText, setSearchText] = useState("")
-  const { data: properties = [], isLoading } = propertyQueries.useList()
+  const [filterDeptId, setFilterDeptId] = useState<number | undefined>(undefined)
+
+  // Gọi API với departmentId filter (server-side)
+  const { data: properties = [], isLoading } = propertyQueries.useList(
+    filterDeptId ? { departmentId: filterDeptId } : {},
+  )
+
   const deleteMutation = propertyQueries.useDelete()
 
+  // Client-side search thêm theo tên/code/đơn vị
   const filteredProperties = useMemo(() => {
     if (!searchText.trim()) return properties
     const lower = searchText.toLowerCase()
@@ -83,10 +92,46 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
       ),
     },
     {
+      title: "Phòng ban áp dụng",
+      key: "departments",
+      width: 240,
+      render: (_, record) => {
+        const depts = record.departments ?? []
+        if (depts.length === 0) {
+          return (
+            <Tag color="default" className="text-xs">
+              Tất cả phòng ban
+            </Tag>
+          )
+        }
+        return (
+          <div className="flex flex-wrap gap-1">
+            {depts.slice(0, 3).map((d) => (
+              <Tag key={d.departmentId} color="blue" className="text-xs m-0">
+                {d.departmentCode}
+              </Tag>
+            ))}
+            {depts.length > 3 && (
+              <Tooltip
+                title={depts
+                  .slice(3)
+                  .map((d) => d.departmentName)
+                  .join(", ")}
+              >
+                <Tag className="text-xs m-0 cursor-pointer">
+                  +{depts.length - 3}
+                </Tag>
+              </Tooltip>
+            )}
+          </div>
+        )
+      },
+    },
+    {
       title: "Kiểu dữ liệu",
       dataIndex: "dataType",
       key: "dataType",
-      width: 140,
+      width: 130,
       render: (dt: PropertyDataType) => {
         const badge = DATA_TYPE_BADGES[dt] || { label: dt, color: "default" }
         return <Tag color={badge.color}>{badge.label}</Tag>
@@ -96,7 +141,7 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
       title: "Loại dự án",
       dataIndex: "scope",
       key: "scope",
-      width: 170,
+      width: 160,
       render: (scope?: PropertyScope) => {
         const badge = (scope && SCOPE_BADGES[scope]) || {
           label: "Toàn dự án",
@@ -109,38 +154,15 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
       title: "Đơn vị",
       dataIndex: "unit",
       key: "unit",
-      width: 120,
+      width: 100,
       render: (unit?: string | null) =>
         unit ? <Tag className="font-mono text-xs">{unit}</Tag> : "-",
-    },
-    {
-      title: "Lựa chọn",
-      key: "options",
-      width: 250,
-      render: (_, record) => {
-        if (
-          record.dataType === "SELECT" &&
-          record.options &&
-          record.options.length > 0
-        ) {
-          return (
-            <div className="flex flex-wrap gap-1">
-              {record.options.map((opt) => (
-                <Tag key={opt} className="text-[11px] m-0">
-                  {opt}
-                </Tag>
-              ))}
-            </div>
-          )
-        }
-        return <span className="text-xs text-muted-foreground">-</span>
-      },
     },
     {
       title: "Trạng thái",
       dataIndex: "isActive",
       key: "isActive",
-      width: 180,
+      width: 120,
       render: (isActive: boolean) => (
         <Tag color={isActive ? "success" : "default"}>
           {isActive ? "Đang dùng" : "Tạm khóa"}
@@ -189,15 +211,38 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <Input
-          placeholder="Tìm theo tên, mã code, đơn vị tính..."
-          prefix={<Search className="size-4 text-muted-foreground" />}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          allowClear
-          className="max-w-md"
-        />
+      {/* Toolbar: Search + Filter phòng ban */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Input
+            placeholder="Tìm theo tên, mã code, đơn vị tính..."
+            prefix={<Search className="size-4 text-muted-foreground" />}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            allowClear
+            className="w-72"
+          />
+
+          <DepartmentSelect
+            placeholder={
+              <span className="flex items-center gap-1.5">
+                <Building2 className="size-3.5" />
+                Lọc theo Phòng ban
+              </span>
+            }
+            allowClear
+            className="w-64"
+            selectedId={filterDeptId}
+            setSelectedId={setFilterDeptId}
+          />
+
+          {filterDeptId && (
+            <span className="text-xs text-muted-foreground">
+              (bao gồm cả chỉ số dùng chung toàn hệ thống)
+            </span>
+          )}
+        </div>
+
         <div className="text-xs text-muted-foreground">
           Tổng số:{" "}
           <span className="font-semibold">{filteredProperties.length}</span> cơ

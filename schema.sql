@@ -1,3 +1,9 @@
+-- =========================================================================
+-- SCHEMA DATABASE: HỆ THỐNG ĐỊNH BIÊN NHÂN SỰ (HEADCOUNT PLANNING)
+-- Khớp đồng bộ 100% với Drizzle ORM Schema (drizzle/schema.ts)
+-- =========================================================================
+
+-- 1. Phòng ban / Cơ cấu tổ chức
 CREATE TABLE departments (
     id SERIAL PRIMARY KEY, -- Khóa chính
     code VARCHAR(50) NOT NULL UNIQUE, -- Mã đơn vị (sync từ Nova Hub)
@@ -15,6 +21,26 @@ CREATE TABLE departments (
     updated_at TIMESTAMP NOT NULL DEFAULT now() -- Thời điểm cập nhật
 );
 
+-- 2. Khu vực (Sector)
+CREATE TABLE sectors (
+    id SERIAL PRIMARY KEY,
+    code VARCHAR(50) UNIQUE,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT now()
+);
+
+-- 3. Vùng dự án (Region) - 1 Khu vực có thể có nhiều Vùng
+CREATE TABLE regions (
+    id SERIAL PRIMARY KEY,
+    sector_id INT NOT NULL REFERENCES sectors(id) ON DELETE RESTRICT,
+    code VARCHAR(50) UNIQUE,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT now()
+);
+
+-- 4. Chức danh định biên (Roles)
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
     code VARCHAR(50) UNIQUE,
@@ -23,12 +49,12 @@ CREATE TABLE roles (
     level INT NOT NULL DEFAULT 1,
     parent_role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT,
     department_id INT REFERENCES departments(id) ON DELETE RESTRICT,
-    planning_method VARCHAR(20) DEFAULT 'BY_PROJECT' CHECK (planning_method IN ('BY_SECTOR', 'BY_REGION', 'BY_PROJECT')), -- Phương thức chạy ĐB: Theo Khu vực (01), Vùng (02), hay Dự án (03)
-    lead_time_months INT NOT NULL DEFAULT 0, -- Số tháng chuẩn bị tuyển dụng trước khi bắt đầu mốc/giai đoạn (ví dụ: KTS thiết kế ý tưởng cần trước 4 tháng, GĐ PCD cần trước 1 tháng)
+    planning_method VARCHAR(20) DEFAULT 'BY_PROJECT' CHECK (planning_method IN ('BY_SECTOR', 'BY_REGION', 'BY_PROJECT')), -- Phương thức chạy ĐB: Theo Khu vực, Vùng, hay Dự án
     description TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
+-- 5. Người dùng / Nhân sự (Users)
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     full_name VARCHAR(150) NOT NULL,
@@ -50,26 +76,15 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
-
--- Khu vực (Sector)
-CREATE TABLE sectors (
-    id SERIAL PRIMARY KEY,
-    code VARCHAR(50) UNIQUE,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
+-- 6. Phiên đăng nhập (Sessions)
+CREATE TABLE sessions (
+    id VARCHAR(64) PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    expires_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
--- Vùng dự án (Region) - 1 Khu vực có thể có nhiều Vùng
-CREATE TABLE regions (
-    id SERIAL PRIMARY KEY,
-    sector_id INT NOT NULL REFERENCES sectors(id) ON DELETE RESTRICT,
-    code VARCHAR(50) UNIQUE,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    created_at TIMESTAMP NOT NULL DEFAULT now()
-);
-
+-- 7. Dự án (Projects)
 CREATE TABLE projects (
     id SERIAL PRIMARY KEY,
     code VARCHAR(50) UNIQUE,
@@ -81,140 +96,166 @@ CREATE TABLE projects (
     start_date DATE,
     end_date DATE,
     thumbnail TEXT,
+    project_types JSONB NOT NULL DEFAULT '["HIGH_RISE"]'::jsonb, -- Loại hình phát triển: LOW_RISE, HIGH_RISE, MIXED
     created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
--- Khai báo danh sách Dự án tham gia chạy định biên nhân sự (tách biệt Bounded Context)
+-- 8. Khai báo danh sách Dự án tham gia chạy định biên nhân sự
 CREATE TABLE headcount_projects (
-    id SERIAL PRIMARY KEY, -- Khóa chính
-    project_id INT NOT NULL UNIQUE REFERENCES projects(id) ON DELETE CASCADE, -- Dự án được kích hoạt chạy định biên
-    is_active BOOLEAN NOT NULL DEFAULT true, -- Trạng thái kích hoạt chạy định biên
-    note TEXT, -- Ghi chú
-    created_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm kích hoạt
-    updated_at TIMESTAMP NOT NULL DEFAULT now() -- Thời điểm cập nhật
+    id SERIAL PRIMARY KEY,
+    project_id INT NOT NULL UNIQUE REFERENCES projects(id) ON DELETE CASCADE,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    note TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
+-- 9. Cơ sở định biên / Thuộc tính quy mô (Properties)
 CREATE TABLE properties (
-    id SERIAL PRIMARY KEY, -- Khóa chính
+    id SERIAL PRIMARY KEY,
     code VARCHAR(50) NOT NULL UNIQUE, -- Mã thuộc tính
     name VARCHAR(150) NOT NULL, -- Tên thuộc tính
     data_type VARCHAR(20) NOT NULL DEFAULT 'NUMBER' CHECK (data_type IN ('NUMBER', 'STRING', 'BOOLEAN', 'SELECT')), -- Kiểu dữ liệu
     unit VARCHAR(20), -- Đơn vị tính
     options JSONB, -- Lựa chọn nếu là SELECT
-    role_id INT REFERENCES roles(id) ON DELETE SET NULL, -- Chức danh áp dụng (NULL nếu là chung)
     description TEXT, -- Diễn giải
+    scope VARCHAR(20) NOT NULL DEFAULT 'COMMON' CHECK (scope IN ('COMMON', 'PER_TYPE', 'LOW_RISE_ONLY', 'HIGH_RISE_ONLY')), -- Phạm vi áp dụng theo loại hình
     is_active BOOLEAN NOT NULL DEFAULT true, -- Trạng thái kích hoạt
-    created_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm tạo
-    updated_at TIMESTAMP NOT NULL DEFAULT now() -- Thời điểm cập nhật
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
+-- 10. Bảng liên kết nhiều-nhiều giữa Thuộc tính định biên và Phòng ban (Property Departments)
+CREATE TABLE property_departments (
+    id SERIAL PRIMARY KEY,
+    property_id INT NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+    department_id INT NOT NULL REFERENCES departments(id) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    UNIQUE (property_id, department_id)
+);
+
+-- 11. Giá trị thuộc tính quy mô theo từng Dự án (Property Values)
 CREATE TABLE property_values (
-    id SERIAL PRIMARY KEY, -- Khóa chính
-    project_id INT NOT NULL REFERENCES projects(id) ON DELETE CASCADE, -- Thuộc dự án
-    property_id INT NOT NULL REFERENCES properties(id) ON DELETE RESTRICT, -- Thuộc tính
-    project_type VARCHAR(50), -- Loại hình dự án
+    id SERIAL PRIMARY KEY,
+    project_id INT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    property_id INT NOT NULL REFERENCES properties(id) ON DELETE RESTRICT,
+    project_type VARCHAR(50), -- Loại hình dự án (LOW_RISE, HIGH_RISE, null nếu COMMON)
     value_text TEXT, -- Giá trị chuỗi
     value_number NUMERIC(15, 4), -- Giá trị số
-    created_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm tạo
-    updated_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm cập nhật
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP NOT NULL DEFAULT now(),
     UNIQUE (project_id, property_id, project_type)
 );
 
+-- 12. Phân bổ nhân sự vào dự án (User Projects)
 CREATE TABLE user_projects (
-    id SERIAL PRIMARY KEY, -- Khóa chính
-    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- Nhân sự
-    project_id INT NOT NULL REFERENCES projects(id) ON DELETE CASCADE, -- Dự án phụ trách
-    role_id INT NOT NULL REFERENCES roles(id) ON DELETE RESTRICT, -- Chức danh đảm nhiệm
-    is_primary BOOLEAN NOT NULL DEFAULT true, -- Có phải dự án chính không
-    effective_from DATE NOT NULL DEFAULT CURRENT_DATE, -- Ngày bắt đầu hiệu lực
-    effective_to DATE, -- Ngày kết thúc hiệu lực
-    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'ENDED')), -- Trạng thái gán (ACTIVE, ENDED)
-    replacement_user_id INT REFERENCES users(id) ON DELETE SET NULL, -- Nhân sự thay thế (nếu có)
-    replacement_from DATE, -- Ngày bắt đầu thay thế
-    replacement_to DATE, -- Ngày kết thúc thay thế
-    created_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm tạo
-    updated_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm cập nhật
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    project_id INT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    role_id INT NOT NULL REFERENCES roles(id) ON DELETE RESTRICT,
+    is_primary BOOLEAN NOT NULL DEFAULT true,
+    effective_from DATE NOT NULL DEFAULT CURRENT_DATE,
+    effective_to DATE,
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'ENDED')),
+    replacement_user_id INT REFERENCES users(id) ON DELETE SET NULL,
+    replacement_from DATE,
+    replacement_to DATE,
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP NOT NULL DEFAULT now(),
     UNIQUE (user_id, project_id, role_id, effective_from)
 );
 
+-- 13. Mốc chuẩn dự án (Milestones)
 CREATE TABLE milestones (
-    id SERIAL PRIMARY KEY, -- Khóa chính
-    code VARCHAR(50) NOT NULL UNIQUE, -- Mã mốc chuẩn
-    name VARCHAR(200) NOT NULL, -- Tên mốc chuẩn
-    description TEXT, -- Diễn giải
-    is_active BOOLEAN NOT NULL DEFAULT true, -- Trạng thái kích hoạt
-    created_at TIMESTAMP NOT NULL DEFAULT now() -- Thời điểm tạo
+    id SERIAL PRIMARY KEY,
+    code VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(200) NOT NULL,
+    description TEXT,
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
+-- 14. Quan hệ phụ thuộc giữa các Mốc chuẩn (Milestone Dependencies)
 CREATE TABLE milestone_dependencies (
-    id SERIAL PRIMARY KEY, -- Khóa chính
-    from_milestone_id INT NOT NULL REFERENCES milestones(id) ON DELETE CASCADE, -- Mốc điều kiện (phải hoàn thành trước)
-    to_milestone_id INT NOT NULL REFERENCES milestones(id) ON DELETE CASCADE, -- Mốc kế tiếp (chỉ thực hiện sau)
-    dependency_type VARCHAR(20) NOT NULL DEFAULT 'FINISH_TO_START', -- Loại phụ thuộc
-    description TEXT, -- Diễn giải lý do phụ thuộc
-    created_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm tạo
+    id SERIAL PRIMARY KEY,
+    from_milestone_id INT NOT NULL REFERENCES milestones(id) ON DELETE CASCADE,
+    to_milestone_id INT NOT NULL REFERENCES milestones(id) ON DELETE CASCADE,
+    dependency_type VARCHAR(20) NOT NULL DEFAULT 'FINISH_TO_START',
+    description TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
     UNIQUE (from_milestone_id, to_milestone_id)
 );
 
+-- 15. Phiên bản Kế hoạch tiến độ Dự án (Plans)
 CREATE TABLE plans (
-    id SERIAL PRIMARY KEY, -- Khóa chính
-    project_id INT NOT NULL REFERENCES projects(id) ON DELETE CASCADE, -- Thuộc dự án nào
-    version_name VARCHAR(50) NOT NULL, -- Tên/Mã phiên bản kế hoạch (01, 02...)
-    status VARCHAR(20) NOT NULL DEFAULT 'DRAFT' CHECK (status IN ('DRAFT', 'ACTIVE', 'ARCHIVED')), -- Trạng thái phiên bản
-    valid_from DATE NOT NULL, -- Ngày bắt đầu hiệu lực áp dụng
-    note TEXT, -- Ghi chú lý do lập/điều chỉnh kế hoạch
-    created_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm tạo
-    updated_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm cập nhật
+    id SERIAL PRIMARY KEY,
+    project_id INT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    version_name VARCHAR(50) NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'DRAFT' CHECK (status IN ('DRAFT', 'ACTIVE', 'ARCHIVED')),
+    valid_from DATE NOT NULL,
+    note TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP NOT NULL DEFAULT now(),
     UNIQUE (project_id, version_name)
 );
 
+-- 16. Các giai đoạn / mốc trong Kế hoạch tiến độ (Phases)
 CREATE TABLE phases (
-    id SERIAL PRIMARY KEY, -- Khóa chính
-    plan_id INT NOT NULL REFERENCES plans(id) ON DELETE CASCADE, -- Thuộc phiên bản kế hoạch nào
-    order_index INT NOT NULL DEFAULT 0, -- Thứ tự bước thực hiện (1, 2, 3...)
-    milestone_id INT NOT NULL REFERENCES milestones(id) ON DELETE RESTRICT, -- Mốc chuẩn đạt được khi kết thúc giai đoạn
-    start_month INT NOT NULL DEFAULT 1, -- Tháng bắt đầu của giai đoạn (tính từ tháng khởi đầu dự án, hỗ trợ gối đầu/chạy song song)
-    duration_months INT NOT NULL DEFAULT 1, -- Thời lượng số tháng (chuẩn hóa tròn tháng theo quy định tập đoàn)
-    is_anchor BOOLEAN NOT NULL DEFAULT false, -- Đánh dấu mốc cam kết quan trọng (cần cảnh báo nếu bị trễ)
-    description TEXT, -- Diễn giải chi tiết
-    created_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm tạo
-    updated_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm cập nhật
+    id SERIAL PRIMARY KEY,
+    plan_id INT NOT NULL REFERENCES plans(id) ON DELETE CASCADE,
+    order_index INT NOT NULL DEFAULT 0,
+    milestone_id INT NOT NULL REFERENCES milestones(id) ON DELETE RESTRICT,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    duration_months INT NOT NULL DEFAULT 1,
+    description TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP NOT NULL DEFAULT now(),
     UNIQUE (plan_id, milestone_id)
 );
 
+-- 17. Khung định biên chuẩn (Headcount Standards)
 CREATE TABLE headcount_standards (
-    id SERIAL PRIMARY KEY, -- Khóa chính
-    role_id INT NOT NULL REFERENCES roles(id) ON DELETE CASCADE, -- Chức danh chạy định biên
-    from_milestone_id INT NOT NULL REFERENCES milestones(id) ON DELETE CASCADE, -- Mốc bắt đầu
-    to_milestone_id INT REFERENCES milestones(id) ON DELETE SET NULL, -- Mốc kết thúc (nếu là giai đoạn từ mốc A đến mốc B)
-    headcount NUMERIC(10, 4) NOT NULL DEFAULT 1.0, -- Định biên chuẩn gợi ý ban đầu (baseline mặc định)
-    headcount_min NUMERIC(10, 4), -- Ngưỡng sàn ràng buộc khi điều chỉnh nhân sự theo tháng
-    headcount_max NUMERIC(10, 4), -- Ngưỡng trần ràng buộc khi điều chỉnh nhân sự theo tháng
-    note TEXT, -- Ghi chú nghiệp vụ
-    created_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm tạo
-    updated_at TIMESTAMP NOT NULL DEFAULT now() -- Thời điểm cập nhật
+    id SERIAL PRIMARY KEY,
+    role_id INT NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    from_milestone_id INT NOT NULL REFERENCES milestones(id) ON DELETE CASCADE,
+    to_milestone_id INT REFERENCES milestones(id) ON DELETE SET NULL,
+    headcount NUMERIC(10, 4) NOT NULL DEFAULT 1.0,
+    headcount_min NUMERIC(10, 4),
+    headcount_max NUMERIC(10, 4),
+    note TEXT,
+    from_lead_time_months INT NOT NULL DEFAULT 0, -- Số tháng lead time trước mốc bắt đầu
+    to_lead_time_months INT NOT NULL DEFAULT 0, -- Số tháng lead time trước mốc kết thúc
+    duration_months INT NOT NULL DEFAULT 12, -- Thời lượng áp dụng tiêu chuẩn
+    monthly_factors JSONB NOT NULL DEFAULT '[]'::jsonb, -- Mảng hệ số phân bổ từng tháng
+    project_type VARCHAR(30) NOT NULL DEFAULT 'ALL' CHECK (project_type IN ('ALL', 'LOW_RISE', 'HIGH_RISE', 'MIXED')), -- Áp dụng theo loại hình dự án
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
+-- 18. Tiêu chí ràng buộc quy mô theo Khung định biên (Headcount Criteria)
 CREATE TABLE headcount_criteria (
-    id SERIAL PRIMARY KEY, -- Khóa chính
-    standard_id INT NOT NULL REFERENCES headcount_standards(id) ON DELETE CASCADE, -- Thuộc khung định biên nào
-    property_id INT NOT NULL REFERENCES properties(id) ON DELETE RESTRICT, -- Thuộc tính quy mô đo lường (số học)
-    condition_operator VARCHAR(20) NOT NULL DEFAULT 'BETWEEN' CHECK (condition_operator IN ('=', '<', '<=', '>', '>=', 'BETWEEN')), -- Toán tử so sánh điều kiện
-    min_value NUMERIC(15, 4), -- Cận dưới giá trị quy mô
-    max_value NUMERIC(15, 4), -- Cận trên giá trị quy mô
-    note TEXT, -- Ghi chú điều kiện
-    created_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm tạo
-    updated_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm cập nhật
+    id SERIAL PRIMARY KEY,
+    standard_id INT NOT NULL REFERENCES headcount_standards(id) ON DELETE CASCADE,
+    property_id INT NOT NULL REFERENCES properties(id) ON DELETE RESTRICT,
+    condition_operator VARCHAR(20) NOT NULL DEFAULT 'BETWEEN' CHECK (condition_operator IN ('=', '<', '<=', '>', '>=', 'BETWEEN')),
+    min_value NUMERIC(15, 4),
+    max_value NUMERIC(15, 4),
+    value_text TEXT,
+    note TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP NOT NULL DEFAULT now(),
     UNIQUE (standard_id, property_id, min_value, max_value)
 );
 
+-- 19. Hệ số phân bổ định biên theo tháng trong giai đoạn (Headcount Monthly Factors)
 CREATE TABLE headcount_monthly_factors (
-    id SERIAL PRIMARY KEY, -- Khóa chính
-    standard_id INT NOT NULL REFERENCES headcount_standards(id) ON DELETE CASCADE, -- Thuộc khung định biên nào
-    duration_months INT NOT NULL, -- Số tháng thực hiện của giai đoạn (ví dụ: 6 tháng, 7 tháng...)
-    month_no INT NOT NULL, -- Tháng thứ mấy trong giai đoạn (1, 2, ... duration_months)
-    factor NUMERIC(10, 2) NOT NULL DEFAULT 1.0, -- Hệ số tối ưu T (ví dụ: 0.5, 1.0...)
-    created_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm tạo
-    updated_at TIMESTAMP NOT NULL DEFAULT now(), -- Thời điểm cập nhật
+    id SERIAL PRIMARY KEY,
+    standard_id INT NOT NULL REFERENCES headcount_standards(id) ON DELETE CASCADE,
+    duration_months INT NOT NULL,
+    month_no INT NOT NULL,
+    factor NUMERIC(10, 2) NOT NULL DEFAULT 1.0,
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP NOT NULL DEFAULT now(),
     UNIQUE (standard_id, duration_months, month_no)
 );

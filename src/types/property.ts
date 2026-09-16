@@ -31,6 +31,8 @@ export interface PropertyQueryParams {
   dataType?: PropertyDataType
   scope?: PropertyScope
   isActive?: boolean | string
+  /** Lọc theo phòng ban — chỉ trả về properties đã gán cho dept này HOẶC chưa gán dept nào */
+  departmentId?: number | string
   page?: number
   limit?: number
   order?: "ASC" | "DESC" | string
@@ -46,6 +48,10 @@ export interface PropertyResponse {
   options?: string[] | null
   description?: string | null
   isActive: boolean
+  /** Danh sách ID phòng ban đã gán (rỗng = áp dụng chung tất cả) */
+  departmentIds: number[]
+  /** Tên phòng ban đã gán (kèm theo khi API include) */
+  departments?: PropertyDepartmentItem[]
   createdAt: string
   updatedAt: string
 }
@@ -59,9 +65,18 @@ export interface PropertyCreate {
   options?: string[] | null
   description?: string | null
   isActive?: boolean
+  /** Danh sách ID phòng ban muốn gán (không truyền = không giới hạn phòng ban) */
+  departmentIds?: number[]
 }
 
 export interface PropertyUpdate extends Partial<PropertyCreate> {}
+
+/** Thông tin phòng ban gán cho property (từ bảng junction property_departments) */
+export interface PropertyDepartmentItem {
+  departmentId: number
+  departmentCode: string
+  departmentName: string
+}
 
 export interface PropertyValueItem {
   id?: number

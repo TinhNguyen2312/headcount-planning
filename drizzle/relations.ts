@@ -1,9 +1,10 @@
 import { relations } from "drizzle-orm/relations";
-import { roles, properties, regions, projects, headcountProjects, propertyValues, userProjects, users, milestones, milestoneDependencies, plans, headcountStandards, phases, headcountCriteria, headcountMonthlyFactors, departments, sectors, sessions } from "./schema";
+import { roles, properties, propertyDepartments, regions, projects, headcountProjects, propertyValues, userProjects, users, milestones, milestoneDependencies, plans, headcountStandards, phases, headcountCriteria, headcountMonthlyFactors, departments, sectors, sessions } from "./schema";
 
-export const propertiesRelations = relations(properties, ({one, many}) => ({
+export const propertiesRelations = relations(properties, ({many}) => ({
 	propertyValues: many(propertyValues),
 	headcountCriteria: many(headcountCriteria),
+	propertyDepartments: many(propertyDepartments),
 }));
 
 export const rolesRelations = relations(roles, ({one, many}) => ({
@@ -191,6 +192,18 @@ export const departmentsRelations = relations(departments, ({one, many}) => ({
 		relationName: "departments_parentId_departments_id"
 	}),
 	roles: many(roles),
+	propertyDepartments: many(propertyDepartments),
+}));
+
+export const propertyDepartmentsRelations = relations(propertyDepartments, ({one}) => ({
+	property: one(properties, {
+		fields: [propertyDepartments.propertyId],
+		references: [properties.id],
+	}),
+	department: one(departments, {
+		fields: [propertyDepartments.departmentId],
+		references: [departments.id],
+	}),
 }));
 
 export const sectorsRelations = relations(sectors, ({many}) => ({

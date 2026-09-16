@@ -17,7 +17,7 @@ const projectUrl = (projectId: number, path = "") =>
   `${API_V1}/projects/${projectId}/properties${path}`
 
 export const PropertiesAPI = {
-  /** GET /api/properties */
+  /** GET /api/properties — hỗ trợ filter departmentId */
   getAll: (params: PropertyQueryParams = {}) =>
     apiClient.get<ListResponse<PropertyResponse>>(url(), { params }),
 
@@ -25,11 +25,11 @@ export const PropertiesAPI = {
   getOne: (id: number) =>
     apiClient.get<ItemResponse<PropertyResponse>>(url(`/${id}`)),
 
-  /** POST /api/properties */
+  /** POST /api/properties — nhận departmentIds[] */
   createOne: (data: PropertyCreate) =>
     apiClient.post<ItemResponse<PropertyResponse>>(url(), data),
 
-  /** PATCH /api/properties/{id} */
+  /** PATCH /api/properties/{id} — nhận departmentIds[] để sync */
   updateOne: (id: number, data: PropertyUpdate) =>
     apiClient.patch<ItemResponse<PropertyResponse>>(url(`/${id}`), data),
 

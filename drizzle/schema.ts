@@ -21,6 +21,31 @@ export const properties = pgTable("properties", {
 	check("properties_scope_check", sql`(scope)::text = ANY ((ARRAY['COMMON'::character varying, 'PER_TYPE'::character varying, 'LOW_RISE_ONLY'::character varying, 'HIGH_RISE_ONLY'::character varying])::text[])`),
 ]);
 
+/**
+ * Bảng junction n-n giữa properties và departments.
+ * Nếu một property không có dòng nào trong bảng này → hiển thị cho TẤT CẢ phòng ban (backward-compatible).
+ * Nếu có gán → chỉ hiển thị khi filter đúng department đó.
+ */
+export const propertyDepartments = pgTable("property_departments", {
+	id: serial().primaryKey().notNull(),
+	propertyId: integer("property_id").notNull(),
+	departmentId: integer("department_id").notNull(),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	foreignKey({
+		columns: [table.propertyId],
+		foreignColumns: [properties.id],
+		name: "property_departments_property_id_fkey",
+	}).onDelete("cascade"),
+	foreignKey({
+		columns: [table.departmentId],
+		foreignColumns: [departments.id],
+		name: "property_departments_department_id_fkey",
+	}).onDelete("cascade"),
+	unique("property_departments_property_id_department_id_key").on(table.propertyId, table.departmentId),
+]);
+
+
 export const projects = pgTable("projects", {
 	id: serial().primaryKey().notNull(),
 	code: varchar({ length: 50 }),
