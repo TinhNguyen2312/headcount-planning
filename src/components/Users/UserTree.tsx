@@ -45,8 +45,8 @@ const UserTree = ({
     },
   )
 
-  const { items: rolesData = [], isLoading: isLoadingRoles } =
-    roleQueries.useList()
+  const { data: rolesTree = [], isLoading: isLoadingRoles } =
+    roleQueries.useTree()
 
   const { items: projectsList = [] } = projectQueries.useList({ limit: 100 })
 
@@ -145,7 +145,7 @@ const UserTree = ({
       ) : viewMode === "roles" ? (
         <RoleTreeView
           trees={trees}
-          roles={rolesData}
+          roles={rolesTree}
           projects={projectsList}
           selectedProjectId={projectId}
         />

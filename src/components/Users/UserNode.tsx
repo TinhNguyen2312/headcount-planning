@@ -51,7 +51,6 @@ const UserNode = ({
   const isSelf = currentUser?.id === user.id
   const status = statusConfig[user.status] || statusConfig.active
 
-  // Generate color palette based on user name
   const initials = getInitials(user.fullName || "U")
 
   return (

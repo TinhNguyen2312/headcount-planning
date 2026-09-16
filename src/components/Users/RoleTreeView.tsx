@@ -1,10 +1,12 @@
 import { Background, Controls, MiniMap, ReactFlow } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
-import { useMemo } from "react"
+import { useCallback, useMemo, useState } from "react"
 
+import DepartmentGroupNode from "@/components/Role/DepartmentGroupNode"
+import RoleBusEdge from "@/components/Role/RoleBusEdge"
 import type {
   ProjectResponse,
-  RoleResponse,
+  RoleTreeNodeResponse,
   UserTreeNodeResponse,
 } from "@/types"
 import ProjectGroupFlowNode from "./ProjectGroupFlowNode"
@@ -13,12 +15,17 @@ import { buildRoleFlowElements } from "./roleOrgChart"
 
 const nodeTypes = {
   roleGroupNode: RoleGroupFlowNode,
+  departmentGroupNode: DepartmentGroupNode,
   projectGroupNode: ProjectGroupFlowNode,
+}
+
+const edgeTypes = {
+  roleBus: RoleBusEdge,
 }
 
 interface RoleTreeViewProps {
   trees: UserTreeNodeResponse[]
-  roles: RoleResponse[]
+  roles: RoleTreeNodeResponse[]
   projects?: ProjectResponse[]
   selectedProjectId?: number
 }
@@ -29,9 +36,30 @@ export const RoleTreeView = ({
   projects,
   selectedProjectId,
 }: RoleTreeViewProps) => {
+  const [collapsedIds, setCollapsedIds] = useState<Set<number>>(() => new Set())
+
+  const toggleCollapsed = useCallback((id: number) => {
+    setCollapsedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }, [])
+
   const { nodes, edges } = useMemo(() => {
-    return buildRoleFlowElements(trees, roles, projects, selectedProjectId)
-  }, [trees, roles, projects, selectedProjectId])
+    return buildRoleFlowElements(
+      trees,
+      roles,
+      projects,
+      selectedProjectId,
+      collapsedIds,
+      toggleCollapsed,
+    )
+  }, [trees, roles, projects, selectedProjectId, collapsedIds, toggleCollapsed])
 
   return (
     <div
@@ -42,6 +70,7 @@ export const RoleTreeView = ({
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={false}

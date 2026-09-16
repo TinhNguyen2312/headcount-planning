@@ -1,34 +1,14 @@
 "use client"
 
 import { Form, Input, InputNumber, Select } from "antd"
-import React, { useMemo } from "react"
-import { milestoneQueries } from "@/hooks/server/milestones"
-import { roleQueries } from "@/hooks/server/roles"
+import React from "react"
+import MilestoneSelect from "@/components/Common/MilestoneSelect"
+import RoleSelect from "@/components/Common/RoleSelect"
 import { STANDARD_PROJECT_TYPE_OPTIONS } from "@/types"
 
 interface StandardGeneralTabProps {}
 
 export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = () => {
-  const { data: milestones = [] } = milestoneQueries.useList({ limit: 500 })
-  const { data: roles = [] } = roleQueries.useList({ limit: 500 })
-  const roleOptions = useMemo(
-    () =>
-      roles.map((r) => ({
-        value: r.id,
-        label: `${r.name}`,
-      })),
-    [roles],
-  )
-
-  const milestoneOptions = useMemo(
-    () =>
-      milestones.map((m) => ({
-        value: m.id,
-        label: `${m.name}`,
-      })),
-    [milestones],
-  )
-
   return (
     <div className="space-y-3 pt-2">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -39,12 +19,7 @@ export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = () => {
             rules={[{ required: true, message: "Vui lòng chọn chức danh" }]}
             className="mb-0"
           >
-            <Select
-              placeholder="Chọn chức danh..."
-              options={roleOptions}
-              showSearch
-              optionFilterProp="label"
-            />
+            <RoleSelect placeholder="Chọn chức danh..." />
           </Form.Item>
         </div>
 
@@ -64,25 +39,19 @@ export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Cụm Mốc bắt đầu */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <div className="p-3 bg-muted/40 rounded-lg border border-border/50 space-y-3">
           <Form.Item
             name="fromMilestoneId"
             label={
               <span className="font-medium text-emerald-700 dark:text-emerald-300">
-                Mốc bắt đầu (From Milestone)
+                Mốc bắt đầu
               </span>
             }
             rules={[{ required: true, message: "Vui lòng chọn mốc bắt đầu" }]}
             className="mb-0"
           >
-            <Select
-              placeholder="Chọn mốc bắt đầu..."
-              options={milestoneOptions}
-              showSearch
-              optionFilterProp="label"
-            />
+            <MilestoneSelect placeholder="Chọn mốc bắt đầu..." />
           </Form.Item>
 
           <Form.Item
@@ -101,24 +70,20 @@ export const StandardGeneralTab: React.FC<StandardGeneralTabProps> = () => {
           </Form.Item>
         </div>
 
-        {/* Cụm Mốc kết thúc */}
         <div className="p-3 bg-muted/40 rounded-lg border border-border/50 space-y-3">
           <Form.Item
             name="toMilestoneId"
             label={
               <span className="font-medium text-blue-700 dark:text-blue-300">
-                Mốc kết thúc (To Milestone)
+                Mốc kết thúc
               </span>
             }
             tooltip="Để trống nếu áp dụng xuyên suốt đến hết vòng đời dự án"
             className="mb-0"
           >
-            <Select
+            <MilestoneSelect
               placeholder="Chọn mốc kết thúc (hoặc để trống)..."
-              options={milestoneOptions}
               allowClear
-              showSearch
-              optionFilterProp="label"
             />
           </Form.Item>
 

@@ -10,7 +10,6 @@ export interface FlatEntry {
   parentId: string | null
 }
 
-/** Lọc bỏ nhân sự LOCKED và đẩy con lên cấp cha */
 export const filterLockedUsers = (
   nodes: UserTreeNodeResponse[],
 ): UserTreeNodeResponse[] => {
@@ -29,7 +28,6 @@ export const filterLockedUsers = (
   return result
 }
 
-/** Đếm tổng số ID nhân sự có trong cây */
 export const collectAllNodeIds = (nodes: UserTreeNodeResponse[]): number[] => {
   const ids: number[] = []
   const visit = (node: UserTreeNodeResponse) => {
@@ -44,7 +42,6 @@ export const collectAllNodeIds = (nodes: UserTreeNodeResponse[]): number[] => {
   return ids
 }
 
-/** Thuật toán bố trí Dagre cho Cây Phân cấp Quản lý trực tiếp (Manager Hierarchy) */
 export const layoutManagerHierarchyWithDagre = (
   roots: UserTreeNodeResponse[],
   collapsedIds: Set<number>,
@@ -147,7 +144,6 @@ export const layoutManagerHierarchyWithDagre = (
   return { entries, positionMap }
 }
 
-/** Tạo nodes và edges cho React Flow từ cây Quản lý */
 export const buildManagerFlowElements = (
   activeTree: UserTreeNodeResponse[],
   collapsedIds: Set<number>,

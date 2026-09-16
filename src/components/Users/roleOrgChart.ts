@@ -1,816 +1,518 @@
-import type { Edge } from "@xyflow/react"
+import type { Edge, Node } from "@xyflow/react"
 import dagre from "dagre"
 import type {
   ProjectResponse,
-  RoleResponse,
+  RoleTreeNodeResponse,
   UserTreeNodeResponse,
 } from "@/types"
-import type { RoleGroupFlowNodeType } from "./RoleGroupFlowNode"
-import type {
-  RoleGroupNodeData,
-  RoleGroupUserItem,
-  RoleSectionGroup,
+import type { DepartmentGroupInfo } from "@/components/Role/roleTreeLayout"
+import {
+  calculateUserRoleNodeHeight,
+  USER_ROLE_CARD_WIDTH,
+  type AssignedUserItem,
 } from "./RoleGroupNode"
 
-export const ROLE_CODES = {
-  GD_PGD: "20047380",
-  TRUONG_PHONG: "20047381",
-  TBP_QLXD: "20047382",
-  TBP_QLCD: "20047383",
-  TBP_HTKT: "20047384",
-  GS_QLXD: "20047385",
-  GS_QLCD: "20047386",
-  GS_HTKT: "20047387",
-  KTS: "20047388",
-  CLTD: "20047389",
-  TRAC_DAC: "20047390",
-  ATLD: "20047391",
-  CAY_XANH: "20047392",
-  THU_KY: "20047393",
-} as const
-
-const VACANCY_LABEL = "Chưa có nhân sự"
-export const ROLE_GROUP_CARD_WIDTH = 260
-const MANAGER_CARD_HEIGHT = 95
-
-export type RoleCodeKey = keyof typeof ROLE_CODES
-
-export const identifyRoleKey = (role?: {
-  code?: string | null
-  name?: string | null
-  shortCode?: string | null
-}): RoleCodeKey | null => {
-  if (!role) return null
-
-  const code = role.code?.trim()
-  if (code) {
-    for (const [key, val] of Object.entries(ROLE_CODES)) {
-      if (val === code) return key as RoleCodeKey
-    }
-  }
-
-  const name = (role.name || "").toLowerCase()
-  const shortCode = (role.shortCode || "").toLowerCase()
-
-  if (
-    name.includes("gđ/pgđ") ||
-    name.includes("gd/pgd") ||
-    name.includes("giám đốc phòng")
-  ) {
-    return "GD_PGD"
-  }
-  if (name.includes("trưởng phòng")) {
-    return "TRUONG_PHONG"
-  }
-  if (
-    name.includes("trưởng bộ phận") &&
-    (name.includes("cơ điện") || name.includes("qlcd"))
-  ) {
-    return "TBP_QLCD"
-  }
-  if (
-    name.includes("trưởng bộ phận") &&
-    (name.includes("hạ tầng") || name.includes("htkt"))
-  ) {
-    return "TBP_HTKT"
-  }
-  if (
-    name.includes("trưởng bộ phận") &&
-    (name.includes("xây dựng") || name.includes("qlxd"))
-  ) {
-    return "TBP_QLXD"
-  }
-  if (
-    name.includes("giám sát") &&
-    (name.includes("cơ điện") || name.includes("qlcd"))
-  ) {
-    return "GS_QLCD"
-  }
-  if (
-    name.includes("giám sát") &&
-    (name.includes("hạ tầng") || name.includes("htkt"))
-  ) {
-    return "GS_HTKT"
-  }
-  if (
-    name.includes("giám sát") &&
-    (name.includes("xây dựng") || name.includes("qlxd"))
-  ) {
-    return "GS_QLXD"
-  }
-  if (
-    name.includes("kiến trúc sư") ||
-    shortCode === "kts" ||
-    shortCode === "kts_ct"
-  ) {
-    return "KTS"
-  }
-  if (name.includes("chất lượng") || shortCode === "cltd") {
-    return "CLTD"
-  }
-  if (name.includes("trắc đạc")) {
-    return "TRAC_DAC"
-  }
-  if (
-    name.includes("an toàn lao động") ||
-    shortCode === "atlđ" ||
-    shortCode === "atld"
-  ) {
-    return "ATLD"
-  }
-  if (name.includes("cây xanh")) {
-    return "CAY_XANH"
-  }
-  if (name.includes("thư ký")) {
-    return "THU_KY"
-  }
-
-  return null
-}
-
-const DEPARTMENT_BRANCHES = [
-  {
-    key: "qlxd",
-    managerKey: "TBP_QLXD" as RoleCodeKey,
-    managerCode: ROLE_CODES.TBP_QLXD,
-    managerTitle: "Trưởng bộ phận Quản lý Xây dựng",
-    groupTitle: "Giám sát Xây dựng",
-    supervisorKey: "GS_QLXD" as RoleCodeKey,
-    supervisorCode: ROLE_CODES.GS_QLXD,
-    supervisorTitle: "Kỹ sư cao cấp Giám sát Xây dựng",
-  },
-  {
-    key: "qlcd",
-    managerKey: "TBP_QLCD" as RoleCodeKey,
-    managerCode: ROLE_CODES.TBP_QLCD,
-    managerTitle: "Trưởng bộ phận Quản lý Cơ điện",
-    groupTitle: "Giám sát Cơ điện",
-    supervisorKey: "GS_QLCD" as RoleCodeKey,
-    supervisorCode: ROLE_CODES.GS_QLCD,
-    supervisorTitle: "Kỹ sư cao cấp Giám sát Cơ điện",
-  },
-  {
-    key: "htkt",
-    managerKey: "TBP_HTKT" as RoleCodeKey,
-    managerCode: ROLE_CODES.TBP_HTKT,
-    managerTitle: "Trưởng bộ phận Quản lý Hạ tầng kỹ thuật",
-    groupTitle: "Giám sát Hạ tầng kỹ thuật",
-    supervisorKey: "GS_HTKT" as RoleCodeKey,
-    supervisorCode: ROLE_CODES.GS_HTKT,
-    supervisorTitle: "Kỹ sư cao cấp Giám sát Hạ tầng kỹ thuật",
-  },
-] as const
-
-const SPECIALIST_ROLES = [
-  {
-    key: "CLTD" as RoleCodeKey,
-    code: ROLE_CODES.CLTD,
-    title: "Kỹ sư cao cấp Kiểm soát Chất lượng và tiến độ",
-  },
-  {
-    key: "KTS" as RoleCodeKey,
-    code: ROLE_CODES.KTS,
-    title: "Kiến trúc sư cao cấp Công trường",
-  },
-  {
-    key: "ATLD" as RoleCodeKey,
-    code: ROLE_CODES.ATLD,
-    title: "Kỹ sư cao cấp Kiểm soát An toàn lao động",
-  },
-  {
-    key: "CAY_XANH" as RoleCodeKey,
-    code: ROLE_CODES.CAY_XANH,
-    title: "Kỹ sư cao cấp kiểm soát cây xanh",
-  },
-  {
-    key: "TRAC_DAC" as RoleCodeKey,
-    code: ROLE_CODES.TRAC_DAC,
-    title: "Kỹ sư cao cấp Kiểm soát Trắc đạc",
-  },
-  {
-    key: "THU_KY" as RoleCodeKey,
-    code: ROLE_CODES.THU_KY,
-    title: "Thư ký Công trường",
-  },
-] as const
-
-export interface RoleOrgNodeConfig {
+export interface FlatRoleUserEntry {
   id: string
+  role: RoleTreeNodeResponse
   parentId: string | null
+  assignedUsers: AssignedUserItem[]
   width: number
   height: number
-  data: RoleGroupNodeData
 }
 
-export interface ProjectUserGroup {
-  projectId: number
-  projectName: string
-  users: UserTreeNodeResponse[]
-}
+export const flattenVisibleRoleTree = (
+  roots: RoleTreeNodeResponse[],
+  collapsedIds: Set<number>,
+  userMapByRoleId: Map<number, AssignedUserItem[]>,
+): FlatRoleUserEntry[] => {
+  const entries: FlatRoleUserEntry[] = []
 
-export const collectAllUsers = (
-  nodes: UserTreeNodeResponse[],
-): UserTreeNodeResponse[] => {
-  const list: UserTreeNodeResponse[] = []
-  const visited = new Set<number>()
+  const visit = (role: RoleTreeNodeResponse, parentId: string | null) => {
+    const id = String(role.id)
+    const assignedUsers = userMapByRoleId.get(role.id) || []
+    const width = USER_ROLE_CARD_WIDTH
+    const height = calculateUserRoleNodeHeight(assignedUsers.length)
 
-  const visit = (node: UserTreeNodeResponse) => {
-    if (!visited.has(node.id)) {
-      visited.add(node.id)
-      list.push(node)
-    }
-    for (const child of node.children || []) {
-      visit(child)
+    entries.push({
+      id,
+      role,
+      parentId,
+      assignedUsers,
+      width,
+      height,
+    })
+
+    if (!collapsedIds.has(role.id)) {
+      for (const child of role.children || []) {
+        visit(child, id)
+      }
     }
   }
 
-  for (const node of nodes) {
-    visit(node)
+  for (const root of roots) {
+    visit(root, null)
   }
-  return list
+
+  return entries
 }
 
-export const groupUsersByProject = (
-  allUsers: UserTreeNodeResponse[],
-  projects?: ProjectResponse[],
+export const mapUsersToRoles = (
+  users: UserTreeNodeResponse[],
   selectedProjectId?: number,
-): ProjectUserGroup[] => {
-  if (selectedProjectId) {
-    const proj = projects?.find((p) => p.id === selectedProjectId)
-    const projName = proj?.name || `Dự án #${selectedProjectId}`
-    return [
-      {
-        projectId: selectedProjectId,
-        projectName: projName,
-        users: allUsers,
-      },
-    ]
-  }
+): Map<number, AssignedUserItem[]> => {
+  const roleUserMap = new Map<number, AssignedUserItem[]>()
+  const visited = new Set<string>()
 
-  const validProjectIds = new Set<number>()
-  const projectNameMap = new Map<number, string>()
-  if (projects && projects.length > 0) {
-    for (const p of projects) {
-      validProjectIds.add(p.id)
-      projectNameMap.set(p.id, p.name)
-    }
-  }
+  const collect = (node: UserTreeNodeResponse) => {
+    const allProjects = node.projects || []
+    const isMultiProject = allProjects.length > 1
 
-  const projectMap = new Map<
-    number,
-    { projectName: string; users: Set<UserTreeNodeResponse> }
-  >()
-
-  for (const user of allUsers) {
-    if (user.projects && user.projects.length > 0) {
-      for (const p of user.projects) {
+    if (selectedProjectId) {
+      for (const p of allProjects) {
         if (p.status && p.status !== "ACTIVE") continue
         const pId = p.projectId ?? p.id
-        if (pId == null) continue
-        if (validProjectIds.size > 0 && !validProjectIds.has(pId)) continue
+        if (pId === selectedProjectId && p.roleId) {
+          const key = `${p.roleId}-${node.id}`
+          if (!visited.has(key)) {
+            visited.add(key)
+            if (!roleUserMap.has(p.roleId)) roleUserMap.set(p.roleId, [])
+            roleUserMap.get(p.roleId)!.push({
+              id: node.id,
+              fullName: node.fullName,
+              email: node.email,
+              phone: node.phone,
+              status: node.status,
+              isMultiProject,
+            })
+          }
+        }
+      }
 
-        if (!projectMap.has(pId)) {
-          const fallbackName = p.projectName || p.name || `Dự án #${pId}`
-          const name = projectNameMap.get(pId) || fallbackName
-          projectMap.set(pId, {
-            projectName: name,
-            users: new Set(),
+      if (node.roleId) {
+        const hasMatchingProject = allProjects.some(
+          (p) => (p.projectId ?? p.id) === selectedProjectId,
+        )
+        if (hasMatchingProject || allProjects.length === 0) {
+          const key = `${node.roleId}-${node.id}`
+          if (!visited.has(key)) {
+            visited.add(key)
+            if (!roleUserMap.has(node.roleId)) roleUserMap.set(node.roleId, [])
+            roleUserMap.get(node.roleId)!.push({
+              id: node.id,
+              fullName: node.fullName,
+              email: node.email,
+              phone: node.phone,
+              status: node.status,
+              isMultiProject,
+            })
+          }
+        }
+      }
+    } else {
+      if (node.roleId) {
+        const key = `${node.roleId}-${node.id}`
+        if (!visited.has(key)) {
+          visited.add(key)
+          if (!roleUserMap.has(node.roleId)) roleUserMap.set(node.roleId, [])
+          roleUserMap.get(node.roleId)!.push({
+            id: node.id,
+            fullName: node.fullName,
+            email: node.email,
+            phone: node.phone,
+            status: node.status,
+            isMultiProject,
           })
         }
-        projectMap.get(pId)!.users.add(user)
+      }
+
+      for (const p of allProjects) {
+        if (p.status && p.status !== "ACTIVE") continue
+        if (p.roleId) {
+          const key = `${p.roleId}-${node.id}`
+          if (!visited.has(key)) {
+            visited.add(key)
+            if (!roleUserMap.has(p.roleId)) roleUserMap.set(p.roleId, [])
+            roleUserMap.get(p.roleId)!.push({
+              id: node.id,
+              fullName: node.fullName,
+              email: node.email,
+              phone: node.phone,
+              status: node.status,
+              isMultiProject,
+            })
+          }
+        }
       }
     }
-  }
 
-  if (projectMap.size === 0) {
-    return [
-      {
-        projectId: 0,
-        projectName: "Dự án chung",
-        users: allUsers,
-      },
-    ]
-  }
-
-  return Array.from(projectMap.entries())
-    .map(([projectId, info]) => ({
-      projectId,
-      projectName: info.projectName,
-      users: Array.from(info.users),
-    }))
-    .filter((g) => g.users.length > 0)
-}
-
-const getSubordinatesOfManager = (
-  manager: UserTreeNodeResponse,
-): UserTreeNodeResponse[] => {
-  if (!manager.children || manager.children.length === 0) return []
-  return collectAllUsers(manager.children)
-}
-
-const getRoleIdByCode = (
-  roles: RoleResponse[],
-  code: string,
-): number | undefined => {
-  const role = roles.find((r) => r.code === code)
-  if (role) return role.id
-  for (const [key, val] of Object.entries(ROLE_CODES)) {
-    if (val === code) {
-      const matched = roles.find((r) => identifyRoleKey(r) === key)
-      if (matched) return matched.id
-    }
-  }
-  return undefined
-}
-
-export const checkUserMatchesRoleKey = (
-  user: UserTreeNodeResponse,
-  targetKey: RoleCodeKey,
-  roles: RoleResponse[],
-  projectId?: number,
-): boolean => {
-  if (user.roleId) {
-    const role = roles.find((r) => r.id === user.roleId)
-    if (role && identifyRoleKey(role) === targetKey) return true
-  }
-  if (user.roleName && identifyRoleKey({ name: user.roleName }) === targetKey) {
-    return true
-  }
-
-  if (user.projects && user.projects.length > 0) {
-    for (const p of user.projects) {
-      if (p.status && p.status !== "ACTIVE") continue
-      const pId = p.projectId ?? p.id
-      if (projectId && pId !== projectId) continue
-
-      if (p.roleId) {
-        const role = roles.find((r) => r.id === p.roleId)
-        if (role && identifyRoleKey(role) === targetKey) return true
-      }
-      if (p.roleName && identifyRoleKey({ name: p.roleName }) === targetKey) {
-        return true
-      }
+    for (const child of node.children || []) {
+      collect(child)
     }
   }
 
-  return false
-}
-
-const filterUsersByRoleCode = (
-  scopeUsers: UserTreeNodeResponse[],
-  roles: RoleResponse[],
-  roleCode: string,
-  projectId?: number,
-): UserTreeNodeResponse[] => {
-  const roleId = getRoleIdByCode(roles, roleCode)
-  if (roleId !== undefined) {
-    return scopeUsers.filter((u) => {
-      if (u.roleId === roleId) return true
-      return (
-        u.projects?.some((p) => {
-          const pId = p.projectId ?? p.id
-          return p.roleId === roleId && (!projectId || pId === projectId)
-        }) ?? false
-      )
-    })
-  }
-  const key = identifyRoleKey({ code: roleCode, name: roleCode })
-  if (key) {
-    return filterUsersByRoleKey(scopeUsers, roles, key, projectId)
-  }
-  return []
-}
-
-const filterUsersByRoleKey = (
-  scopeUsers: UserTreeNodeResponse[],
-  roles: RoleResponse[],
-  targetKey: RoleCodeKey,
-  projectId?: number,
-): UserTreeNodeResponse[] => {
-  return scopeUsers.filter((u) =>
-    checkUserMatchesRoleKey(u, targetKey, roles, projectId),
-  )
-}
-
-const formatToUserItems = (
-  users: UserTreeNodeResponse[],
-): RoleGroupUserItem[] => {
-  if (users.length === 0) {
-    return [{ fullName: VACANCY_LABEL, isVacancy: true }]
-  }
-  return users.map((u) => {
-    const isMultiProject = (u.projects?.length ?? 0) > 1
-    return {
-      id: u.id,
-      fullName: u.fullName,
-      note: isMultiProject ? "(Kiêm nhiệm)" : undefined,
-      isVacancy: false,
-    }
-  })
-}
-
-const calculateManagerHeight = (count: number): number => {
-  if (count <= 1) return MANAGER_CARD_HEIGHT
-  return 60 + count * 22
-}
-
-const calculateGroupHeight = (sections: RoleSectionGroup[]): number => {
-  const PADDING = 28
-  const TITLE_HEIGHT = 18
-  const ROW_HEIGHT = 15
-  const GAP = 14
-
-  return (
-    PADDING +
-    sections.reduce((total, section, idx) => {
-      const rows = Math.max(section.users.length, 1)
-      const separator = idx > 0 ? GAP : 0
-      return total + separator + TITLE_HEIGHT + rows * ROW_HEIGHT
-    }, 0)
-  )
-}
-
-function appendBranchesForManager(
-  prefix: string,
-  parentManagerNodeId: string,
-  managerScopeUsers: UserTreeNodeResponse[],
-  roles: RoleResponse[],
-  configs: RoleOrgNodeConfig[],
-  projectId?: number,
-) {
-  for (const branch of DEPARTMENT_BRANCHES) {
-    const branchManagers = filterUsersByRoleKey(
-      managerScopeUsers,
-      roles,
-      branch.managerKey,
-      projectId,
-    )
-    const branchManagerNodeId = `${prefix}role-${branch.key}-mgr-${parentManagerNodeId}`
-
-    configs.push({
-      id: branchManagerNodeId,
-      parentId: parentManagerNodeId,
-      width: ROLE_GROUP_CARD_WIDTH,
-      height: calculateManagerHeight(branchManagers.length),
-      data: {
-        type: "manager",
-        title: branch.managerTitle,
-        managerUsers:
-          branchManagers.length > 0
-            ? branchManagers.map((u) => ({ id: u.id, fullName: u.fullName }))
-            : undefined,
-        managerName:
-          branchManagers.length === 1 ? branchManagers[0].fullName : undefined,
-        isVacancy: branchManagers.length === 0,
-      },
-    })
-
-    const supervisors = filterUsersByRoleKey(
-      managerScopeUsers,
-      roles,
-      branch.supervisorKey,
-      projectId,
-    )
-    const supervisorSections: RoleSectionGroup[] = [
-      {
-        roleId: getRoleIdByCode(roles, branch.supervisorCode) ?? -1,
-        roleName: branch.supervisorTitle,
-        users: formatToUserItems(supervisors),
-      },
-    ]
-
-    configs.push({
-      id: `${prefix}role-group-${branch.key}-${parentManagerNodeId}`,
-      parentId: branchManagerNodeId,
-      width: ROLE_GROUP_CARD_WIDTH,
-      height: calculateGroupHeight(supervisorSections),
-      data: {
-        type: "group",
-        title: branch.groupTitle,
-        sections: supervisorSections,
-      },
-    })
+  for (const u of users) {
+    collect(u)
   }
 
-  const specialistSections: RoleSectionGroup[] = SPECIALIST_ROLES.map(
-    (role) => ({
-      roleId: getRoleIdByCode(roles, role.code) ?? -1,
-      roleName: role.title,
-      users: formatToUserItems(
-        filterUsersByRoleKey(managerScopeUsers, roles, role.key, projectId),
-      ),
-    }),
-  )
-
-  configs.push({
-    id: `${prefix}role-group-specialists-${parentManagerNodeId}`,
-    parentId: parentManagerNodeId,
-    width: ROLE_GROUP_CARD_WIDTH,
-    height: calculateGroupHeight(specialistSections),
-    data: {
-      type: "group",
-      title: "Chuyên trách Trực thuộc Phòng",
-      sections: specialistSections,
-    },
-  })
+  return roleUserMap
 }
 
-export function buildRoleOrgChart(
-  users: UserTreeNodeResponse[],
-  roles: RoleResponse[],
-) {
-  const configs = buildProjectRoleOrgChart(
-    { projectId: 0, projectName: "Dự án chung", users },
-    roles,
-  )
-  const xAlignPairs: Array<[string, string]> = []
-  const gdNode = configs.find((c) => c.parentId === null)
-  const tpNodes = configs.filter(
-    (c) => c.data.type === "manager" && c.data.title.startsWith("Trưởng phòng"),
-  )
-  if (gdNode && tpNodes[0]) {
-    xAlignPairs.push([gdNode.id, tpNodes[0].id])
-  }
-  if (tpNodes[0]) {
-    const branchMgrs = configs.filter(
-      (c) => c.parentId === tpNodes[0].id && c.data.type === "manager",
-    )
-    for (const b of branchMgrs) {
-      xAlignPairs.push([tpNodes[0].id, b.id])
-    }
-  }
-  return { configs, xAlignPairs }
-}
-
-export function buildProjectRoleOrgChart(
-  projectGroup: ProjectUserGroup,
-  roles: RoleResponse[],
-): RoleOrgNodeConfig[] {
-  const configs: RoleOrgNodeConfig[] = []
-  const { projectId, projectName, users } = projectGroup
-  const prefix = projectId > 0 ? `p${projectId}-` : ""
-
-  const gdUsers = filterUsersByRoleCode(
-    users,
-    roles,
-    ROLE_CODES.GD_PGD,
-    projectId,
-  )
-  const gdNodeId = `${prefix}role-gd-root`
-
-  configs.push({
-    id: gdNodeId,
-    parentId: null,
-    width: ROLE_GROUP_CARD_WIDTH,
-    height: calculateManagerHeight(gdUsers.length),
-    data: {
-      type: "manager",
-      title: "GĐ/PGĐ Phòng Quản lý Xây dựng, An toàn và Môi trường",
-      departmentName: projectName,
-      managerUsers:
-        gdUsers.length > 0
-          ? gdUsers.map((u) => ({ id: u.id, fullName: u.fullName }))
-          : undefined,
-      managerName:
-        gdUsers.length === 1
-          ? gdUsers[0].fullName
-          : gdUsers.length === 0
-            ? VACANCY_LABEL
-            : undefined,
-      isVacancy: gdUsers.length === 0,
-    },
-  })
-
-  const tpUsers = filterUsersByRoleCode(
-    users,
-    roles,
-    ROLE_CODES.TRUONG_PHONG,
-    projectId,
-  )
-
-  if (tpUsers.length === 0) {
-    const vacantTpNodeId = `${prefix}role-tp-vacant`
-    configs.push({
-      id: vacantTpNodeId,
-      parentId: gdNodeId,
-      width: ROLE_GROUP_CARD_WIDTH,
-      height: MANAGER_CARD_HEIGHT,
-      data: {
-        type: "manager",
-        title: "Trưởng phòng Quản lý Xây dựng, An toàn và Môi trường",
-        departmentName: projectName,
-        managerName: VACANCY_LABEL,
-        isVacancy: true,
-      },
-    })
-
-    appendBranchesForManager(
-      prefix,
-      vacantTpNodeId,
-      users,
-      roles,
-      configs,
-      projectId,
-    )
-  } else {
-    const hasAnyTpSubordinates = tpUsers.some(
-      (u) => getSubordinatesOfManager(u).length > 0,
-    )
-
-    for (const tp of tpUsers) {
-      const tpNodeId = `${prefix}role-tp-${tp.id}`
-
-      configs.push({
-        id: tpNodeId,
-        parentId: gdNodeId,
-        width: ROLE_GROUP_CARD_WIDTH,
-        height: MANAGER_CARD_HEIGHT,
-        data: {
-          type: "manager",
-          title: "Trưởng phòng Quản lý Xây dựng, An toàn và Môi trường",
-          departmentName: projectName,
-          managerName: tp.fullName,
-          isVacancy: false,
-        },
-      })
-
-      const tpSubordinates = getSubordinatesOfManager(tp)
-      const managerScope =
-        tpSubordinates.length > 0
-          ? tpSubordinates
-          : hasAnyTpSubordinates
-            ? []
-            : tpUsers.length === 1
-              ? users
-              : []
-
-      appendBranchesForManager(
-        prefix,
-        tpNodeId,
-        managerScope,
-        roles,
-        configs,
-        projectId,
-      )
-    }
-  }
-
-  return configs
-}
+const PAD_LEFT = 16
+const PAD_RIGHT = 16
+const PAD_TOP = 16
+const PAD_BOTTOM = 20
+const HEADER_H = 36
 
 export const buildRoleFlowElements = (
-  activeTree: UserTreeNodeResponse[],
-  roles: RoleResponse[],
+  users: UserTreeNodeResponse[],
+  roles: RoleTreeNodeResponse[],
   projects?: ProjectResponse[],
   selectedProjectId?: number,
+  collapsedIds: Set<number> = new Set(),
+  toggleCollapsed?: (id: number) => void,
 ) => {
-  if (!activeTree || activeTree.length === 0 || !roles || roles.length === 0) {
-    return { nodes: [] as RoleGroupFlowNodeType[], edges: [] as Edge[] }
+  if (!roles || roles.length === 0) {
+    return { nodes: [] as Node[], edges: [] as Edge[] }
   }
 
-  const allUsers = collectAllUsers(activeTree)
-  const projectGroups = groupUsersByProject(
-    allUsers,
-    projects,
-    selectedProjectId,
-  )
+  const roleUserMap = mapUsersToRoles(users, selectedProjectId)
+  const entries = flattenVisibleRoleTree(roles, collapsedIds, roleUserMap)
 
-  const allNodes: RoleGroupFlowNodeType[] = []
-  const allEdges: Edge[] = []
+  if (entries.length === 0) {
+    return { nodes: [] as Node[], edges: [] as Edge[] }
+  }
 
-  let currentXOffset = 0
+  const sortedEntries = [...entries].sort((a, b) => {
+    const la = a.role.level ?? 99
+    const lb = b.role.level ?? 99
+    if (la !== lb) return la - lb
+    const da = a.role.departmentId ?? 0
+    const db = b.role.departmentId ?? 0
+    if (da !== db) return da - db
+    return Number(a.id) - Number(b.id)
+  })
 
-  for (const projectGroup of projectGroups) {
-    const configs = buildProjectRoleOrgChart(projectGroup, roles)
-
-    const graph = new dagre.graphlib.Graph()
-    graph.setDefaultEdgeLabel(() => ({}))
-    graph.setGraph({
-      rankdir: "TB",
-      nodesep: 32,
-      ranksep: 72,
-    })
-
-    for (const c of configs) {
-      graph.setNode(c.id, { width: c.width, height: c.height })
+  const deptMap = new Map<
+    number,
+    {
+      deptId: number
+      name: string
+      code?: string | null
+      type?: string | null
+      level?: number | null
+      parentId?: number | null
+      metadata?: unknown
+      entries: FlatRoleUserEntry[]
     }
-    for (const c of configs) {
-      if (c.parentId) {
-        graph.setEdge(c.parentId, c.id)
+  >()
+
+  for (const entry of sortedEntries) {
+    const deptId = entry.role.departmentId
+    if (deptId) {
+      if (!deptMap.has(deptId)) {
+        deptMap.set(deptId, {
+          deptId,
+          name: entry.role.departmentName || `Phòng ban #${deptId}`,
+          code: entry.role.departmentCode,
+          type: entry.role.departmentType,
+          level: entry.role.departmentLevel,
+          parentId: entry.role.departmentParentId,
+          metadata: entry.role.departmentMetadata,
+          entries: [],
+        })
       }
+      deptMap.get(deptId)!.entries.push(entry)
     }
+  }
 
-    dagre.layout(graph)
+  const g = new dagre.graphlib.Graph({ compound: true })
+  g.setDefaultEdgeLabel(() => ({}))
+  g.setGraph({
+    rankdir: "TB",
+    nodesep: 80,
+    ranksep: 80,
+    marginx: 40,
+    marginy: 40,
+  })
 
-    const parentMap = new Map<string, string | null>()
-    for (const c of configs) {
-      parentMap.set(c.id, c.parentId)
+  for (const [deptId, dept] of deptMap.entries()) {
+    g.setNode(`dept_${deptId}`, { label: dept.name })
+  }
+
+  for (const entry of sortedEntries) {
+    g.setNode(entry.id, { width: entry.width, height: entry.height })
+    if (entry.role.departmentId && deptMap.has(entry.role.departmentId)) {
+      g.setParent(entry.id, `dept_${entry.role.departmentId}`)
     }
+  }
 
-    const depthMap = new Map<string, number>()
-    const getDepth = (id: string): number => {
-      if (depthMap.has(id)) return depthMap.get(id)!
-      const pId = parentMap.get(id)
-      if (!pId) {
-        depthMap.set(id, 0)
-        return 0
-      }
-      const d = getDepth(pId) + 1
-      depthMap.set(id, d)
-      return d
+  const visibleIds = new Set(sortedEntries.map((e) => e.id))
+  const siblingGroups = new Map<string, FlatRoleUserEntry[]>()
+
+  for (const entry of sortedEntries) {
+    if (entry.parentId && entry.role.departmentId) {
+      const key = `${entry.parentId}_dept_${entry.role.departmentId}`
+      if (!siblingGroups.has(key)) siblingGroups.set(key, [])
+      siblingGroups.get(key)!.push(entry)
     }
+  }
 
-    for (const c of configs) {
-      getDepth(c.id)
-    }
+  const verticalChainedIds = new Set<string>()
+  const effectiveEdges: {
+    source: string
+    target: string
+    targetHandle?: "top" | "left"
+  }[] = []
 
-    const maxDepth = Math.max(0, ...Array.from(depthMap.values()))
-    const RANK_GAP = 72
-    const tierTopY = new Map<number, number>()
-    let currentTierY = 0
-    const gdHeight =
-      configs.find((c) => c.parentId === null)?.height ?? MANAGER_CARD_HEIGHT
+  for (const siblings of siblingGroups.values()) {
+    const isExecutiveGroup = siblings.some(
+      (s) =>
+        (s.role.level != null && s.role.level <= 2) ||
+        s.role.departmentCode === "BTGD" ||
+        s.role.departmentCode === "HDQT" ||
+        s.role.departmentType === "Ban",
+    )
 
-    for (let d = 0; d <= maxDepth; d++) {
-      tierTopY.set(d, currentTierY)
-      const rowHeight = d === 0 ? gdHeight : MANAGER_CARD_HEIGHT
-      currentTierY += rowHeight + RANK_GAP
-    }
-
-    let minX = Infinity
-    let maxX = -Infinity
-    let maxY = -Infinity
-
-    for (const c of configs) {
-      const node = graph.node(c.id)
-      minX = Math.min(minX, node.x - c.width / 2)
-      maxX = Math.max(maxX, node.x + c.width / 2)
-      const d = depthMap.get(c.id) ?? 0
-      const nodeTopY = tierTopY.get(d) ?? 0
-      maxY = Math.max(maxY, nodeTopY + c.height)
-    }
-
-    const treeWidth = maxX - minX
-    const treeHeight = maxY
-
-    const FRAME_PADDING_X = 40
-    const FRAME_PADDING_Y = 40
-    const frameX = currentXOffset - FRAME_PADDING_X
-    const frameY = -FRAME_PADDING_Y
-    const frameWidth = treeWidth + 2 * FRAME_PADDING_X
-    const frameHeight = treeHeight + 2 * FRAME_PADDING_Y
-
-    allNodes.push({
-      id: `${projectGroup.projectId > 0 ? `p${projectGroup.projectId}-` : ""}frame`,
-      type: "projectGroupNode",
-      position: { x: frameX, y: frameY },
-      data: {
-        projectName: projectGroup.projectName,
-        userCount: projectGroup.users.length,
-        width: frameWidth,
-        height: frameHeight,
-      },
-      className: "nodrag nopan",
-      draggable: false,
-      selectable: false,
-      style: { pointerEvents: "none" as const, zIndex: -1 },
-    } as unknown as RoleGroupFlowNodeType)
-
-    for (const c of configs) {
-      const node = graph.node(c.id)
-      const posX = currentXOffset + (node.x - c.width / 2 - minX)
-      const d = depthMap.get(c.id) ?? 0
-      const posY = tierTopY.get(d) ?? 0
-
-      allNodes.push({
-        id: c.id,
-        type: "roleGroupNode",
-        position: { x: posX, y: posY },
-        data: {
-          ...c.data,
-          isHighlighted: false,
-        },
-        className: "nodrag nopan",
-        draggable: false,
-        selectable: false,
-        style: { pointerEvents: "all" as const },
+    if (!isExecutiveGroup && siblings.length > 5) {
+      const sorted = [...siblings].sort((a, b) => {
+        const la = a.role.level ?? 99
+        const lb = b.role.level ?? 99
+        if (la !== lb) return la - lb
+        return Number(a.id) - Number(b.id)
       })
-    }
 
-    for (const c of configs) {
-      if (c.parentId) {
-        allEdges.push({
-          id: `${c.parentId}-${c.id}`,
-          source: c.parentId,
-          target: c.id,
-          type: "step",
-          style: { stroke: "var(--muted-foreground)", strokeWidth: 2 },
+      g.setEdge(sorted[0].parentId!, sorted[0].id)
+      for (let i = 0; i < sorted.length - 1; i++) {
+        g.setEdge(sorted[i].id, sorted[i + 1].id)
+      }
+
+      for (const sib of sorted) {
+        verticalChainedIds.add(sib.id)
+        effectiveEdges.push({
+          source: sib.parentId!,
+          target: sib.id,
+          targetHandle: "left",
         })
       }
     }
-
-    currentXOffset += treeWidth + 2 * FRAME_PADDING_X + 64
   }
 
-  return { nodes: allNodes, edges: allEdges }
+  for (const entry of sortedEntries) {
+    if (entry.parentId && visibleIds.has(entry.parentId)) {
+      if (!verticalChainedIds.has(entry.id)) {
+        g.setEdge(entry.parentId, entry.id)
+        effectiveEdges.push({
+          source: entry.parentId,
+          target: entry.id,
+          targetHandle: "top",
+        })
+      }
+    }
+  }
+
+  dagre.layout(g)
+
+  const positions = new Map<string, { x: number; y: number }>()
+  for (const entry of sortedEntries) {
+    const node = g.node(entry.id)
+    if (node) {
+      positions.set(entry.id, {
+        x: node.x - entry.width / 2,
+        y: node.y - entry.height / 2,
+      })
+    }
+  }
+
+  const groups: DepartmentGroupInfo[] = []
+  for (const [deptId, dept] of deptMap.entries()) {
+    let minX = Infinity
+    let maxX = -Infinity
+    let minY = Infinity
+    let maxY = -Infinity
+
+    for (const r of dept.entries) {
+      const pos = positions.get(r.id)
+      if (pos) {
+        if (pos.x < minX) minX = pos.x
+        if (pos.x + r.width > maxX) maxX = pos.x + r.width
+        if (pos.y < minY) minY = pos.y
+        if (pos.y + r.height > maxY) maxY = pos.y + r.height
+      }
+    }
+
+    if (minX !== Infinity) {
+      const isSubDept =
+        Boolean(dept.parentId) ||
+        dept.type === "BỘ_PHẬN" ||
+        dept.type === "NHÓM" ||
+        Boolean(dept.level && dept.level >= 3)
+
+      const cardSpanWidth = maxX - minX + PAD_LEFT + PAD_RIGHT
+      const titleLen = dept.name ? dept.name.length : 0
+      const codeLen = dept.code ? dept.code.length : 0
+      const minTitleWidth =
+        titleLen * 8.5 + (codeLen > 0 ? codeLen * 8.5 + 28 : 0) + 48
+      const groupWidth = Math.max(cardSpanWidth, minTitleWidth)
+
+      let customColor: string | null = null
+      if (dept.metadata && typeof dept.metadata === "object") {
+        const meta = dept.metadata as Record<string, unknown>
+        if (typeof meta.color === "string") customColor = meta.color
+        else if (typeof meta.themeColor === "string")
+          customColor = meta.themeColor
+      } else if (typeof dept.metadata === "string") {
+        try {
+          const parsed = JSON.parse(dept.metadata)
+          if (typeof parsed.color === "string") customColor = parsed.color
+          else if (typeof parsed.themeColor === "string")
+            customColor = parsed.themeColor
+        } catch {}
+      }
+
+      if (!customColor) {
+        const palette = [
+          "#4f46e5",
+          "#2563eb",
+          "#059669",
+          "#0891b2",
+          "#d97706",
+          "#7c3aed",
+          "#e11d48",
+          "#0d9488",
+          "#ea580c",
+          "#9333ea",
+          "#db2777",
+          "#65a30d",
+        ]
+        customColor = palette[Math.abs(deptId) % palette.length]
+      }
+
+      groups.push({
+        id: `dept_${deptId}`,
+        title: dept.name,
+        code: dept.code,
+        type: dept.type,
+        roleCount: dept.entries.length,
+        x: minX - PAD_LEFT,
+        y: minY - PAD_TOP - HEADER_H,
+        width: groupWidth,
+        height: maxY - minY + PAD_TOP + PAD_BOTTOM + HEADER_H,
+        theme: isSubDept ? "subdepartment" : "department",
+        color: customColor,
+      })
+    }
+  }
+
+  const groupNodes: Node[] = groups.map((g) => ({
+    id: g.id,
+    type: "departmentGroupNode",
+    position: { x: g.x, y: g.y },
+    data: g,
+    draggable: false,
+    selectable: false,
+    zIndex: -1,
+    style: { pointerEvents: "none" as const },
+  }))
+
+  const roleNodes: Node[] = sortedEntries.map((entry) => ({
+    id: entry.id,
+    type: "roleGroupNode",
+    position: positions.get(entry.id) ?? { x: 0, y: 0 },
+    data: {
+      role: entry.role,
+      users: entry.assignedUsers,
+      childCount: entry.role.children ? entry.role.children.length : 0,
+      expanded: !collapsedIds.has(entry.role.id),
+      onToggleExpand: toggleCollapsed
+        ? () => toggleCollapsed(entry.role.id)
+        : undefined,
+    },
+    className: "nodrag nopan",
+    draggable: false,
+    selectable: false,
+    zIndex: 10,
+    style: { pointerEvents: "all" as const },
+  }))
+
+  let projectNodes: Node[] = []
+  if (selectedProjectId && projects && projects.length > 0) {
+    const selectedProject = projects.find((p) => p.id === selectedProjectId)
+    if (selectedProject && (groupNodes.length > 0 || roleNodes.length > 0)) {
+      let overallMinX = Infinity
+      let overallMaxX = -Infinity
+      let overallMinY = Infinity
+      let overallMaxY = -Infinity
+
+      for (const g of groups) {
+        if (g.x < overallMinX) overallMinX = g.x
+        if (g.x + g.width > overallMaxX) overallMaxX = g.x + g.width
+        if (g.y < overallMinY) overallMinY = g.y
+        if (g.y + g.height > overallMaxY) overallMaxY = g.y + g.height
+      }
+
+      for (const r of roleNodes) {
+        const x = r.position.x
+        const y = r.position.y
+        const w = USER_ROLE_CARD_WIDTH
+        const h = 100
+        if (x < overallMinX) overallMinX = x
+        if (x + w > overallMaxX) overallMaxX = x + w
+        if (y < overallMinY) overallMinY = y
+        if (y + h > overallMaxY) overallMaxY = y + h
+      }
+
+      if (overallMinX !== Infinity) {
+        let totalAssignedUsers = 0
+        const countedUserIds = new Set<number>()
+        for (const entry of sortedEntries) {
+          for (const u of entry.assignedUsers) {
+            if (!countedUserIds.has(u.id)) {
+              countedUserIds.add(u.id)
+              totalAssignedUsers++
+            }
+          }
+        }
+
+        const projectPadding = 32
+        const pX = overallMinX - projectPadding
+        const pY = overallMinY - projectPadding - 24
+        const pW = overallMaxX - overallMinX + projectPadding * 2
+        const pH = overallMaxY - overallMinY + projectPadding * 2 + 24
+
+        projectNodes = [
+          {
+            id: `project_${selectedProjectId}`,
+            type: "projectGroupNode",
+            position: { x: pX, y: pY },
+            data: {
+              projectName: selectedProject.name,
+              userCount: totalAssignedUsers,
+              width: pW,
+              height: pH,
+            },
+            draggable: false,
+            selectable: false,
+            zIndex: -2,
+            style: { pointerEvents: "none" as const },
+          },
+        ]
+      }
+    }
+  }
+
+  const flowEdges: Edge[] = effectiveEdges.map((e) => ({
+    id: `${e.source}-${e.target}`,
+    source: e.source,
+    sourceHandle: "bottom",
+    target: e.target,
+    targetHandle: e.targetHandle ?? "top",
+    type: "roleBus",
+    style: { stroke: "#475569", strokeWidth: 1.8, opacity: 0.9 },
+  }))
+
+  return {
+    nodes: [...projectNodes, ...groupNodes, ...roleNodes],
+    edges: flowEdges,
+  }
 }

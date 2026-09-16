@@ -1,20 +1,30 @@
 import { Handle, type Node, type NodeProps, Position } from "@xyflow/react"
-import RoleGroupNode, { type RoleGroupNodeData } from "./RoleGroupNode"
+import UserRoleNode, { type UserRoleNodeProps } from "./RoleGroupNode"
 
-export type RoleGroupFlowNodeType = Node<RoleGroupNodeData, "roleGroupNode">
+export type UserRoleFlowNodeData = UserRoleNodeProps & Record<string, unknown>
+export type RoleGroupFlowNodeType = Node<UserRoleFlowNodeData, "roleGroupNode">
 
 const RoleGroupFlowNode = ({ data }: NodeProps<RoleGroupFlowNodeType>) => {
   return (
-    <div className="nodrag nopan w-[260px]">
+    <div className="nodrag nopan relative">
       <Handle
         type="target"
+        id="top"
         position={Position.Top}
         className="!opacity-0"
         isConnectable={false}
       />
-      <RoleGroupNode data={data} />
+      <Handle
+        type="target"
+        id="left"
+        position={Position.Left}
+        className="!opacity-0"
+        isConnectable={false}
+      />
+      <UserRoleNode {...data} />
       <Handle
         type="source"
+        id="bottom"
         position={Position.Bottom}
         className="!opacity-0"
         isConnectable={false}

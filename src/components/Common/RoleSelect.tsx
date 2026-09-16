@@ -1,4 +1,4 @@
-import type { DefaultOptionType, SelectProps } from "antd/es/select"
+﻿import type { DefaultOptionType, SelectProps } from "antd/es/select"
 import { useMemo } from "react"
 
 import InfiniteSelect from "@/components/Common/InfiniteSelect"
@@ -30,6 +30,8 @@ interface RoleSelectBaseProps {
   filterItem?: (role: RoleResponse) => boolean
   extraParams?: Record<string, unknown>
   options?: DefaultOptionType[]
+  selectedId?: number
+  setSelectedId?: (id?: number) => void
 }
 
 export interface RoleSelectSingleIdProps extends RoleSelectBaseProps {
@@ -72,6 +74,8 @@ export const RoleSelect = (props: RoleSelectProps) => {
     valueType = "id",
     value,
     onChange,
+    selectedId,
+    setSelectedId,
     placeholder,
     className = "w-full",
     disabled,
@@ -86,6 +90,7 @@ export const RoleSelect = (props: RoleSelectProps) => {
   } = props
 
   const isMultiple = mode === "multiple" || mode === "tags"
+  const rawValue = value !== undefined ? value : selectedId
 
   const allowedProjectRoles = useMemo(() => {
     const roles = projectRole ?? projectRoles
@@ -94,16 +99,26 @@ export const RoleSelect = (props: RoleSelectProps) => {
   }, [projectRole, projectRoles])
 
   const internalValue = useMemo<number | number[] | undefined>(() => {
-    if (value == null) return isMultiple ? [] : undefined
-    if (Array.isArray(value)) {
-      return value.map((v) =>
+    if (rawValue == null) return isMultiple ? [] : undefined
+    if (Array.isArray(rawValue)) {
+      return rawValue.map((v) =>
         typeof v === "object" && v !== null ? v.id : Number(v),
       )
     }
-    return typeof value === "object" && value !== null
-      ? value.id
-      : Number(value)
-  }, [value, isMultiple])
+    return typeof rawValue === "object" && rawValue !== null
+      ? rawValue.id
+      : Number(rawValue)
+  }, [rawValue, isMultiple])
+
+  // Fetch role detail when value is a single number ID to prevent showing raw ID
+  const singleIdToFetch =
+    !isMultiple && typeof internalValue === "number" && !isNaN(internalValue)
+      ? internalValue
+      : undefined
+
+  const { data: fetchedRole } = roleQueries.useDetail(singleIdToFetch, {
+    enabled: !!singleIdToFetch,
+  })
 
   const defaultPlaceholder = isMultiple
     ? "Chọn 1 hoặc nhiều chức danh..."
@@ -131,6 +146,12 @@ export const RoleSelect = (props: RoleSelectProps) => {
     number | number[],
     DefaultOptionType
   >["onChange"] = (val, opt) => {
+    if (setSelectedId && typeof val === "number") {
+      setSelectedId(val)
+    } else if (setSelectedId && val == null) {
+      setSelectedId(undefined)
+    }
+
     if (!onChange) return
 
     if (isMultiple) {
@@ -154,8 +175,8 @@ export const RoleSelect = (props: RoleSelectProps) => {
 
   const defaultOptions = useMemo<DefaultOptionType[] | undefined>(() => {
     if (options) return options
-    if (value && typeof value === "object") {
-      const arr = Array.isArray(value) ? value : [value]
+    if (rawValue && typeof rawValue === "object") {
+      const arr = Array.isArray(rawValue) ? rawValue : [rawValue]
       return arr
         .filter(
           (v): v is RoleResponse =>
@@ -167,8 +188,17 @@ export const RoleSelect = (props: RoleSelectProps) => {
           ...r,
         }))
     }
+    if (fetchedRole) {
+      return [
+        {
+          value: fetchedRole.id,
+          label: fetchedRole.name,
+          ...fetchedRole,
+        },
+      ]
+    }
     return undefined
-  }, [options, value])
+  }, [options, rawValue, fetchedRole])
 
   return (
     <InfiniteSelect<RoleResponse, number | number[]>

@@ -1,5 +1,6 @@
 "use client"
 
+import type { TableColumnsType } from "antd"
 import {
   Button,
   Input,
@@ -10,7 +11,6 @@ import {
   Tag,
   Tooltip,
 } from "antd"
-import type { TableColumnsType } from "antd"
 import {
   Building2,
   List,
@@ -22,7 +22,7 @@ import {
 } from "lucide-react"
 import React, { useMemo, useState } from "react"
 
-import { departmentQueries } from "@/hooks/server/departments"
+import DepartmentSelect from "@/components/Common/DepartmentSelect"
 import { roleQueries } from "@/hooks/server/roles"
 import {
   PLANNING_METHOD_OPTIONS,
@@ -43,9 +43,7 @@ interface RoleTableViewProps {
 }
 
 /** Recursively clean tree node children so empty arrays don't trigger expand icon */
-function sanitizeTreeData(
-  nodes: RoleTreeNodeResponse[],
-): RoleTreeTableItem[] {
+function sanitizeTreeData(nodes: RoleTreeNodeResponse[]): RoleTreeTableItem[] {
   return nodes.map((node) => ({
     ...node,
     children:
@@ -85,16 +83,7 @@ const RoleTableView: React.FC<RoleTableViewProps> = ({
     PlanningMethod | "ALL"
   >("ALL")
   const [forceFlatView, setForceFlatView] = useState(false)
-
-  const { data: departments = [] } = departmentQueries.useList()
   const deleteMutation = roleQueries.useDelete()
-
-  const departmentOptions = useMemo(() => {
-    return (departments || []).map((d) => ({
-      value: d.id,
-      label: d.name,
-    }))
-  }, [departments])
 
   const isFiltering =
     Boolean(keyword.trim()) ||
@@ -207,9 +196,7 @@ const RoleTableView: React.FC<RoleTableViewProps> = ({
             </span>
           </div>
         ) : (
-          <span className="text-muted-foreground text-xs italic">
-            Chưa gán
-          </span>
+          <span className="text-muted-foreground text-xs italic">Chưa gán</span>
         ),
     },
     {
@@ -310,16 +297,10 @@ const RoleTableView: React.FC<RoleTableViewProps> = ({
             className="w-full sm:w-72"
           />
 
-          <Select
+          <DepartmentSelect
             placeholder="Lọc phòng ban"
-            value={departmentFilter}
-            onChange={setDepartmentFilter}
-            allowClear
-            showSearch
-            filterOption={(input, option) =>
-              (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-            }
-            options={departmentOptions}
+            selectedId={departmentFilter}
+            setSelectedId={setDepartmentFilter}
             className="w-48"
           />
 

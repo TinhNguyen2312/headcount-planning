@@ -6,18 +6,16 @@ import { Edit, Eye, RotateCcw, Trash2 } from "lucide-react"
 import React, { useState } from "react"
 import { ActionMenu, type ActionMenuItem } from "@/components/Common/ActionMenu"
 import { DataTable } from "@/components/Common/DataTable"
-import InfiniteSelect from "@/components/Common/InfiniteSelect"
-import { milestoneQueries } from "@/hooks/server/milestones"
-import { propertyQueries } from "@/hooks/server/properties"
-import { roleQueries } from "@/hooks/server/roles"
+import PropertySelect from "@/components/Common/PropertySelect"
+import RoleSelect from "@/components/Common/RoleSelect"
 import { standardQueries } from "@/hooks/server/standards"
 import { useListPageState } from "@/hooks/useListPageState"
 import {
   type HeadcountStandardResponse,
-  type PropertyResponse,
   STANDARD_PROJECT_TYPE_OPTIONS,
   type StandardProjectType,
 } from "@/types"
+import MilestoneSelect from "../Common/MilestoneSelect"
 import { formatCriteriaDisplay } from "./criteriaRules"
 import { StandardModal } from "./StandardModal"
 
@@ -44,22 +42,11 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
     number | undefined
   >(undefined)
 
-  const {
-    page,
-    setPage,
-    limit,
-    setLimit,
-    queryParams,
-  } = useListPageState({
+  const { page, setPage, limit, setLimit, queryParams } = useListPageState({
     persistKey: "standards-table",
     initialLimit: 15,
     initialSort: { sort: { sortBy: "id", order: "DESC" } },
-    resetPageOn: [
-      selectedRoleId,
-      selectedMilestoneId,
-      selectedProjectType,
-      selectedPropertyId,
-    ],
+    resetPageOn: `${selectedRoleId ?? ""}_${selectedMilestoneId ?? ""}_${selectedProjectType ?? ""}_${selectedPropertyId ?? ""}`,
   })
 
   const {
@@ -278,22 +265,6 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
       },
     },
     {
-      title: "Ghi chú",
-      dataIndex: "note",
-      key: "note",
-      render: (note: string | null) =>
-        note ? (
-          <span
-            className="text-xs text-muted-foreground line-clamp-2"
-            title={note}
-          >
-            {note}
-          </span>
-        ) : (
-          <span className="text-xs text-muted-foreground">—</span>
-        ),
-    },
-    {
       title: "Thao tác",
       key: "actions",
       width: 90,
@@ -348,11 +319,9 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
       {/* Filter Bar */}
       <div className="flex flex-wrap items-center gap-3 bg-card p-3 rounded-lg border border-border">
         <div className="w-60">
-          <InfiniteSelect
-            placeholder="Lọc theo chức danh"
-            value={selectedRoleId}
-            onChange={(val) => setSelectedRoleId(val as number | undefined)}
-            useList={roleQueries.useList}
+          <RoleSelect
+            selectedId={selectedRoleId}
+            setSelectedId={(val) => setSelectedRoleId(Number(val))}
             allowClear
           />
         </div>
@@ -367,27 +336,18 @@ export const StandardTableView: React.FC<StandardTableViewProps> = ({
         />
 
         <div className="w-60">
-          <InfiniteSelect
-            placeholder="Lọc theo mốc tiến độ"
-            value={selectedMilestoneId}
-            onChange={(val) => setSelectedMilestoneId(val)}
-            useList={milestoneQueries.useList}
-            allowClear
+          <MilestoneSelect
+            selectedId={selectedMilestoneId}
+            setSelectedId={(val) =>
+              setSelectedMilestoneId(val != null ? Number(val) : undefined)
+            }
           />
         </div>
 
         <div className="w-60">
-          <InfiniteSelect<PropertyResponse>
-            placeholder="Lọc cơ sở định biên"
-            value={selectedPropertyId}
-            onChange={(val) => setSelectedPropertyId(Number(val))}
-            useList={propertyQueries.useList}
-            transformItem={(item) => ({
-              value: item.id,
-              label: item.name,
-              id: item.id,
-              name: item.name,
-            })}
+          <PropertySelect
+            selectedId={selectedPropertyId}
+            setSelectedId={setSelectedPropertyId}
             allowClear
           />
         </div>

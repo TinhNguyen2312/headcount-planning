@@ -81,10 +81,20 @@ export function useListPageState<TExtra extends object = object>(
     resetPageOn,
   })
 
+  const isResetEqual = (a: unknown, b: unknown) => {
+    if (a === b) return true
+    if (Array.isArray(a) && Array.isArray(b)) {
+      return (
+        a.length === b.length && a.every((val, idx) => Object.is(val, b[idx]))
+      )
+    }
+    return false
+  }
+
   if (
     prevFilters.debouncedKeyword !== debouncedKeyword ||
     prevFilters.sortConfig !== sortConfig ||
-    prevFilters.resetPageOn !== resetPageOn
+    !isResetEqual(prevFilters.resetPageOn, resetPageOn)
   ) {
     setPrevFilters({ debouncedKeyword, sortConfig, resetPageOn })
     setPage(1)
