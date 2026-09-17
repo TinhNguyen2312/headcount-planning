@@ -1,4 +1,4 @@
-import { createApiHandler, IdParamSchema } from "@/server/core"
+import { createApiHandler, IdParamSchema, PERMISSIONS } from "@/server/core"
 import { UpdateDepartmentSchema } from "@/server/modules/departments/department.schema"
 import { DepartmentService } from "@/server/modules/departments/department.service"
 
@@ -10,7 +10,7 @@ export const GET = createApiHandler({
 })
 
 export const PATCH = createApiHandler({
-  auth: true,
+  permissions: [PERMISSIONS.CATALOG_MANAGE],
   paramsSchema: IdParamSchema,
   bodySchema: UpdateDepartmentSchema,
   handler: async ({ params, body }) => {
@@ -19,7 +19,7 @@ export const PATCH = createApiHandler({
 })
 
 export const DELETE = createApiHandler({
-  auth: true,
+  permissions: [PERMISSIONS.CATALOG_MANAGE],
   paramsSchema: IdParamSchema,
   handler: async ({ params }) => {
     return await DepartmentService.delete(params.id)

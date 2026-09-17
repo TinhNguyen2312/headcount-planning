@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server"
-import { getCurrentUserFromSession } from "@/lib/session"
 import type { users } from "@/db"
+import { getCurrentUserFromSession } from "@/lib/session"
 import { ForbiddenError, UnauthorizedError } from "./errors"
 
 export type AuthenticatedUser = typeof users.$inferSelect
@@ -46,8 +46,6 @@ export function requireRoles(
   }
 
   if (!allowedRoles.includes(user.systemRole)) {
-    throw new ForbiddenError(
-      "Tài khoản không đủ quyền truy cập tính năng này",
-    )
+    throw new ForbiddenError("Tài khoản không đủ quyền truy cập tính năng này")
   }
 }

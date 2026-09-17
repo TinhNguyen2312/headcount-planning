@@ -1,4 +1,4 @@
-import { createApiHandler } from "@/server/core"
+import { createApiHandler, PERMISSIONS } from "@/server/core"
 import {
   CreateDepartmentSchema,
   QueryDepartmentSchema,
@@ -13,7 +13,7 @@ export const GET = createApiHandler({
 })
 
 export const POST = createApiHandler({
-  auth: true,
+  permissions: [PERMISSIONS.CATALOG_MANAGE],
   bodySchema: CreateDepartmentSchema,
   handler: async ({ body }) => {
     return await DepartmentService.create(body)

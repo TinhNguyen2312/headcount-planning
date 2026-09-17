@@ -1,13 +1,14 @@
-import { and, eq, isNull, lte, or, gte, sql } from "drizzle-orm"
+import { and, eq, gte, inArray, isNull, lte, or, sql } from "drizzle-orm"
 import {
-  db,
   accessRolePermissions,
+  accessRoles,
+  db,
   permissions,
   userAccessRoles,
   userProjects,
-  accessRoles,
 } from "@/db"
 import { BadRequestError, ForbiddenError } from "./errors"
+import type { PermissionKey } from "./permissions"
 
 export type PermissionScope = "GLOBAL" | "PROJECT"
 
@@ -16,11 +17,38 @@ export interface ResolvedPermissions {
   globalPermissions: Set<string>
   projectPermissions: Set<string>
   allPermissions: Set<string>
-  has: (permissionKey: string) => boolean
+  has: (permissionKey: PermissionKey | string) => boolean
 }
 
 /**
- * Trích xuất toàn bộ quyền (Global + Project) của một người dùng
+ * Lấy tất cả ID của Role và các Role tổ tiên (Cha, Ông, Cụ...) thông qua đệ quy (Hierarchical RBAC)
+ */
+export async function getRoleWithAncestorIds(
+  roleIds: number[],
+): Promise<number[]> {
+  const validIds = roleIds.filter((id) => typeof id === "number" && !isNaN(id))
+  if (validIds.length === 0) return []
+
+  const idSqlList = sql.join(
+    validIds.map((id) => sql`${id}`),
+    sql`, `,
+  )
+
+  const query = sql`
+    WITH RECURSIVE role_tree AS (
+      SELECT id, parent_id FROM access_roles WHERE id IN (${idSqlList})
+      UNION
+      SELECT r.id, r.parent_id FROM access_roles r
+      INNER JOIN role_tree rt ON r.id = rt.parent_id
+    )
+    SELECT DISTINCT id FROM role_tree
+  `
+  const result = await db.execute<{ id: number }>(query)
+  return (result as unknown as Array<{ id: number }>).map((r) => Number(r.id))
+}
+
+/**
+ * Trích xuất toàn bộ quyền (Global + Project) của một người dùng bao gồm kế thừa
  */
 export async function resolveUserPermissions(
   userId: number,
@@ -42,43 +70,37 @@ export async function resolveUserPermissions(
   const globalPermissions = new Set<string>()
   const projectPermissions = new Set<string>()
 
-  // 1. Lấy quyền GLOBAL từ user_access_roles
-  const globalRows = await db
-    .select({
-      key: permissions.key,
-    })
+  // 1. Lấy quyền GLOBAL (kèm tất cả Role cha kế thừa) từ user_access_roles
+  const globalRoleRows = await db
+    .select({ accessRoleId: userAccessRoles.accessRoleId })
     .from(userAccessRoles)
-    .innerJoin(
-      accessRolePermissions,
-      eq(userAccessRoles.accessRoleId, accessRolePermissions.accessRoleId),
-    )
-    .innerJoin(
-      permissions,
-      eq(accessRolePermissions.permissionId, permissions.id),
-    )
     .where(eq(userAccessRoles.userId, userId))
 
-  for (const row of globalRows) {
-    globalPermissions.add(row.key)
-  }
+  const directGlobalRoleIds = globalRoleRows.map((r) => r.accessRoleId)
+  const allGlobalRoleIds = await getRoleWithAncestorIds(directGlobalRoleIds)
 
-  // 2. Nếu có projectId, lấy quyền PROJECT từ user_projects còn hiệu lực
-  if (projectId) {
-    const today = new Date().toISOString().split("T")[0]
-
-    const projectRows = await db
-      .select({
-        key: permissions.key,
-      })
-      .from(userProjects)
-      .innerJoin(
-        accessRolePermissions,
-        eq(userProjects.accessRoleId, accessRolePermissions.accessRoleId),
-      )
+  if (allGlobalRoleIds.length > 0) {
+    const globalRows = await db
+      .select({ key: permissions.key })
+      .from(accessRolePermissions)
       .innerJoin(
         permissions,
         eq(accessRolePermissions.permissionId, permissions.id),
       )
+      .where(inArray(accessRolePermissions.accessRoleId, allGlobalRoleIds))
+
+    for (const row of globalRows) {
+      globalPermissions.add(row.key)
+    }
+  }
+
+  // 2. Nếu có projectId, lấy quyền PROJECT (kèm tất cả Role cha kế thừa) từ user_projects còn hiệu lực
+  if (projectId) {
+    const today = new Date().toISOString().split("T")[0]
+
+    const projectRoleRows = await db
+      .select({ accessRoleId: userProjects.accessRoleId })
+      .from(userProjects)
       .where(
         and(
           eq(userProjects.userId, userId),
@@ -92,8 +114,25 @@ export async function resolveUserPermissions(
         ),
       )
 
-    for (const row of projectRows) {
-      projectPermissions.add(row.key)
+    const directProjectRoleIds = projectRoleRows
+      .map((r) => r.accessRoleId)
+      .filter((id): id is number => id !== null && id !== undefined)
+
+    const allProjectRoleIds = await getRoleWithAncestorIds(directProjectRoleIds)
+
+    if (allProjectRoleIds.length > 0) {
+      const projectRows = await db
+        .select({ key: permissions.key })
+        .from(accessRolePermissions)
+        .innerJoin(
+          permissions,
+          eq(accessRolePermissions.permissionId, permissions.id),
+        )
+        .where(inArray(accessRolePermissions.accessRoleId, allProjectRoleIds))
+
+      for (const row of projectRows) {
+        projectPermissions.add(row.key)
+      }
     }
   }
 
@@ -107,7 +146,7 @@ export async function resolveUserPermissions(
     globalPermissions,
     projectPermissions,
     allPermissions,
-    has: (permissionKey: string) =>
+    has: (permissionKey: PermissionKey | string) =>
       allPermissions.has(permissionKey) || allPermissions.has("*"),
   }
 }
@@ -117,7 +156,7 @@ export async function resolveUserPermissions(
  */
 export function checkPermission(
   perms: ResolvedPermissions,
-  requiredPermission: string,
+  requiredPermission: PermissionKey | string,
 ): void {
   if (!perms.has(requiredPermission)) {
     throw new ForbiddenError(
@@ -160,5 +199,52 @@ export function validateGlobalRoleAssignment(accessRoleScope: string): void {
     throw new BadRequestError(
       "Vai trò phân quyền hệ thống (toàn công ty) phải có phạm vi là GLOBAL",
     )
+  }
+}
+
+/**
+ * Validate nghiệp vụ Kế thừa:
+ * 1. Role con và Role cha phải cùng phạm vi (scope).
+ * 2. Không được tạo vòng lặp vô tận (Cycle detection).
+ */
+export async function validateRoleInheritance(
+  roleId: number | null | undefined,
+  roleScope: PermissionScope,
+  parentId: number | null | undefined,
+): Promise<void> {
+  if (!parentId) return
+
+  if (roleId && parentId === roleId) {
+    throw new BadRequestError("Một vai trò không thể kế thừa chính nó")
+  }
+
+  // 1. Kiểm tra parentRole có tồn tại và cùng scope không
+  const [parentRole] = await db
+    .select({
+      id: accessRoles.id,
+      scope: accessRoles.scope,
+      parentId: accessRoles.parentId,
+    })
+    .from(accessRoles)
+    .where(eq(accessRoles.id, parentId))
+
+  if (!parentRole) {
+    throw new BadRequestError("Vai trò cha không tồn tại")
+  }
+
+  if (parentRole.scope !== roleScope) {
+    throw new BadRequestError(
+      `Vai trò phạm vi ${roleScope} chỉ có thể kế thừa từ vai trò cha có cùng phạm vi ${roleScope}`,
+    )
+  }
+
+  // 2. Chống lặp chu trình (Cycle detection)
+  if (roleId) {
+    const ancestors = await getRoleWithAncestorIds([parentId])
+    if (ancestors.includes(roleId)) {
+      throw new BadRequestError(
+        "Kế thừa không hợp lệ: Sẽ gây ra chu trình lặp vô tận giữa các vai trò (Cycle detected)",
+      )
+    }
   }
 }

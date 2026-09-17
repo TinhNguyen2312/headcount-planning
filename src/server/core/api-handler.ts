@@ -7,6 +7,7 @@ import {
   requireRoles,
 } from "./auth"
 import type { PaginationMeta } from "./pagination"
+import type { PermissionKey } from "./permissions"
 import {
   checkPermission,
   type ResolvedPermissions,
@@ -39,7 +40,7 @@ export interface ApiHandlerConfig<
 > {
   auth?: boolean
   roles?: string[]
-  permissions?: string[]
+  permissions?: (PermissionKey | string)[]
   getProjectId?: (ctx: {
     req: NextRequest
     user: AuthenticatedUser | null

@@ -230,6 +230,14 @@ export const accessRolesRelations = relations(accessRoles, ({one, many}) => ({
 		fields: [accessRoles.createdBy],
 		references: [users.id]
 	}),
+	parent: one(accessRoles, {
+		fields: [accessRoles.parentId],
+		references: [accessRoles.id],
+		relationName: "accessRoles_parentId_accessRoles_id",
+	}),
+	children: many(accessRoles, {
+		relationName: "accessRoles_parentId_accessRoles_id",
+	}),
 	accessRolePermissions: many(accessRolePermissions),
 	userAccessRoles: many(userAccessRoles),
 	userProjects: many(userProjects),

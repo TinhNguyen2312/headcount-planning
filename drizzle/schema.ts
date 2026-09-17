@@ -689,6 +689,7 @@ export const accessRoles = pgTable(
     isSystem: boolean("is_system").default(false).notNull(),
     description: text(),
     createdBy: integer("created_by"),
+    parentId: integer("parent_id"),
     createdAt: timestamp("created_at", { mode: "string" })
       .defaultNow()
       .notNull(),
@@ -702,11 +703,17 @@ export const accessRoles = pgTable(
       foreignColumns: [users.id],
       name: "access_roles_created_by_fkey",
     }).onDelete("set null"),
+    foreignKey({
+      columns: [table.parentId],
+      foreignColumns: [table.id],
+      name: "access_roles_parent_id_fkey",
+    }).onDelete("set null"),
     unique("access_roles_name_key").on(table.name),
     check(
       "access_roles_scope_check",
       sql`(scope)::text = ANY ((ARRAY['GLOBAL'::character varying, 'PROJECT'::character varying])::text[])`,
     ),
+    index("idx_access_roles_parent").on(table.parentId),
   ],
 )
 

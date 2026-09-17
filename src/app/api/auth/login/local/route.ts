@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server"
 import { eq } from "drizzle-orm"
+import { NextRequest } from "next/server"
 import { db, users } from "@/db"
+import { apiError, apiSuccess } from "@/lib/apiResponse"
 import { verifyPassword } from "@/lib/security"
 import { createSession } from "@/lib/session"
-import { apiError, apiSuccess } from "@/lib/apiResponse"
 import { formatUserResponse } from "@/lib/userHelpers"
 
 const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || "JSESSIONID"
