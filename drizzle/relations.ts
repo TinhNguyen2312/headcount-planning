@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { roles, properties, propertyDepartments, regions, projects, headcountProjects, propertyValues, userProjects, users, milestones, milestoneDependencies, plans, headcountStandards, phases, headcountCriteria, headcountMonthlyFactors, departments, sectors, sessions } from "./schema";
+import { roles, properties, propertyDepartments, regions, projects, headcountProjects, propertyValues, userProjects, users, milestones, milestoneDependencies, plans, headcountStandards, phases, headcountCriteria, headcountMonthlyFactors, departments, sectors, sessions, permissions, accessRoles, accessRolePermissions, userAccessRoles } from "./schema";
 
 export const propertiesRelations = relations(properties, ({many}) => ({
 	propertyValues: many(propertyValues),
@@ -80,6 +80,10 @@ export const userProjectsRelations = relations(userProjects, ({one}) => ({
 		fields: [userProjects.userId],
 		references: [users.id],
 		relationName: "userProjects_userId_users_id"
+	}),
+	accessRole: one(accessRoles, {
+		fields: [userProjects.accessRoleId],
+		references: [accessRoles.id]
 	}),
 }));
 
@@ -214,5 +218,47 @@ export const sessionsRelations = relations(sessions, ({one}) => ({
 	user: one(users, {
 		fields: [sessions.userId],
 		references: [users.id]
+	}),
+}));
+
+export const permissionsRelations = relations(permissions, ({many}) => ({
+	accessRolePermissions: many(accessRolePermissions),
+}));
+
+export const accessRolesRelations = relations(accessRoles, ({one, many}) => ({
+	creator: one(users, {
+		fields: [accessRoles.createdBy],
+		references: [users.id]
+	}),
+	accessRolePermissions: many(accessRolePermissions),
+	userAccessRoles: many(userAccessRoles),
+	userProjects: many(userProjects),
+}));
+
+export const accessRolePermissionsRelations = relations(accessRolePermissions, ({one}) => ({
+	accessRole: one(accessRoles, {
+		fields: [accessRolePermissions.accessRoleId],
+		references: [accessRoles.id]
+	}),
+	permission: one(permissions, {
+		fields: [accessRolePermissions.permissionId],
+		references: [permissions.id]
+	}),
+}));
+
+export const userAccessRolesRelations = relations(userAccessRoles, ({one}) => ({
+	user: one(users, {
+		fields: [userAccessRoles.userId],
+		references: [users.id],
+		relationName: "userAccessRoles_userId_users_id"
+	}),
+	accessRole: one(accessRoles, {
+		fields: [userAccessRoles.accessRoleId],
+		references: [accessRoles.id]
+	}),
+	grantor: one(users, {
+		fields: [userAccessRoles.grantedBy],
+		references: [users.id],
+		relationName: "userAccessRoles_grantedBy_users_id"
 	}),
 }));

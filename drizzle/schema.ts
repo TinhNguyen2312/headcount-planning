@@ -5,10 +5,12 @@ import {
   check,
   date,
   foreignKey,
+  index,
   integer,
   jsonb,
   numeric,
   pgTable,
+  primaryKey,
   serial,
   text,
   timestamp,
@@ -191,6 +193,7 @@ export const userProjects = pgTable(
     replacementUserId: integer("replacement_user_id"),
     replacementFrom: date("replacement_from"),
     replacementTo: date("replacement_to"),
+    accessRoleId: integer("access_role_id"),
     createdAt: timestamp("created_at", { mode: "string" })
       .defaultNow()
       .notNull(),
@@ -219,6 +222,11 @@ export const userProjects = pgTable(
       foreignColumns: [users.id],
       name: "user_projects_user_id_fkey",
     }).onDelete("cascade"),
+    foreignKey({
+      columns: [table.accessRoleId],
+      foreignColumns: [accessRoles.id],
+      name: "user_projects_access_role_id_fkey",
+    }).onDelete("restrict"),
     unique("user_projects_user_id_project_id_role_id_effective_from_key").on(
       table.userId,
       table.projectId,
@@ -228,6 +236,13 @@ export const userProjects = pgTable(
     check(
       "user_projects_status_check",
       sql`(status)::text = ANY ((ARRAY['ACTIVE'::character varying, 'ENDED'::character varying])::text[])`,
+    ),
+    index("idx_user_projects_access_role").on(table.accessRoleId),
+    index("idx_user_projects_lookup").on(
+      table.userId,
+      table.status,
+      table.effectiveFrom,
+      table.effectiveTo,
     ),
   ],
 )
@@ -642,3 +657,115 @@ export const sessions = pgTable(
     }).onDelete("cascade"),
   ],
 )
+
+export const permissions = pgTable(
+  "permissions",
+  {
+    id: serial().primaryKey().notNull(),
+    key: varchar({ length: 100 }).notNull(),
+    label: varchar({ length: 150 }).notNull(),
+    groupName: varchar("group_name", { length: 50 }).notNull(),
+    scope: varchar({ length: 20 }).default("PROJECT").notNull(),
+    description: text(),
+    createdAt: timestamp("created_at", { mode: "string" })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    unique("permissions_key_key").on(table.key),
+    check(
+      "permissions_scope_check",
+      sql`(scope)::text = ANY ((ARRAY['GLOBAL'::character varying, 'PROJECT'::character varying])::text[])`,
+    ),
+  ],
+)
+
+export const accessRoles = pgTable(
+  "access_roles",
+  {
+    id: serial().primaryKey().notNull(),
+    name: varchar({ length: 100 }).notNull(),
+    scope: varchar({ length: 20 }).default("PROJECT").notNull(),
+    isSystem: boolean("is_system").default(false).notNull(),
+    description: text(),
+    createdBy: integer("created_by"),
+    createdAt: timestamp("created_at", { mode: "string" })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { mode: "string" })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.createdBy],
+      foreignColumns: [users.id],
+      name: "access_roles_created_by_fkey",
+    }).onDelete("set null"),
+    unique("access_roles_name_key").on(table.name),
+    check(
+      "access_roles_scope_check",
+      sql`(scope)::text = ANY ((ARRAY['GLOBAL'::character varying, 'PROJECT'::character varying])::text[])`,
+    ),
+  ],
+)
+
+export const accessRolePermissions = pgTable(
+  "access_role_permissions",
+  {
+    accessRoleId: integer("access_role_id").notNull(),
+    permissionId: integer("permission_id").notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.accessRoleId],
+      foreignColumns: [accessRoles.id],
+      name: "access_role_permissions_access_role_id_fkey",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [table.permissionId],
+      foreignColumns: [permissions.id],
+      name: "access_role_permissions_permission_id_fkey",
+    }).onDelete("cascade"),
+    primaryKey({
+      columns: [table.accessRoleId, table.permissionId],
+      name: "access_role_permissions_pkey",
+    }),
+    index("idx_arp_permission").on(table.permissionId),
+  ],
+)
+
+export const userAccessRoles = pgTable(
+  "user_access_roles",
+  {
+    userId: integer("user_id").notNull(),
+    accessRoleId: integer("access_role_id").notNull(),
+    grantedBy: integer("granted_by"),
+    grantedAt: timestamp("granted_at", { mode: "string" })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [users.id],
+      name: "user_access_roles_user_id_fkey",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [table.accessRoleId],
+      foreignColumns: [accessRoles.id],
+      name: "user_access_roles_access_role_id_fkey",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [table.grantedBy],
+      foreignColumns: [users.id],
+      name: "user_access_roles_granted_by_fkey",
+    }).onDelete("set null"),
+    primaryKey({
+      columns: [table.userId, table.accessRoleId],
+      name: "user_access_roles_pkey",
+    }),
+    index("idx_uar_access_role").on(table.accessRoleId),
+  ],
+)
+
