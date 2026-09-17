@@ -1,4 +1,5 @@
-import { and, eq, inArray, or, type SQL } from "drizzle-orm"
+import dayjs from "dayjs"
+import { and, eq, inArray, or, type SQL, sql } from "drizzle-orm"
 import {
   db,
   headcountProjects,
@@ -10,9 +11,9 @@ import {
   sectors,
 } from "@/db"
 import type { PlanningMethod } from "@/types"
-import type { HeadcountCalculationParams, MonthPeriod } from "./types"
+import { isPhaseInDateRange } from "./calculationEngine"
+import type { HeadcountCalculationParams } from "./types"
 
-// Inferred nested types trực tiếp từ Drizzle query relations
 export type LoadedProject = Awaited<ReturnType<typeof queryProjects>>[number]
 export type LoadedRole = Awaited<ReturnType<typeof queryRoles>>[number]
 export type LoadedStandard = Awaited<ReturnType<typeof queryStandards>>[number]
@@ -113,12 +114,6 @@ export async function queryProjects(projectIds: number[]) {
   })
 }
 
-/**
- * Bước 3: Lọc Role theo đúng scopeType đang chạy:
- * - scopeType = 'BY_PROJECT' => planning_method = 'BY_PROJECT'
- * - scopeType = 'BY_REGION'  => planning_method = 'BY_REGION'
- * - scopeType = 'BY_SECTOR'  => planning_method = 'BY_SECTOR'
- */
 export async function queryRoles(scopeType: PlanningMethod) {
   return db.query.roles.findMany({
     where: eq(roles.planningMethod, scopeType),
@@ -128,14 +123,44 @@ export async function queryRoles(scopeType: PlanningMethod) {
   })
 }
 
-/**
- * Bước 4.1: Lọc headcount_standards từ DB theo danh sách roleIds
- */
-export async function queryStandards(roleIds: number[]) {
+export async function queryStandards(
+  roleIds: number[],
+  projectTypes?: string[],
+  milestoneIds?: number[],
+) {
   if (roleIds.length === 0) return []
 
+  const conditions: SQL[] = [inArray(headcountStandards.roleId, roleIds)]
+
+  if (projectTypes && projectTypes.length > 0) {
+    const applicableTypes = new Set<string>(["ALL"])
+    for (const pt of projectTypes) {
+      applicableTypes.add(pt)
+      if (pt === "MIXED") {
+        applicableTypes.add("LOW_RISE")
+        applicableTypes.add("HIGH_RISE")
+      }
+    }
+    conditions.push(
+      inArray(headcountStandards.projectType, Array.from(applicableTypes)),
+    )
+  }
+
+  if (milestoneIds && milestoneIds.length > 0) {
+    const orMilestoneConditions = milestoneIds.map((mId) =>
+      and(
+        sql`${headcountStandards.fromMilestoneId} <= ${mId}`,
+        or(
+          sql`${headcountStandards.toMilestoneId} IS NULL`,
+          sql`${headcountStandards.toMilestoneId} >= ${mId}`,
+        ),
+      ),
+    )
+    conditions.push(or(...orMilestoneConditions)!)
+  }
+
   return db.query.headcountStandards.findMany({
-    where: inArray(headcountStandards.roleId, roleIds),
+    where: and(...conditions),
     with: {
       role: {
         with: {
@@ -156,7 +181,6 @@ export async function queryStandards(roleIds: number[]) {
 
 export async function loadProjectScopeData(
   params: HeadcountCalculationParams,
-  _months?: MonthPeriod[],
 ): Promise<{
   scopeName: string
   projects: LoadedProject[]
@@ -165,7 +189,6 @@ export async function loadProjectScopeData(
 }> {
   const { scopeType, scopeId } = params
 
-  // 1. scopeType => chọn các dự án trong scope đó ở bảng headcount_projects.active = true
   const { scopeName, projectIds } = await resolveScope(scopeType, scopeId)
 
   if (projectIds.length === 0) {
@@ -187,22 +210,59 @@ export async function loadProjectScopeData(
     return { scopeName, projects: [], roles: [], standards: [] }
   }
 
-  // 2. Query projects (kèm active plans, phases, milestone, propertyValues)
-  // và Bước 3: lọc role theo scopeType
-  const [loadedProjects, loadedRoles] = await Promise.all([
+  const [projects, roles] = await Promise.all([
     queryProjects(activeProjectIds),
     queryRoles(scopeType),
   ])
 
-  const targetRoleIds = loadedRoles.map((r) => r.id)
+  const targetRoleIds = roles.map((r) => r.id)
+  const targetProjectTypes = Array.from(
+    new Set(projects.map((p) => p.projectType)),
+  )
 
-  // 4.1: Query headcount_standards theo các roles bước 3
-  const loadedStandards = await queryStandards(targetRoleIds)
+  const durationMonths = params.durationMonths || 6
+  let rangeStart = ""
+  let rangeEnd = ""
+
+  if (params.fromMonth && params.fromMonth.includes("/")) {
+    const [mStr, yStr] = params.fromMonth.split("/")
+    const startMonth = parseInt(mStr, 10) - 1
+    const startYear = parseInt(yStr, 10) || new Date().getFullYear()
+
+    rangeStart = dayjs(new Date(startYear, startMonth, 1)).format("YYYY-MM-DD")
+    rangeEnd = dayjs(
+      new Date(startYear, startMonth + durationMonths, 0),
+    ).format("YYYY-MM-DD")
+  }
+
+  const milestoneIdSet = new Set<number>()
+  for (const proj of projects) {
+    const activePlan = proj.plans?.[0]
+    const phases = activePlan?.phases || []
+    for (const phase of phases) {
+      if (
+        !rangeStart ||
+        !rangeEnd ||
+        isPhaseInDateRange(phase, rangeStart, rangeEnd)
+      ) {
+        milestoneIdSet.add(phase.milestoneId)
+      }
+    }
+  }
+
+  const milestoneIds =
+    milestoneIdSet.size > 0 ? Array.from(milestoneIdSet) : undefined
+
+  const standards = await queryStandards(
+    targetRoleIds,
+    targetProjectTypes,
+    milestoneIds,
+  )
 
   return {
     scopeName,
-    projects: loadedProjects,
-    roles: loadedRoles,
-    standards: loadedStandards,
+    projects,
+    roles,
+    standards,
   }
 }

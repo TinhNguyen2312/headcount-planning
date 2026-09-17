@@ -155,7 +155,9 @@ export const PropertyTableView: React.FC<PropertyTableViewProps> = ({
       key: "projectType",
       width: 160,
       render: (_: any, record: PropertyResponse) => {
-        const pType = (record.projectType || record.scope || "ALL") as ProjectType
+        const pType = (record.projectType ||
+          record.scope ||
+          "ALL") as ProjectType
         const badge = (pType && PROJECT_TYPE_BADGES[pType]) || {
           label: "Toàn dự án",
           color: "blue",

@@ -106,9 +106,7 @@ export const ProjectPropertiesTab: React.FC<ProjectPropertiesTabProps> = ({
       sortPropertiesByType(
         properties.filter(
           (p) =>
-            !p.projectType ||
-            p.projectType === "ALL" ||
-            p.scope === "COMMON",
+            !p.projectType || p.projectType === "ALL" || p.scope === "COMMON",
         ),
       ),
     [properties],

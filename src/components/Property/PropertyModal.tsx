@@ -189,7 +189,9 @@ export const PropertyModal: React.FC<PropertyModalProps> = ({
           name="projectType"
           label="Loại dự án áp dụng"
           tooltip="Quy định chỉ số này dùng chung toàn dự án hay tách riêng theo Thấp tầng / Cao tầng"
-          rules={[{ required: true, message: "Vui lòng chọn loại dự án áp dụng" }]}
+          rules={[
+            { required: true, message: "Vui lòng chọn loại dự án áp dụng" },
+          ]}
         >
           <Select options={PROPERTY_PROJECT_TYPE_OPTIONS} />
         </Form.Item>

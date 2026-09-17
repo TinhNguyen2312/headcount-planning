@@ -135,9 +135,7 @@ export async function PUT(
             : null
 
         const targetProjectType =
-          item.projectType === "COMMON"
-            ? "ALL"
-            : item.projectType || "ALL"
+          item.projectType === "COMMON" ? "ALL" : item.projectType || "ALL"
 
         await db
           .insert(propertyValues)

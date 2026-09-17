@@ -1,7 +1,7 @@
 import dayjs from "dayjs"
 import { calculateRoleMonthlyHeadcount } from "./calculationEngine"
 import { aggregateHeadcountMatrix } from "./matrixAggregator"
-import { loadProjectScopeData } from "./scopeLoader"
+import { loadProjectScopeData, type LoadedStandard } from "./scopeLoader"
 import type {
   HeadcountCalculationParams,
   HeadcountReportResult,
@@ -9,7 +9,6 @@ import type {
   MonthPeriod,
 } from "./types"
 
-// Sinh danh sách các tháng
 export function generateMonthPeriods(
   fromMonthStr: string,
   durationMonths = 6,
@@ -45,7 +44,6 @@ export function generateMonthPeriods(
   return result
 }
 
-// Hàm chính sinh Báo cáo định biên nhân sự
 export async function generateHeadcountReport(
   params: HeadcountCalculationParams,
 ): Promise<HeadcountReportResult> {
@@ -77,20 +75,31 @@ export async function generateHeadcountReport(
     }
   }
 
+  const standardsByRoleId = new Map<number, LoadedStandard[]>()
+  for (const std of standards) {
+    const list = standardsByRoleId.get(std.roleId) || []
+    list.push(std)
+    standardsByRoleId.set(std.roleId, list)
+  }
+
   const projectRoleMonthlyMap = new Map<string, MonthlyHeadcountCell[]>()
 
   for (const project of projects) {
     for (const role of roles) {
       const key = `${project.id}_${role.id}`
+      const roleStandards = standardsByRoleId.get(role.id) || []
       const monthlyCells: MonthlyHeadcountCell[] = []
 
       for (const month of months) {
-        const standardHeadcount = calculateRoleMonthlyHeadcount(
-          project,
-          role.id,
-          month,
-          standards,
-        )
+        const standardHeadcount =
+          roleStandards.length === 0
+            ? 0
+            : calculateRoleMonthlyHeadcount(
+                project,
+                role.id,
+                month,
+                roleStandards,
+              )
 
         const actualHeadcount = 0
         const surplus = 0
