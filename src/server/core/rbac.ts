@@ -146,8 +146,28 @@ export async function resolveUserPermissions(
     globalPermissions,
     projectPermissions,
     allPermissions,
-    has: (permissionKey: PermissionKey | string) =>
-      allPermissions.has(permissionKey) || allPermissions.has("*"),
+    has: (permissionKey: PermissionKey | string) => {
+      if (allPermissions.has(permissionKey) || allPermissions.has("*")) {
+        return true
+      }
+      const [resource] = permissionKey.split(".")
+      if (resource && allPermissions.has(`${resource}.manage`)) {
+        return true
+      }
+      if (allPermissions.has("catalog.manage")) {
+        const catalogResources = ["department", "sector", "region", "role", "property", "catalog"]
+        if (catalogResources.includes(resource)) {
+          return true
+        }
+      }
+      if (allPermissions.has("project.manage")) {
+        const projectResources = ["project", "user_project", "milestone", "phase", "headcount_project"]
+        if (projectResources.includes(resource)) {
+          return true
+        }
+      }
+      return false
+    },
   }
 }
 
