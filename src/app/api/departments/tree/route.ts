@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server"
-import { asc } from "drizzle-orm"
+﻿import { asc } from "drizzle-orm"
 import { db, departments } from "@/db"
-import { apiError, apiSuccess } from "@/lib/apiResponse"
+import { createApiHandler, PERMISSIONS } from "@/server/core"
+import { QueryDepartmentTreeSchema } from "@/server/schemas/department.schema"
 import { buildTree } from "@/lib/tree"
 
 function pruneTreeByStatus(nodes: any[], targetStatus: string): any[] {
@@ -19,12 +19,10 @@ function pruneTreeByStatus(nodes: any[], targetStatus: string): any[] {
   return result
 }
 
-export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url)
-    const statusParam = searchParams.get("status")
-
-    // Lấy toàn bộ cây phòng ban để giữ đúng liên kết cha - con
+export const GET = createApiHandler({
+  permissions: [PERMISSIONS.DEPARTMENT_VIEW],
+  querySchema: QueryDepartmentTreeSchema,
+  handler: async ({ query }) => {
     const all = await db
       .select()
       .from(departments)
@@ -32,18 +30,19 @@ export async function GET(req: NextRequest) {
 
     const fullTree = buildTree(all)
 
-    // Nếu truyền status=ALL thì trả về tất cả
-    // Mặc định chỉ lấy các nhánh ACTIVE (nếu cha INACTIVE thì ẩn luôn toàn bộ con của nó)
-    if (statusParam === "ALL") {
-      return apiSuccess(fullTree)
+    if (query.status === "ALL") {
+      return {
+        data: fullTree,
+        message: "Thành công",
+      }
     }
 
-    const filterStatus = statusParam || "ACTIVE"
+    const filterStatus = query.status || "ACTIVE"
     const prunedTree = pruneTreeByStatus(fullTree, filterStatus)
 
-    return apiSuccess(prunedTree)
-  } catch (error) {
-    console.error("Get department tree error:", error)
-    return apiError("Lỗi lấy cây phòng ban", 500)
-  }
-}
+    return {
+      data: prunedTree,
+      message: "Thành công",
+    }
+  },
+})

@@ -1,4 +1,4 @@
-import { z } from "zod"
+﻿import { z } from "zod"
 import { PaginationQuerySchema } from "@/server/core/common.schema"
 
 export const QueryUserSchema = PaginationQuerySchema.extend({

@@ -1,4 +1,4 @@
-import { z } from "zod"
+﻿import { z } from "zod"
 import { PaginationQuerySchema } from "@/server/core/common.schema"
 
 export const QueryProjectSchema = PaginationQuerySchema.extend({
@@ -6,8 +6,6 @@ export const QueryProjectSchema = PaginationQuerySchema.extend({
   regionId: z.coerce.number().int().optional(),
   sectorId: z.coerce.number().int().optional(),
 })
-
-export type QueryProjectInput = z.infer<typeof QueryProjectSchema>
 
 export const CreateProjectSchema = z.object({
   name: z.string().trim().min(1, "Tên dự án không được để trống"),
@@ -26,8 +24,6 @@ export const CreateProjectSchema = z.object({
   thumbnail: z.string().trim().nullable().optional(),
 })
 
-export type CreateProjectInput = z.infer<typeof CreateProjectSchema>
-
 export const UpdateProjectSchema = z.object({
   name: z.string().trim().min(1, "Tên dự án không được để trống").optional(),
   code: z.string().trim().nullable().optional(),
@@ -40,8 +36,6 @@ export const UpdateProjectSchema = z.object({
   projectType: z.enum(["ALL", "LOW_RISE", "HIGH_RISE", "MIXED"]).optional(),
   thumbnail: z.string().trim().nullable().optional(),
 })
-
-export type UpdateProjectInput = z.infer<typeof UpdateProjectSchema>
 
 export const SaveProjectPropertiesSchema = z.object({
   values: z
@@ -56,6 +50,9 @@ export const SaveProjectPropertiesSchema = z.object({
     .default([]),
 })
 
+export type QueryProjectInput = z.infer<typeof QueryProjectSchema>
+export type CreateProjectInput = z.infer<typeof CreateProjectSchema>
+export type UpdateProjectInput = z.infer<typeof UpdateProjectSchema>
 export type SaveProjectPropertiesInput = z.infer<
   typeof SaveProjectPropertiesSchema
 >
