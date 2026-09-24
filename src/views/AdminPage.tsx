@@ -1,27 +1,40 @@
 "use client"
 
 import { Button, Tabs } from "antd"
-import { MapPin, Milestone, Plus, SlidersHorizontal } from "lucide-react"
+import { MapPin, Milestone, Plus, ShieldCheck, SlidersHorizontal } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useMemo, useState } from "react"
 
+import { AccessRoleModal, AccessRoleTableView } from "@/components/AccessRole"
 import PageContainer from "@/components/Common/PageContainer"
 import { MilestoneFlowView, MilestoneModal } from "@/components/Milestone"
 import SectorRegionManager from "@/components/Projects/SectorRegionManager"
 import { PropertyModal, PropertyTableView } from "@/components/Property"
-import type { MilestoneResponse, PropertyResponse } from "@/types"
+import type {
+  AccessRoleResponse,
+  MilestoneResponse,
+  PropertyResponse,
+} from "@/types"
 
-type AdminTabKey = "regions" | "milestones" | "properties"
+type AdminTabKey = "regions" | "milestones" | "properties" | "access-roles"
 
 function AdminContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const tabFromUrl = searchParams.get("tab") as AdminTabKey | null
   const [activeTab, setActiveTab] = useState<AdminTabKey>(
-    tabFromUrl && ["regions", "milestones", "properties"].includes(tabFromUrl)
+    tabFromUrl &&
+      ["regions", "milestones", "properties", "access-roles"].includes(
+        tabFromUrl,
+      )
       ? tabFromUrl
       : "regions",
   )
+
+  // Access role modal state
+  const [isAddRoleOpen, setIsAddRoleOpen] = useState(false)
+  const [editingRole, setEditingRole] = useState<AccessRoleResponse | null>(null)
+  const [isDuplicate, setIsDuplicate] = useState(false)
 
   // Milestone modal state
   const [isAddMilestoneOpen, setIsAddMilestoneOpen] = useState(false)
@@ -87,11 +100,49 @@ function AdminContent() {
           </div>
         ),
       },
+      {
+        key: "access-roles",
+        label: (
+          <span className="flex items-center gap-1.5 font-medium">
+            <ShieldCheck className="size-4" />
+            Vai trò & Phân quyền
+          </span>
+        ),
+        children: (
+          <div className="pt-2">
+            <AccessRoleTableView
+              onEditRole={(role) => {
+                setEditingRole(role)
+                setIsDuplicate(false)
+              }}
+              onDuplicateRole={(role) => {
+                setEditingRole(role)
+                setIsDuplicate(true)
+              }}
+            />
+          </div>
+        ),
+      },
     ],
     [],
   )
 
   const renderRightSlot = () => {
+    if (activeTab === "access-roles") {
+      return (
+        <Button
+          type="primary"
+          icon={<Plus className="size-4" />}
+          onClick={() => {
+            setEditingRole(null)
+            setIsDuplicate(false)
+            setIsAddRoleOpen(true)
+          }}
+        >
+          Thêm vai trò truy cập
+        </Button>
+      )
+    }
     if (activeTab === "milestones") {
       return (
         <Button
@@ -128,6 +179,17 @@ function AdminContent() {
           className="admin-tabs"
         />
       </div>
+
+      <AccessRoleModal
+        role={editingRole}
+        isDuplicate={isDuplicate}
+        open={isAddRoleOpen || Boolean(editingRole)}
+        onCancel={() => {
+          setIsAddRoleOpen(false)
+          setEditingRole(null)
+          setIsDuplicate(false)
+        }}
+      />
 
       <MilestoneModal
         milestone={editingMilestone}

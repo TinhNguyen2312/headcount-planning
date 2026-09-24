@@ -1,47 +1,46 @@
-import { NextRequest } from "next/server"
-import { ilike, or, and, count, desc, asc, eq, type SQL } from "drizzle-orm"
+﻿import { and, asc, count, desc, eq, ilike, or, type SQL } from "drizzle-orm"
 import { db, headcountProjects, projects, regions, sectors } from "@/db"
-import { getCurrentUserFromSession } from "@/lib/session"
-import { apiError, apiSuccess, createPaginationMeta } from "@/lib/apiResponse"
-import type {
-  HeadcountProjectCreatePayload,
-  HeadcountProjectResponse,
-} from "@/types"
+import {
+  ConflictError,
+  createApiHandler,
+  createPaginationMeta,
+  NotFoundError,
+  PERMISSIONS,
+} from "@/server/core"
+import {
+  CreateHeadcountProjectSchema,
+  QueryHeadcountProjectSchema,
+} from "@/server/schemas/headcount-project.schema"
+import {
+  formatHeadcountProjectRow,
+  headcountProjectSelection,
+} from "./helper"
 
-const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || "JSESSIONID"
-
-export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url)
-    const keyword = searchParams.get("keyword")?.trim() || ""
-    const isActiveParam = searchParams.get("isActive")
-    const regionIdParam = searchParams.get("regionId")
-    const sectorIdParam = searchParams.get("sectorId")
-    const page = parseInt(searchParams.get("page") || "0", 10)
-    const limit = Math.min(500, parseInt(searchParams.get("limit") || "50", 10))
-    const order =
-      searchParams.get("order")?.toLowerCase() === "asc" ? "asc" : "desc"
+export const GET = createApiHandler({
+  permissions: [PERMISSIONS.HEADCOUNT_PROJECT_VIEW],
+  querySchema: QueryHeadcountProjectSchema,
+  handler: async ({ query }) => {
+    const page = query.page ?? 0
+    const limit = Math.min(500, query.limit ?? 50)
+    const offset = page * limit
+    const order = query.order === "asc" ? "asc" : "desc"
 
     const conditions: SQL[] = []
 
-    if (
-      isActiveParam !== null &&
-      isActiveParam !== undefined &&
-      isActiveParam !== ""
-    ) {
-      conditions.push(eq(headcountProjects.isActive, isActiveParam === "true"))
+    if (query.isActive !== undefined) {
+      conditions.push(eq(headcountProjects.isActive, query.isActive))
     }
 
-    if (regionIdParam) {
-      conditions.push(eq(projects.regionId, parseInt(regionIdParam, 10)))
+    if (query.regionId !== undefined && !isNaN(query.regionId)) {
+      conditions.push(eq(projects.regionId, query.regionId))
     }
 
-    if (sectorIdParam) {
-      conditions.push(eq(regions.sectorId, parseInt(sectorIdParam, 10)))
+    if (query.sectorId !== undefined && !isNaN(query.sectorId)) {
+      conditions.push(eq(regions.sectorId, query.sectorId))
     }
 
-    if (keyword) {
-      const searchPattern = `%${keyword}%`
+    if (query.keyword) {
+      const searchPattern = `%${query.keyword.trim()}%`
       conditions.push(
         or(
           ilike(projects.name, searchPattern),
@@ -53,7 +52,6 @@ export async function GET(req: NextRequest) {
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined
 
-    // 1. Total count query
     const [{ total }] = await db
       .select({ total: count() })
       .from(headcountProjects)
@@ -62,30 +60,8 @@ export async function GET(req: NextRequest) {
       .leftJoin(sectors, eq(regions.sectorId, sectors.id))
       .where(whereClause)
 
-    // 2. Data rows query
     const rows = await db
-      .select({
-        id: headcountProjects.id,
-        projectId: headcountProjects.projectId,
-        isActive: headcountProjects.isActive,
-        note: headcountProjects.note,
-        createdAt: headcountProjects.createdAt,
-        updatedAt: headcountProjects.updatedAt,
-        project: {
-          id: projects.id,
-          code: projects.code,
-          name: projects.name,
-          address: projects.address,
-          startDate: projects.startDate,
-          endDate: projects.endDate,
-          status: projects.status,
-          thumbnail: projects.thumbnail,
-          regionId: regions.id,
-          regionName: regions.name,
-          sectorId: sectors.id,
-          sectorName: sectors.name,
-        },
-      })
+      .select(headcountProjectSelection)
       .from(headcountProjects)
       .innerJoin(projects, eq(headcountProjects.projectId, projects.id))
       .leftJoin(regions, eq(projects.regionId, regions.id))
@@ -96,40 +72,21 @@ export async function GET(req: NextRequest) {
           ? asc(headcountProjects.createdAt)
           : desc(headcountProjects.createdAt),
       )
-      .offset(page * limit)
+      .offset(offset)
       .limit(limit)
 
-    return apiSuccess(
-      rows,
-      "Lấy danh sách dự án định biên thành công",
-      createPaginationMeta(page, limit, Number(total)),
-    )
-  } catch (error: any) {
-    console.error("GET /api/headcount-projects error:", error)
-    return apiError(
-      "Lỗi hệ thống khi lấy danh sách dự án định biên",
-      500,
-      500,
-      error.message,
-    )
-  }
-}
-
-export async function POST(req: NextRequest) {
-  try {
-    const sessionId = req.cookies.get(SESSION_COOKIE_NAME)?.value
-    const user = await getCurrentUserFromSession(sessionId)
-    if (!user) {
-      return apiError("Chưa đăng nhập", 401, 401)
+    return {
+      data: rows.map(formatHeadcountProjectRow),
+      message: "Lấy danh sách dự án định biên thành công",
+      meta: createPaginationMeta(page, limit, Number(total)),
     }
+  },
+})
 
-    const body: HeadcountProjectCreatePayload = await req.json()
-
-    if (!body.projectId) {
-      return apiError("Vui lòng chọn dự án để kích hoạt", 400, 400)
-    }
-
-    // Verify project exists
+export const POST = createApiHandler({
+  permissions: [PERMISSIONS.HEADCOUNT_PROJECT_CREATE],
+  bodySchema: CreateHeadcountProjectSchema,
+  handler: async ({ body }) => {
     const [existingProject] = await db
       .select({ id: projects.id })
       .from(projects)
@@ -137,10 +94,9 @@ export async function POST(req: NextRequest) {
       .limit(1)
 
     if (!existingProject) {
-      return apiError("Dự án không tồn tại trong hệ thống", 404, 404)
+      throw new NotFoundError("Dự án không tồn tại trong hệ thống")
     }
 
-    // Check if already in headcount_projects
     const [existingHP] = await db
       .select({ id: headcountProjects.id })
       .from(headcountProjects)
@@ -148,30 +104,21 @@ export async function POST(req: NextRequest) {
       .limit(1)
 
     if (existingHP) {
-      return apiError(
-        "Dự án này đã có trong danh sách chạy định biên",
-        409,
-        409,
-      )
+      throw new ConflictError("Dự án này đã có trong danh sách chạy định biên")
     }
 
     const [created] = await db
       .insert(headcountProjects)
       .values({
         projectId: body.projectId,
-        isActive: body.isActive !== undefined ? Boolean(body.isActive) : true,
+        isActive: body.isActive,
         note: body.note?.trim() || null,
       })
       .returning()
 
-    return apiSuccess(created, "Kích hoạt dự án chạy định biên thành công")
-  } catch (error: any) {
-    console.error("POST /api/headcount-projects error:", error)
-    return apiError(
-      "Lỗi hệ thống khi kích hoạt dự án chạy định biên",
-      500,
-      500,
-      error.message,
-    )
-  }
-}
+    return {
+      data: created,
+      message: "Kích hoạt dự án chạy định biên thành công",
+    }
+  },
+})

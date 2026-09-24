@@ -1,5 +1,6 @@
 import axios, { type AxiosError, type AxiosRequestConfig } from "axios"
 import { clearSession } from "@/lib/token"
+import { authStore } from "@/stores/authStore"
 import { getConfig } from "./config"
 
 const MAX_RETRY = 3
@@ -50,7 +51,7 @@ axiosInstance.interceptors.response.use(
     if (axios.isCancel(error)) {
       return Promise.reject(error)
     }
-
+    console.log(error)
     const status = error.response?.status
     const url = request?.url || ""
     const isAuthLoginRequest =
@@ -58,11 +59,15 @@ axiosInstance.interceptors.response.use(
 
     if (status === 401) {
       clearSession()
+      authStore.getState().clearAuth()
+
       if (!isAuthLoginRequest) {
-        const isLoginPage =
-          typeof window !== "undefined" && window.location.pathname === "/login"
-        if (!isLoginPage) {
-          getConfig().onUnauthorized?.()
+        if (typeof window !== "undefined") {
+          const isLoginPage = window.location.pathname.startsWith("/login")
+          if (!isLoginPage) {
+            getConfig().onUnauthorized?.()
+            window.location.href = "/login"
+          }
         }
       }
 

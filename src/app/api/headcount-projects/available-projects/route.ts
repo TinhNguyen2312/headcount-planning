@@ -1,10 +1,10 @@
-import { NextRequest } from "next/server"
-import { notInArray, eq } from "drizzle-orm"
+﻿import { eq, notInArray } from "drizzle-orm"
 import { db, headcountProjects, projects, regions, sectors } from "@/db"
-import { apiError, apiSuccess } from "@/lib/apiResponse"
+import { createApiHandler, PERMISSIONS } from "@/server/core"
 
-export async function GET(_req: NextRequest) {
-  try {
+export const GET = createApiHandler({
+  permissions: [PERMISSIONS.HEADCOUNT_PROJECT_VIEW],
+  handler: async () => {
     // 1. Get existing projectIds in headcount_projects
     const existingHP = await db
       .select({ projectId: headcountProjects.projectId })
@@ -12,18 +12,12 @@ export async function GET(_req: NextRequest) {
 
     const existingProjectIds = existingHP.map((hp) => hp.projectId)
 
-    // 2. Query available projects
-    const availableProjects = await db
+    // 2. Query available projects with native joins
+    const rows = await db
       .select({
-        id: projects.id,
-        code: projects.code,
-        name: projects.name,
-        address: projects.address,
-        status: projects.status,
-        regionId: regions.id,
-        regionName: regions.name,
-        sectorId: sectors.id,
-        sectorName: sectors.name,
+        project: projects,
+        region: regions,
+        sector: sectors,
       })
       .from(projects)
       .leftJoin(regions, eq(projects.regionId, regions.id))
@@ -35,20 +29,17 @@ export async function GET(_req: NextRequest) {
       )
       .orderBy(projects.name)
 
-    return apiSuccess(
-      availableProjects,
-      "Lấy danh sách dự án khả dụng thành công",
-    )
-  } catch (error: any) {
-    console.error(
-      "GET /api/headcount-projects/available-projects error:",
-      error,
-    )
-    return apiError(
-      "Lỗi hệ thống khi lấy danh sách dự án khả dụng",
-      500,
-      500,
-      error.message,
-    )
-  }
-}
+    const availableProjects = rows.map((r) => ({
+      ...r.project,
+      region: r.region,
+      sector: r.sector,
+      regionName: r.region?.name ?? null,
+      sectorName: r.sector?.name ?? null,
+    }))
+
+    return {
+      data: availableProjects,
+      message: "Lấy danh sách dự án khả dụng thành công",
+    }
+  },
+})

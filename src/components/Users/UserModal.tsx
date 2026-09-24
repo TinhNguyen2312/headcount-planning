@@ -1,8 +1,9 @@
-import { Form, Input, Modal } from "antd"
+import { Form, Input, Modal, Select } from "antd"
 import { useEffect, useMemo } from "react"
 
 import InfiniteSelect from "@/components/Common/InfiniteSelect"
 import RoleSelect from "@/components/Common/RoleSelect"
+import { accessRoleQueries } from "@/hooks/server/accessRoles"
 import { roleQueries } from "@/hooks/server/roles"
 import { userQueries } from "@/hooks/server/users"
 import { applyApiFieldErrors } from "@/lib/errors"
@@ -15,6 +16,7 @@ interface UserFormValues {
   password?: string
   confirm_password?: string
   roleId?: number
+  accessRoleIds?: number[]
   perNumber?: string
   departmentCode?: string
   divisionCode?: string
@@ -34,6 +36,23 @@ const UserModal = ({ open, onCancel, user }: UserModalProps) => {
   const updateMutation = userQueries.useUpdate()
   const resetPasswordMutation = userQueries.useResetPassword()
   const { data: roles = [] } = roleQueries.useList()
+
+  const { data: globalRoles = [] } = accessRoleQueries.useList({
+    scope: "GLOBAL",
+    limit: 100,
+  })
+  const { data: userAccessRoles = [] } =
+    accessRoleQueries.useUserAccessRoles(user?.id, {
+      enabled: isEdit && open,
+    })
+  const updateUserRolesMutation = accessRoleQueries.useUpdateUserRoles()
+
+  const globalRoleOptions = useMemo(() => {
+    return globalRoles.map((r) => ({
+      label: `${r.name}${r.isSystem ? " (Hệ thống)" : ""}`,
+      value: r.id,
+    }))
+  }, [globalRoles])
 
   const watchedRoleId = Form.useWatch("roleId", form)
   const selectedRoleId = isEdit
@@ -64,6 +83,7 @@ const UserModal = ({ open, onCancel, user }: UserModalProps) => {
   useEffect(() => {
     if (open) {
       if (user) {
+        const assignedRoleIds = userAccessRoles.map((r) => r.id)
         form.setFieldsValue({
           fullName: user.fullName,
           perNumber: user.perNumber ?? "",
@@ -73,18 +93,20 @@ const UserModal = ({ open, onCancel, user }: UserModalProps) => {
           password: "",
           confirm_password: "",
           roleId: user.roleId ?? undefined,
+          accessRoleIds: assignedRoleIds,
         })
       } else {
         form.resetFields()
       }
     }
-  }, [open, user, form])
+  }, [open, user, userAccessRoles, form])
 
   const isSyncedUser = Boolean(isEdit && user?.perNumber)
   const isPending =
     createMutation.isPending ||
     updateMutation.isPending ||
-    resetPasswordMutation.isPending
+    resetPasswordMutation.isPending ||
+    updateUserRolesMutation.isPending
 
   const handleClose = () => {
     form.resetFields()
@@ -107,6 +129,12 @@ const UserModal = ({ open, onCancel, user }: UserModalProps) => {
         },
         {
           onSuccess: () => {
+            if (values.accessRoleIds !== undefined) {
+              updateUserRolesMutation.mutate({
+                userId: user.id,
+                accessRoleIds: values.accessRoleIds,
+              })
+            }
             if (values.password) {
               resetPasswordMutation.mutate(
                 { id: user.id, data: { newPassword: values.password } },
@@ -138,7 +166,20 @@ const UserModal = ({ open, onCancel, user }: UserModalProps) => {
           roleId: values.roleId,
         },
         {
-          onSuccess: handleClose,
+          onSuccess: (res: any) => {
+            const createdUserId = res?.data?.id
+            if (
+              createdUserId &&
+              values.accessRoleIds &&
+              values.accessRoleIds.length > 0
+            ) {
+              updateUserRolesMutation.mutate({
+                userId: createdUserId,
+                accessRoleIds: values.accessRoleIds,
+              })
+            }
+            handleClose()
+          },
           onError: (error) => {
             applyApiFieldErrors(form, error)
           },
@@ -232,6 +273,20 @@ const UserModal = ({ open, onCancel, user }: UserModalProps) => {
                 ...u,
               }
             }}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Vai trò truy cập toàn cục (Global Access Roles)"
+          name="accessRoleIds"
+          className="col-span-full"
+          tooltip="Gán vai trò phân quyền toàn hệ thống (RBAC) cho người dùng này"
+        >
+          <Select
+            mode="multiple"
+            placeholder="Chọn các vai trò toàn cục (VD: Quản trị viên, Quản trị Nhân sự...)"
+            options={globalRoleOptions}
+            allowClear
           />
         </Form.Item>
 

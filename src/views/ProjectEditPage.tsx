@@ -6,7 +6,6 @@ import {
   CalendarDays,
   SlidersHorizontal,
   UploadCloud,
-  Users,
 } from "lucide-react"
 import { useState } from "react"
 
@@ -14,7 +13,6 @@ import PageContainer from "@/components/Common/PageContainer"
 import { ProjectPlanManagement } from "@/components/Projects/Plan"
 import ProjectEditForm from "@/components/Projects/ProjectEditForm"
 import ProjectPropertiesTab from "@/components/Projects/ProjectPropertiesTab"
-import ProjectUsersTab from "@/components/Projects/ProjectUsersTab"
 import { projectQueries } from "@/hooks/server/projects"
 import { uploadMutations } from "@/hooks/server/uploads"
 import { useProjectAuth } from "@/hooks/useProjectAuth"
@@ -97,16 +95,16 @@ export default function ProjectEditPage({
         />
       ),
     },
-    {
-      key: "users",
-      label: (
-        <span className="flex items-center gap-1.5 font-medium">
-          <Users className="size-4" />
-          Quản lý nhân sự
-        </span>
-      ),
-      children: <ProjectUsersTab projectId={projectId} />,
-    },
+    // {
+    //   key: "users",
+    //   label: (
+    //     <span className="flex items-center gap-1.5 font-medium">
+    //       <Users className="size-4" />
+    //       Quản lý nhân sự
+    //     </span>
+    //   ),
+    //   children: <ProjectUsersTab projectId={projectId} />,
+    // },
   ]
 
   return (
