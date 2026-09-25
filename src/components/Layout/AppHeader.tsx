@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
 import {
   Avatar,
   Breadcrumb,
@@ -9,17 +10,20 @@ import {
   message,
 } from "antd"
 import {
+  Clock,
+  FileCheck,
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
   Settings,
   Sparkles,
   UserCheck,
+  Users,
 } from "lucide-react"
 import { ThemeToggle } from "@/components/Common/ThemeToggle"
 import { getQuickLoginAccounts } from "@/constants/auth"
 import useAuth from "@/hooks/useAuth"
-import { getInitials } from "@/lib/utils"
+import { cn, getInitials } from "@/lib/utils"
 import type { UserResponse } from "@/types"
 
 const { Header } = Layout
@@ -43,6 +47,12 @@ export const AppHeader = ({
   user,
   onLogout,
 }: AppHeaderProps) => {
+  const router = useRouter()
+  const pathname = usePathname() || ""
+  const isTimeline = pathname.startsWith("/timeline")
+  const isDrawingChecker = pathname.startsWith("/drawing-checker")
+  const isHeadcount = !isTimeline && !isDrawingChecker
+
   const { loginMutation } = useAuth()
 
   const handleQuickSwitch = (
@@ -121,13 +131,14 @@ export const AppHeader = ({
   ]
 
   return (
-    <Header className="flex h-16 items-center justify-between border-b border-border bg-background! pl-1! pr-4">
-      <div className="flex items-center gap-4">
+    <Header className="flex h-16 items-center justify-between border-b border-border bg-background! pl-2 pr-4 z-10">
+      {/* Left: Collapse Button & Breadcrumbs */}
+      <div className="flex items-center gap-3">
         <button
           type="button"
           aria-label="Đóng/mở menu"
           onClick={onToggleCollapse}
-          className="flex size-8 items-center justify-center rounded-md text-lg text-foreground hover:bg-accent"
+          className="flex size-8 items-center justify-center rounded-md text-lg text-foreground hover:bg-accent cursor-pointer"
         >
           {collapsed || isMobile ? (
             <PanelLeftOpen className="size-5" />
@@ -135,16 +146,60 @@ export const AppHeader = ({
             <PanelLeftClose className="size-5" />
           )}
         </button>
-        <Breadcrumb className="hidden md:block" items={breadcrumbItems} />
+        <Breadcrumb className="hidden xl:block text-xs" items={breadcrumbItems} />
       </div>
 
+      {/* Center: Executive Tri-Module Switcher */}
+      <div className="flex items-center rounded-lg bg-muted/80 p-0.5 border border-border/80 shadow-xs">
+        <button
+          type="button"
+          onClick={() => router.push("/timeline")}
+          className={cn(
+            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer",
+            isTimeline
+              ? "bg-[#2db34b] text-white shadow-xs"
+              : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+          )}
+        >
+          <Clock className="size-3.5" />
+          <span>Master Timeline</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => router.push("/drawing-checker")}
+          className={cn(
+            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer",
+            isDrawingChecker
+              ? "bg-[#2db34b] text-white shadow-xs"
+              : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+          )}
+        >
+          <FileCheck className="size-3.5" />
+          <span>Thẩm định Bản vẽ AI</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => router.push("/projects")}
+          className={cn(
+            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer",
+            isHeadcount
+              ? "bg-[#2db34b] text-white shadow-xs"
+              : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+          )}
+        >
+          <Users className="size-3.5" />
+          <span>Định biên Nhân sự</span>
+        </button>
+      </div>
+
+      {/* Right: User Profile & Actions */}
       <div className="flex items-center gap-3">
         <ThemeToggle />
-        <div className="hidden text-right md:block">
-          <div className="text-sm font-semibold text-foreground">
-            {user?.fullName ?? "Nhân sự"}
+        <div className="hidden md:block text-right">
+          <div className="text-sm font-semibold text-foreground leading-tight">
+            {user?.fullName ?? "Lãnh đạo Novaland"}
           </div>
-          <div className="text-base text-muted-foreground">{user?.email}</div>
+          <div className="text-xs text-muted-foreground">{user?.email}</div>
         </div>
         <Dropdown
           placement="bottomRight"
@@ -155,7 +210,7 @@ export const AppHeader = ({
             data-testid="user-menu"
             className="cursor-pointer bg-primary!"
           >
-            {getInitials(user?.fullName || "User")}
+            {getInitials(user?.fullName || "BOD")}
           </Avatar>
         </Dropdown>
       </div>

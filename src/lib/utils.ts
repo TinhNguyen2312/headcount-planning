@@ -229,3 +229,19 @@ export const getInitials = (name: string): string => {
     .join("")
     .toUpperCase()
 }
+
+export const formatDate = (date: string | Date | null | undefined): string => {
+  if (!date) return "-"
+  const d = typeof date === "string" ? new Date(date) : date
+  if (Number.isNaN(d.getTime())) return "-"
+  return d.toLocaleDateString("vi-VN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  })
+}
+
+export const formatNumber = (num: number | null | undefined): string => {
+  if (num === null || num === undefined) return "-"
+  return new Intl.NumberFormat("vi-VN").format(num)
+}

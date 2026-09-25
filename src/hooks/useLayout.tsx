@@ -6,11 +6,14 @@ import { useCallback, useMemo } from "react"
 import {
   filterMenuItemsByRole,
   findActiveMenuItem,
-  MENU_ITEMS,
+  HEADCOUNT_MENU_ITEMS,
+  TIMELINE_MENU_ITEMS,
+  DRAWING_CHECKER_MENU_ITEMS,
   type MenuItemConfig,
   type UserNavigationContext,
 } from "@/constants/menu"
 import type { AppRole } from "@/types"
+import { useMtlUiStore } from "@/stores/useMtlUiStore"
 import useAuth from "./useAuth"
 import { useNavigationShortcuts } from "./useNavigationShortcuts"
 
@@ -18,6 +21,11 @@ export const useLayout = () => {
   const router = useRouter()
   const pathname = usePathname() || ""
   const { user, isSuperUser } = useAuth()
+  const { view: mtlView, setView: setMtlView } = useMtlUiStore()
+
+  const isTimeline = pathname.startsWith("/timeline")
+  const isDrawingChecker = pathname.startsWith("/drawing-checker")
+
   const projectId = user?.currentProject?.id
   const currentRole: AppRole | null = isSuperUser
     ? "SUPER_ADMIN"
@@ -31,24 +39,37 @@ export const useLayout = () => {
     [projectId, isSuperUser],
   )
 
+  const rawMenuItems = useMemo(() => {
+    if (isTimeline) return TIMELINE_MENU_ITEMS
+    if (isDrawingChecker) return DRAWING_CHECKER_MENU_ITEMS
+    return HEADCOUNT_MENU_ITEMS
+  }, [isTimeline, isDrawingChecker])
+
   const visibleItems = useMemo(
-    () => filterMenuItemsByRole(MENU_ITEMS, currentRole),
-    [currentRole],
+    () => filterMenuItemsByRole(rawMenuItems, currentRole),
+    [rawMenuItems, currentRole],
   )
 
-  const activeItem = useMemo(
-    () => findActiveMenuItem(visibleItems, pathname),
-    [visibleItems, pathname],
-  )
+  const activeItem = useMemo(() => {
+    if (isTimeline) {
+      const match = visibleItems.find((item) => item.path.includes(`tab=${mtlView}`))
+      return match || visibleItems[0]
+    }
+    return findActiveMenuItem(visibleItems, pathname)
+  }, [isTimeline, visibleItems, mtlView, pathname])
 
   const handleNavigate = useCallback(
     (item: MenuItemConfig) => {
+      if (isTimeline && item.path.startsWith("/timeline?tab=")) {
+        const tab = item.path.replace("/timeline?tab=", "") as any
+        setMtlView(tab)
+      }
       const target = item.resolveNavigation?.(navContext) ?? { to: item.path }
       const url =
         typeof target === "string" ? target : (target as any).to || item.path
       router.push(url)
     },
-    [navContext, router],
+    [isTimeline, navContext, router, setMtlView],
   )
 
   useNavigationShortcuts({
@@ -93,12 +114,18 @@ export const useLayout = () => {
   )
 
   return {
+    isTimeline,
+    isDrawingChecker,
     items: visibleItems,
     menuItems,
     topMenuItems,
     bottomMenuItems,
     activeKey: activeItem?.key ?? "",
     activeLabel: activeItem?.label,
-    navigateHome: useCallback(() => router.push("/projects"), [router]),
+    navigateHome: useCallback(() => {
+      if (isTimeline) return router.push("/timeline")
+      if (isDrawingChecker) return router.push("/drawing-checker")
+      return router.push("/projects")
+    }, [router, isTimeline, isDrawingChecker]),
   }
 }

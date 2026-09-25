@@ -1,0 +1,139 @@
+:root {
+  /* CHTK domain tokens */
+  --surface-raised: #ffffff;
+  --pass: #10b981;
+  --pass-subtle: #ecfdf5;
+  --pass-text: #047857;
+  --fail: #ef4444;
+  --fail-subtle: #fef2f2;
+  --fail-text: #b91c1c;
+  --warning: #f59e0b;
+  --warning-subtle: #fffbeb;
+  --warning-text: #b45309;
+  --pending: #3b82f6;
+  --pending-subtle: #eff6ff;
+  --pending-text: #1d4ed8;
+  --approved: #059669;
+  --approved-subtle: #ecfdf5;
+  --approved-text: #047857;
+  --unknown: #6b7280;
+  --unknown-subtle: #f3f4f6;
+  --unknown-text: #4b5563;
+
+  --group-a: #2563eb;
+  --group-b: #0d9488;
+  --group-c: #7c3aed;
+  --group-d: #d97706;
+
+  --cat-facade: #3b82f6;
+  --cat-dimension: #10b981;
+  --cat-stair-ramp: #f59e0b;
+  --cat-structure: #8b5cf6;
+  --cat-finishing: #ec4899;
+
+  --sev-low: #94a3b8;
+  --sev-low-subtle: #f1f5f9;
+  --sev-low-text: #475569;
+  --sev-medium: #f59e0b;
+  --sev-medium-subtle: #fffbeb;
+  --sev-medium-text: #b45309;
+  --sev-high: #f97316;
+  --sev-high-subtle: #fff7ed;
+  --sev-high-text: #c2410c;
+  --sev-critical: #ef4444;
+  --sev-critical-subtle: #fef2f2;
+  --sev-critical-text: #b91c1c;
+}
+
+.dark {
+  /* CHTK domain dark tokens */
+  --surface-raised: #1e2420;
+  --pass: #10b981;
+  --pass-subtle: #064e3b33;
+  --pass-text: #6ee7b7;
+  --fail: #ef4444;
+  --fail-subtle: #7f1d1d33;
+  --fail-text: #fca5a5;
+  --warning: #f59e0b;
+  --warning-subtle: #78350f33;
+  --warning-text: #fcd34d;
+  --pending: #3b82f6;
+  --pending-subtle: #1e3a8a33;
+  --pending-text: #93c5fd;
+  --approved: #059669;
+  --approved-subtle: #064e3b33;
+  --approved-text: #6ee7b7;
+  --unknown: #6b7280;
+  --unknown-subtle: #37415133;
+  --unknown-text: #d1d5db;
+
+  --group-a: #60a5fa;
+  --group-b: #2dd4bf;
+  --group-c: #a78bfa;
+  --group-d: #fbbf24;
+
+  --cat-facade: #60a5fa;
+  --cat-dimension: #34d399;
+  --cat-stair-ramp: #fbbf24;
+  --cat-structure: #a78bfa;
+  --cat-finishing: #f472b6;
+
+  --sev-low: #64748b;
+  --sev-low-subtle: #33415533;
+  --sev-low-text: #cbd5e1;
+  --sev-medium: #f59e0b;
+  --sev-medium-subtle: #78350f33;
+  --sev-medium-text: #fcd34d;
+  --sev-high: #f97316;
+  --sev-high-subtle: #7c2d1233;
+  --sev-high-text: #fdba74;
+  --sev-critical: #ef4444;
+  --sev-critical-subtle: #7f1d1d33;
+  --sev-critical-text: #fca5a5;
+}
+
+@theme inline {
+  --color-surface-raised: var(--surface-raised);
+  --color-pass: var(--pass);
+  --color-pass-subtle: var(--pass-subtle);
+  --color-pass-text: var(--pass-text);
+  --color-fail: var(--fail);
+  --color-fail-subtle: var(--fail-subtle);
+  --color-fail-text: var(--fail-text);
+  --color-warning: var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-warning-text: var(--warning-text);
+  --color-pending: var(--pending);
+  --color-pending-subtle: var(--pending-subtle);
+  --color-pending-text: var(--pending-text);
+  --color-approved: var(--approved);
+  --color-approved-subtle: var(--approved-subtle);
+  --color-approved-text: var(--approved-text);
+  --color-unknown: var(--unknown);
+  --color-unknown-subtle: var(--unknown-subtle);
+  --color-unknown-text: var(--unknown-text);
+
+  --color-group-a: var(--group-a);
+  --color-group-b: var(--group-b);
+  --color-group-c: var(--group-c);
+  --color-group-d: var(--group-d);
+
+  --color-cat-facade: var(--cat-facade);
+  --color-cat-dimension: var(--cat-dimension);
+  --color-cat-stair-ramp: var(--cat-stair-ramp);
+  --color-cat-structure: var(--cat-structure);
+  --color-cat-finishing: var(--cat-finishing);
+
+  --color-sev-low: var(--sev-low);
+  --color-sev-low-subtle: var(--sev-low-subtle);
+  --color-sev-low-text: var(--sev-low-text);
+  --color-sev-medium: var(--sev-medium);
+  --color-sev-medium-subtle: var(--sev-medium-subtle);
+  --color-sev-medium-text: var(--sev-medium-text);
+  --color-sev-high: var(--sev-high);
+  --color-sev-high-subtle: var(--sev-high-subtle);
+  --color-sev-high-text: var(--sev-high-text);
+  --color-sev-critical: var(--sev-critical);
+  --color-sev-critical-subtle: var(--sev-critical-subtle);
+  --color-sev-critical-text: var(--sev-critical-text);
+}

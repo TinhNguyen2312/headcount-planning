@@ -1,9 +1,11 @@
 import { Button, Card, Popconfirm, Select, Tag, Tooltip } from "antd"
 import dayjs from "dayjs"
+import { useRouter } from "next/navigation"
 import {
   AlertCircle,
   Calendar,
   CheckCircle2,
+  Clock,
   Copy,
   Layers,
   Plus,
@@ -47,6 +49,7 @@ export const PlanVersionHeader: React.FC<PlanVersionHeaderProps> = ({
   onCreatePlan,
   onDeletePlan,
 }) => {
+  const router = useRouter()
   return (
     <Card size="small" className="shadow-xs">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -126,6 +129,14 @@ export const PlanVersionHeader: React.FC<PlanVersionHeaderProps> = ({
             <>
               <Button icon={<Copy className="size-4" />} onClick={onClonePlan}>
                 Nhân bản
+              </Button>
+
+              <Button
+                icon={<Clock className="size-4 text-emerald-600" />}
+                onClick={() => router.push("/timeline?tab=workspace")}
+                className="text-xs font-semibold"
+              >
+                Xem Tiến độ Master Timeline
               </Button>
 
               <Button
