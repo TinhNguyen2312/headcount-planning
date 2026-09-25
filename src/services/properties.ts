@@ -1,5 +1,4 @@
-import { apiClient } from "@/lib/api"
-import { API_V1 } from "@/lib/config"
+import { mockStore } from "@/mocks/store"
 import type {
   ItemResponse,
   ListResponse,
@@ -12,40 +11,81 @@ import type {
   SaveProjectPropertiesPayload,
 } from "@/types"
 
-const url = (path = "") => `${API_V1}/properties${path}`
-const projectUrl = (projectId: number, path = "") =>
-  `${API_V1}/projects/${projectId}/properties${path}`
-
 export const PropertiesAPI = {
-  /** GET /api/properties — hỗ trợ filter departmentId */
-  getAll: (params: PropertyQueryParams = {}) =>
-    apiClient.get<ListResponse<PropertyResponse>>(url(), { params }),
+  /** GET /api/properties */
+  getAll: async (
+    params: PropertyQueryParams = {},
+  ): Promise<ListResponse<PropertyResponse>> => {
+    return mockStore.getProperties(params)
+  },
 
   /** GET /api/properties/{id} */
-  getOne: (id: number) =>
-    apiClient.get<ItemResponse<PropertyResponse>>(url(`/${id}`)),
+  getOne: async (id: number): Promise<ItemResponse<PropertyResponse>> => {
+    const p = await mockStore.getProperty(id)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: p,
+    }
+  },
 
-  /** POST /api/properties — nhận departmentIds[] */
-  createOne: (data: PropertyCreate) =>
-    apiClient.post<ItemResponse<PropertyResponse>>(url(), data),
+  /** POST /api/properties */
+  createOne: async (
+    data: PropertyCreate,
+  ): Promise<ItemResponse<PropertyResponse>> => {
+    const created = await mockStore.createProperty(data)
+    return {
+      code: 0,
+      message: "Tạo cơ sở định biên thành công",
+      result: created,
+    }
+  },
 
-  /** PATCH /api/properties/{id} — nhận departmentIds[] để sync */
-  updateOne: (id: number, data: PropertyUpdate) =>
-    apiClient.patch<ItemResponse<PropertyResponse>>(url(`/${id}`), data),
+  /** PATCH /api/properties/{id} */
+  updateOne: async (
+    id: number,
+    data: PropertyUpdate,
+  ): Promise<ItemResponse<PropertyResponse>> => {
+    const updated = await mockStore.updateProperty(id, data)
+    return {
+      code: 0,
+      message: "Cập nhật cơ sở định biên thành công",
+      result: updated,
+    }
+  },
 
   /** DELETE /api/properties/{id} */
-  deleteOne: (id: number) =>
-    apiClient.delete<ItemResponse<MessageResponse>>(url(`/${id}`)),
+  deleteOne: async (id: number): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.deleteProperty(id)
+    return {
+      code: 0,
+      message: "Xóa cơ sở định biên thành công",
+      result: { message: "Xóa cơ sở định biên thành công" },
+    }
+  },
 
   /** GET /api/projects/{projectId}/properties */
-  getProjectProperties: (projectId: number) =>
-    apiClient.get<ItemResponse<ProjectPropertiesMatrixResponse>>(
-      projectUrl(projectId),
-    ),
+  getProjectProperties: async (
+    projectId: number,
+  ): Promise<ItemResponse<ProjectPropertiesMatrixResponse>> => {
+    const matrix = await mockStore.getProjectProperties(projectId)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: matrix,
+    }
+  },
 
   /** PUT /api/projects/{projectId}/properties (Batch Upsert) */
-  saveProjectProperties: (
+  saveProjectProperties: async (
     projectId: number,
     payload: SaveProjectPropertiesPayload,
-  ) => apiClient.put<ItemResponse<null>>(projectUrl(projectId), payload),
+  ): Promise<ItemResponse<null>> => {
+    await mockStore.saveProjectProperties(projectId, payload)
+    return {
+      code: 0,
+      message: "Lưu cơ sở định biên dự án thành công",
+      result: null,
+    }
+  },
 }

@@ -1,5 +1,5 @@
-import { apiClient } from "@/lib/api"
-import { API_V1 } from "@/lib/config"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { mockStore } from "@/mocks/store"
 import type {
   AssignReplacementRequest,
   GetUserTreeParams,
@@ -19,109 +19,213 @@ import type {
 } from "@/types"
 import type { UpdateRoleRequest } from "@/types/auth"
 
-const url = (path = "") => `${API_V1}/users${path}`
-
 export const UsersAPI = {
-  /** GET /api/usersd */
-  getAll: (params: IQueryUsers = {}) =>
-    apiClient.get<ListResponse<UserWithProjectsResponse>>(url(), {
-      params,
-    }),
+  /** GET /api/users */
+  getAll: async (
+    params: IQueryUsers = {},
+  ): Promise<ListResponse<UserWithProjectsResponse>> => {
+    return mockStore.getUsers(params)
+  },
 
   /** GET /api/users/tree */
-  getTree: (params?: GetUserTreeParams) =>
-    apiClient.get<ListResponse<UserTreeNodeResponse>>(url("/tree"), {
-      params,
-    }),
+  getTree: async (
+    params?: GetUserTreeParams,
+  ): Promise<ListResponse<UserTreeNodeResponse>> => {
+    const tree = await mockStore.getUserTree(params)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: tree,
+      meta: {
+        page: 1,
+        size: tree.length,
+        totalElements: tree.length,
+        totalPages: 1,
+        hasNext: false,
+        hasPrevious: false,
+      },
+    }
+  },
 
   /** GET /api/users/{id} */
-  getOne: (id: number) =>
-    apiClient.get<ItemResponse<UserResponse>>(url(`/${id}`)),
+  getOne: async (id: number): Promise<ItemResponse<UserResponse>> => {
+    const user = await mockStore.getUser(id)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: user,
+    }
+  },
 
   /** POST /api/users */
-  createOne: (data: UserCreate) =>
-    apiClient.post<ItemResponse<UserResponse>>(url("/local"), data),
+  createOne: async (data: UserCreate): Promise<ItemResponse<UserResponse>> => {
+    const created = await mockStore.createUser(data)
+    return {
+      code: 0,
+      message: "Tạo nhân viên thành công",
+      result: created,
+    }
+  },
 
   /** PATCH /api/users/{id} */
-  updateOne: (id: number, data: UserUpdate) =>
-    apiClient.patch<ItemResponse<UserResponse>>(url(`/${id}`), data),
+  updateOne: async (
+    id: number,
+    data: UserUpdate,
+  ): Promise<ItemResponse<UserResponse>> => {
+    const updated = await mockStore.updateUser(id, data)
+    return {
+      code: 0,
+      message: "Cập nhật nhân sự thành công",
+      result: updated,
+    }
+  },
 
   /** DELETE /api/users/{id} */
-  deleteOne: (id: number) =>
-    apiClient.delete<ItemResponse<MessageResponse>>(url(`/${id}`)),
+  deleteOne: async (id: number): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.deleteUser(id)
+    return {
+      code: 0,
+      message: "Xóa nhân sự thành công",
+      result: { message: "Xóa nhân sự thành công" },
+    }
+  },
 
   /** PATCH /api/users/{id}  */
-  updateStatus: (id: number, data: UserStatusUpdate) =>
-    apiClient.patch<ItemResponse<UserResponse>>(url(`/${id}`), data),
+  updateStatus: async (
+    id: number,
+    data: UserStatusUpdate,
+  ): Promise<ItemResponse<UserResponse>> => {
+    const updated = await mockStore.updateUser(id, { status: data.status })
+    return {
+      code: 0,
+      message: "Cập nhật trạng thái thành công",
+      result: updated,
+    }
+  },
 
   /** PATCH /api/users/{id}/role — update systemRole / role */
-  updateRole: (
+  updateRole: async (
     id: number,
     data: UpdateRoleRequest | { systemRole: string },
-  ) => {
-    return apiClient.patch<ItemResponse<UserResponse>>(url(`/${id}/role`), data)
+  ): Promise<ItemResponse<UserResponse>> => {
+    const roleValue = (data as any).role || (data as any).systemRole
+    const updated = await mockStore.updateUser(id, {
+      roleId: typeof roleValue === "number" ? roleValue : undefined,
+    })
+    return {
+      code: 0,
+      message: "Cập nhật quyền thành công",
+      result: updated,
+    }
   },
 
   /** PATCH /api/users/{id}/block */
-  blockUser: (id: number) =>
-    apiClient.patch<ItemResponse<UserResponse>>(url(`/${id}/block`)),
+  blockUser: async (id: number): Promise<ItemResponse<UserResponse>> => {
+    const u = await mockStore.getUser(id)
+    const nextStatus = u.status === "LOCKED" ? "ACTIVE" : "LOCKED"
+    const updated = await mockStore.updateUser(id, { status: nextStatus })
+    return {
+      code: 0,
+      message: nextStatus === "LOCKED" ? "Đã khóa tài khoản" : "Đã mở khóa tài khoản",
+      result: updated,
+    }
+  },
 
   /** POST /api/users/{id}/reset-password */
-  resetPassword: (id: number, data: { newPassword: string }) =>
-    apiClient.post<ItemResponse<MessageResponse>>(
-      url(`/${id}/reset-password`),
-      data,
-    ),
+  resetPassword: async (
+    _id: number,
+    _data: { newPassword: string },
+  ): Promise<ItemResponse<MessageResponse>> => {
+    return {
+      code: 0,
+      message: "Đặt lại mật khẩu thành công",
+      result: { message: "Đặt lại mật khẩu thành công" },
+    }
+  },
 
   /** POST /api/users/import */
-  importUsers: (file: File) => {
-    const formData = new FormData()
-    formData.append("file", file)
-    return apiClient.post<ItemResponse<MessageResponse>>(
-      url("/import"),
-      formData,
-    )
+  importUsers: async (_file: File): Promise<ItemResponse<MessageResponse>> => {
+    return {
+      code: 0,
+      message: "Import danh sách nhân sự thành công",
+      result: { message: "Import danh sách nhân sự thành công" },
+    }
   },
 
   /** GET /api/users/export */
-  exportUsers: () => apiClient.get(url("/export"), { responseType: "blob" }),
+  exportUsers: async (): Promise<Blob> => {
+    return new Blob(["Mock export data"], { type: "text/csv" })
+  },
 
   /** GET /api/users/{id}/project-roles */
-  getProjectRoles: (id: number) =>
-    apiClient.get<ListResponse<UserProjectRoleDetailResponse>>(
-      url(`/${id}/project-roles`),
-    ),
+  getProjectRoles: async (
+    id: number,
+  ): Promise<ListResponse<UserProjectRoleDetailResponse>> => {
+    const list = await mockStore.getUserProjectRoles(id)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: list,
+      meta: {
+        page: 1,
+        size: list.length,
+        totalElements: list.length,
+        totalPages: 1,
+        hasNext: false,
+        hasPrevious: false,
+      },
+    }
+  },
 
   /** POST /api/users/{id}/project-roles */
-  assignProjectRole: (id: number, data: UserProjectRoleCreate) =>
-    apiClient.post<ItemResponse<UserProjectRoleDetailResponse>>(
-      url(`/${id}/project-roles`),
-      {
-        ...data,
-        userId: data.userId ?? id,
-      },
-    ),
+  assignProjectRole: async (
+    id: number,
+    data: UserProjectRoleCreate,
+  ): Promise<ItemResponse<UserProjectRoleDetailResponse>> => {
+    const res = await mockStore.createUserProjectRole({
+      ...data,
+      userId: data.userId ?? id,
+    })
+    return {
+      code: 0,
+      message: "Phân bổ nhân sự thành công",
+      result: res,
+    }
+  },
 
   /** POST /api/user-project-roles/{id}/assign-replacement */
-  assignReplacement: (
+  assignReplacement: async (
     userProjectRoleId: number,
     data: AssignReplacementRequest,
-  ) =>
-    apiClient.post<ItemResponse<UserProjectRoleDetailResponse>>(
-      `${API_V1}/user-project-roles/${userProjectRoleId}/assign-replacement`,
-      data,
-    ),
+  ): Promise<ItemResponse<UserProjectRoleDetailResponse>> => {
+    const updated = await mockStore.updateUserProjectRole(userProjectRoleId, {
+      ...data,
+    } as any)
+    return {
+      code: 0,
+      message: "Gán nhân sự thay thế thành công",
+      result: updated,
+    }
+  },
 
   /** POST /api/user-project-roles/{id}/cancel-replacement */
-  cancelReplacement: (userProjectRoleId: number) =>
-    apiClient.post<ItemResponse<UserProjectRoleDetailResponse>>(
-      `${API_V1}/user-project-roles/${userProjectRoleId}/cancel-replacement`,
-    ),
+  cancelReplacement: async (
+    userProjectRoleId: number,
+  ): Promise<ItemResponse<UserProjectRoleDetailResponse>> => {
+    const updated = await mockStore.updateUserProjectRole(userProjectRoleId, {
+      status: "ACTIVE",
+    } as any)
+    return {
+      code: 0,
+      message: "Hủy nhân sự thay thế thành công",
+      result: updated,
+    }
+  },
 }
 
 export const UserProjectRolesAPI = {
   /** GET /api/user-project-roles */
-  getAll: (
+  getAll: async (
     params: {
       userId?: number
       projectId?: number
@@ -133,37 +237,56 @@ export const UserProjectRolesAPI = {
       sortBy?: string
       order?: string
     } = {},
-  ) =>
-    apiClient.get<ListResponse<UserProjectRoleDetailResponse>>(
-      `${API_V1}/user-project-roles`,
-      {
-        params,
-      },
-    ),
+  ): Promise<ListResponse<UserProjectRoleDetailResponse>> => {
+    return mockStore.getAllUserProjectRoles(params)
+  },
 
   /** GET /api/user-project-roles/{id} */
-  getOne: (id: number) =>
-    apiClient.get<ItemResponse<UserProjectRoleDetailResponse>>(
-      `${API_V1}/user-project-roles/${id}`,
-    ),
+  getOne: async (
+    id: number,
+  ): Promise<ItemResponse<UserProjectRoleDetailResponse>> => {
+    const list = await mockStore.getAllUserProjectRoles()
+    const item = list.result.find((a) => a.id === Number(id))
+    if (!item) throw new Error(`UserProjectRole #${id} not found`)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: item,
+    }
+  },
 
   /** POST /api/user-project-roles */
-  createOne: (data: UserProjectRoleCreate) =>
-    apiClient.post<ItemResponse<UserProjectRoleDetailResponse>>(
-      `${API_V1}/user-project-roles`,
-      data,
-    ),
+  createOne: async (
+    data: UserProjectRoleCreate,
+  ): Promise<ItemResponse<UserProjectRoleDetailResponse>> => {
+    const created = await mockStore.createUserProjectRole(data)
+    return {
+      code: 0,
+      message: "Tạo phân bổ thành công",
+      result: created,
+    }
+  },
 
   /** PUT /api/user-project-roles/{id} */
-  updateOne: (id: number, data: UserProjectRoleUpdate) =>
-    apiClient.patch<ItemResponse<UserProjectRoleDetailResponse>>(
-      `${API_V1}/user-project-roles/${id}`,
-      data,
-    ),
+  updateOne: async (
+    id: number,
+    data: UserProjectRoleUpdate,
+  ): Promise<ItemResponse<UserProjectRoleDetailResponse>> => {
+    const updated = await mockStore.updateUserProjectRole(id, data)
+    return {
+      code: 0,
+      message: "Cập nhật phân bổ thành công",
+      result: updated,
+    }
+  },
 
   /** DELETE /api/user-project-roles/{id} */
-  deleteOne: (id: number) =>
-    apiClient.delete<ItemResponse<MessageResponse>>(
-      `${API_V1}/user-project-roles/${id}`,
-    ),
+  deleteOne: async (id: number): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.deleteUserProjectRole(id)
+    return {
+      code: 0,
+      message: "Xóa phân bổ thành công",
+      result: { message: "Xóa phân bổ thành công" },
+    }
+  },
 }

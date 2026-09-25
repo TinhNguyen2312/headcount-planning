@@ -1,5 +1,4 @@
-import { apiClient } from "@/lib/api"
-import { API_V1 } from "@/lib/config"
+import { mockStore } from "@/mocks/store"
 import type {
   ItemResponse,
   ListResponse,
@@ -12,49 +11,94 @@ import type {
   MilestoneUpdate,
 } from "@/types"
 
-const url = (path = "") => `${API_V1}/milestones${path}`
-
 export const MilestonesAPI = {
   /** GET /api/milestones */
-  getAll: (params: MilestoneQueryParams = {}) =>
-    apiClient.get<ListResponse<MilestoneResponse>>(url(), { params }),
+  getAll: async (
+    params: MilestoneQueryParams = {},
+  ): Promise<ListResponse<MilestoneResponse>> => {
+    return mockStore.getMilestones(params)
+  },
 
   /** GET /api/milestones/{id} */
-  getOne: (id: number) =>
-    apiClient.get<ItemResponse<MilestoneResponse>>(url(`/${id}`)),
+  getOne: async (id: number): Promise<ItemResponse<MilestoneResponse>> => {
+    const m = await mockStore.getMilestone(id)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: m,
+    }
+  },
 
   /** POST /api/milestones */
-  createOne: (data: MilestoneCreate) =>
-    apiClient.post<ItemResponse<MilestoneResponse>>(url(), data),
+  createOne: async (
+    data: MilestoneCreate,
+  ): Promise<ItemResponse<MilestoneResponse>> => {
+    const created = await mockStore.createMilestone(data)
+    return {
+      code: 0,
+      message: "Tạo mốc thành công",
+      result: created,
+    }
+  },
 
   /** PATCH /api/milestones/{id} */
-  updateOne: (id: number, data: MilestoneUpdate) =>
-    apiClient.patch<ItemResponse<MilestoneResponse>>(url(`/${id}`), data),
+  updateOne: async (
+    id: number,
+    data: MilestoneUpdate,
+  ): Promise<ItemResponse<MilestoneResponse>> => {
+    const updated = await mockStore.updateMilestone(id, data)
+    return {
+      code: 0,
+      message: "Cập nhật mốc thành công",
+      result: updated,
+    }
+  },
 
   /** DELETE /api/milestones/{id} */
-  deleteOne: (id: number) =>
-    apiClient.delete<ItemResponse<MessageResponse>>(url(`/${id}`)),
+  deleteOne: async (id: number): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.deleteMilestone(id)
+    return {
+      code: 0,
+      message: "Xóa mốc thành công",
+      result: { message: "Xóa mốc thành công" },
+    }
+  },
 
   /** GET /api/milestones/dependencies */
-  getDependencies: () =>
-    apiClient.get<ItemResponse<MilestoneDependencyResponse[]>>(
-      url("/dependencies"),
-    ),
+  getDependencies: async (): Promise<
+    ItemResponse<MilestoneDependencyResponse[]>
+  > => {
+    const deps = await mockStore.getMilestoneDependencies()
+    return {
+      code: 0,
+      message: "Thành công",
+      result: deps,
+    }
+  },
 
   /** POST /api/milestones/dependencies */
-  createDependency: (data: MilestoneDependencyCreate) =>
-    apiClient.post<ItemResponse<MilestoneDependencyResponse>>(
-      url("/dependencies"),
-      data,
-    ),
+  createDependency: async (
+    data: MilestoneDependencyCreate,
+  ): Promise<ItemResponse<MilestoneDependencyResponse>> => {
+    const created = await mockStore.createMilestoneDependency(data)
+    return {
+      code: 0,
+      message: "Tạo liên kết mốc thành công",
+      result: created,
+    }
+  },
 
   /** DELETE /api/milestones/dependencies */
-  deleteDependency: (params: {
+  deleteDependency: async (params: {
     id?: number
     fromMilestoneId?: number
     toMilestoneId?: number
-  }) =>
-    apiClient.delete<ItemResponse<MessageResponse>>(url("/dependencies"), {
-      params,
-    }),
+  }): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.deleteMilestoneDependency(params)
+    return {
+      code: 0,
+      message: "Xóa liên kết mốc thành công",
+      result: { message: "Xóa liên kết mốc thành công" },
+    }
+  },
 }

@@ -1,5 +1,4 @@
-import { apiClient } from "@/lib/api"
-import { API_V1 } from "@/lib/config"
+import { mockStore } from "@/mocks/store"
 import type {
   EvaluateStandardPayload,
   HeadcountStandardCreatePayload,
@@ -12,36 +11,70 @@ import type {
   StandardMatchResult,
 } from "@/types"
 
-const url = (path = "") => `${API_V1}/standards${path}`
-
 export const StandardsAPI = {
   /** GET /api/standards */
-  getAll: (params: HeadcountStandardQueryParams = {}) =>
-    apiClient.get<ListResponse<HeadcountStandardResponse>>(url(), { params }),
+  getAll: async (
+    params: HeadcountStandardQueryParams = {},
+  ): Promise<ListResponse<HeadcountStandardResponse>> => {
+    return mockStore.getStandards(params)
+  },
 
   /** GET /api/standards/{id} */
-  getOne: (id: number) =>
-    apiClient.get<ItemResponse<HeadcountStandardResponse>>(url(`/${id}`)),
+  getOne: async (
+    id: number,
+  ): Promise<ItemResponse<HeadcountStandardResponse>> => {
+    const s = await mockStore.getStandard(id)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: s,
+    }
+  },
 
   /** POST /api/standards */
-  createOne: (data: HeadcountStandardCreatePayload) =>
-    apiClient.post<ItemResponse<HeadcountStandardResponse>>(url(), data),
+  createOne: async (
+    data: HeadcountStandardCreatePayload,
+  ): Promise<ItemResponse<HeadcountStandardResponse>> => {
+    const created = await mockStore.createStandard(data)
+    return {
+      code: 0,
+      message: "Tạo định biên chuẩn thành công",
+      result: created,
+    }
+  },
 
   /** PATCH /api/standards/{id} */
-  updateOne: (id: number, data: HeadcountStandardUpdatePayload) =>
-    apiClient.patch<ItemResponse<HeadcountStandardResponse>>(
-      url(`/${id}`),
-      data,
-    ),
+  updateOne: async (
+    id: number,
+    data: HeadcountStandardUpdatePayload,
+  ): Promise<ItemResponse<HeadcountStandardResponse>> => {
+    const updated = await mockStore.updateStandard(id, data)
+    return {
+      code: 0,
+      message: "Cập nhật định biên chuẩn thành công",
+      result: updated,
+    }
+  },
 
   /** DELETE /api/standards/{id} */
-  deleteOne: (id: number) =>
-    apiClient.delete<ItemResponse<MessageResponse>>(url(`/${id}`)),
+  deleteOne: async (id: number): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.deleteStandard(id)
+    return {
+      code: 0,
+      message: "Xóa định biên chuẩn thành công",
+      result: { message: "Xóa định biên chuẩn thành công" },
+    }
+  },
 
   /** POST /api/standards/evaluate */
-  evaluate: (payload: EvaluateStandardPayload) =>
-    apiClient.post<ItemResponse<StandardMatchResult[]>>(
-      url("/evaluate"),
-      payload,
-    ),
+  evaluate: async (
+    payload: EvaluateStandardPayload,
+  ): Promise<ItemResponse<StandardMatchResult[]>> => {
+    const res = await mockStore.evaluateStandards(payload)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: res,
+    }
+  },
 }

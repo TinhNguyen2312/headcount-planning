@@ -1,5 +1,4 @@
-import { apiClient } from "@/lib/api"
-import { API_V1 } from "@/lib/config"
+import { mockStore } from "@/mocks/store"
 import type {
   ItemResponse,
   ListResponse,
@@ -10,26 +9,56 @@ import type {
   SectorUpdate,
 } from "@/types"
 
-const url = (path = "") => `${API_V1}/sectors${path}`
-
 export const SectorsAPI = {
   /** GET /api/sectors */
-  getAll: (params: SectorQueryParams = {}) =>
-    apiClient.get<ListResponse<SectorResponse>>(url(), { params }),
+  getAll: async (
+    params: SectorQueryParams = {},
+  ): Promise<ListResponse<SectorResponse>> => {
+    return mockStore.getSectors(params)
+  },
 
   /** GET /api/sectors/{id} */
-  getOne: (id: number) =>
-    apiClient.get<ItemResponse<SectorResponse>>(url(`/${id}`)),
+  getOne: async (id: number): Promise<ItemResponse<SectorResponse>> => {
+    const s = await mockStore.getSector(id)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: s,
+    }
+  },
 
   /** POST /api/sectors */
-  createOne: (data: SectorCreate) =>
-    apiClient.post<ItemResponse<SectorResponse>>(url(), data),
+  createOne: async (
+    data: SectorCreate,
+  ): Promise<ItemResponse<SectorResponse>> => {
+    const created = await mockStore.createSector(data)
+    return {
+      code: 0,
+      message: "Tạo khu vực thành công",
+      result: created,
+    }
+  },
 
   /** PATCH /api/sectors/{id} */
-  updateOne: (id: number, data: SectorUpdate) =>
-    apiClient.patch<ItemResponse<SectorResponse>>(url(`/${id}`), data),
+  updateOne: async (
+    id: number,
+    data: SectorUpdate,
+  ): Promise<ItemResponse<SectorResponse>> => {
+    const updated = await mockStore.updateSector(id, data)
+    return {
+      code: 0,
+      message: "Cập nhật khu vực thành công",
+      result: updated,
+    }
+  },
 
   /** DELETE /api/sectors/{id} */
-  deleteOne: (id: number) =>
-    apiClient.delete<ItemResponse<MessageResponse>>(url(`/${id}`)),
+  deleteOne: async (id: number): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.deleteSector(id)
+    return {
+      code: 0,
+      message: "Xóa khu vực thành công",
+      result: { message: "Xóa khu vực thành công" },
+    }
+  },
 }

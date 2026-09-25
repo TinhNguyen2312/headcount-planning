@@ -7,10 +7,8 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionId = request.cookies.get(SESSION_COOKIE_NAME)?.value;
 
-  // Don't intercept static files, API routes, or Next.js internals
+  // Don't intercept static files or Next.js internals
   if (
-    pathname.startsWith("/api") ||
-    pathname.startsWith("/api-doc") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/uploads") ||
     pathname.includes(".")
@@ -18,16 +16,27 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const isLoginPage = pathname === "/login";
-
-  if (!sessionId && !isLoginPage) {
-    const url = new URL("/login", request.url);
-    return NextResponse.redirect(url);
+  // Root path -> redirect to /projects
+  if (pathname === "/") {
+    const url = new URL("/projects", request.url);
+    const response = NextResponse.redirect(url);
+    if (!sessionId) {
+      response.cookies.set(SESSION_COOKIE_NAME, "mock_session_active", {
+        path: "/",
+        maxAge: 31536000,
+      });
+    }
+    return response;
   }
 
-  if (sessionId && isLoginPage) {
-    const url = new URL("/projects", request.url);
-    return NextResponse.redirect(url);
+  // Ensure mock session cookie is present for any non-login route for seamless UI dev
+  if (!sessionId && pathname !== "/login") {
+    const response = NextResponse.next();
+    response.cookies.set(SESSION_COOKIE_NAME, "mock_session_active", {
+      path: "/",
+      maxAge: 31536000,
+    });
+    return response;
   }
 
   return NextResponse.next();
@@ -35,14 +44,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - api-doc (Swagger UI)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    "/((?!api|api-doc|_next/static|_next/image|favicon.ico).*)",
+    "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };

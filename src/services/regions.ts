@@ -1,5 +1,4 @@
-import { apiClient } from "@/lib/api"
-import { API_V1 } from "@/lib/config"
+import { mockStore } from "@/mocks/store"
 import type {
   ItemResponse,
   ListResponse,
@@ -11,26 +10,56 @@ import type {
   RegionUpdate,
 } from "@/types"
 
-const url = (path = "") => `${API_V1}/regions${path}`
-
 export const RegionsAPI = {
   /** GET /api/regions */
-  getAll: (params: RegionQueryParams = {}) =>
-    apiClient.get<ListResponse<RegionDetail>>(url(), { params }),
+  getAll: async (
+    params: RegionQueryParams = {},
+  ): Promise<ListResponse<RegionDetail>> => {
+    return mockStore.getRegions(params)
+  },
 
   /** GET /api/regions/{id} */
-  getOne: (id: number) =>
-    apiClient.get<ItemResponse<RegionDetail>>(url(`/${id}`)),
+  getOne: async (id: number): Promise<ItemResponse<RegionDetail>> => {
+    const r = await mockStore.getRegion(id)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: r,
+    }
+  },
 
   /** POST /api/regions */
-  createOne: (data: RegionCreate) =>
-    apiClient.post<ItemResponse<RegionResponse>>(url(), data),
+  createOne: async (
+    data: RegionCreate,
+  ): Promise<ItemResponse<RegionResponse>> => {
+    const created = await mockStore.createRegion(data)
+    return {
+      code: 0,
+      message: "Tạo vùng thành công",
+      result: created,
+    }
+  },
 
   /** PATCH /api/regions/{id} */
-  updateOne: (id: number, data: RegionUpdate) =>
-    apiClient.patch<ItemResponse<RegionResponse>>(url(`/${id}`), data),
+  updateOne: async (
+    id: number,
+    data: RegionUpdate,
+  ): Promise<ItemResponse<RegionResponse>> => {
+    const updated = await mockStore.updateRegion(id, data)
+    return {
+      code: 0,
+      message: "Cập nhật vùng thành công",
+      result: updated,
+    }
+  },
 
   /** DELETE /api/regions/{id} */
-  deleteOne: (id: number) =>
-    apiClient.delete<ItemResponse<MessageResponse>>(url(`/${id}`)),
+  deleteOne: async (id: number): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.deleteRegion(id)
+    return {
+      code: 0,
+      message: "Xóa vùng thành công",
+      result: { message: "Xóa vùng thành công" },
+    }
+  },
 }

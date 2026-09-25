@@ -24,6 +24,15 @@ export interface AccessRoleResponse {
   permissions?: PermissionResponse[]
 }
 
+export interface AccessRoleQueryParams {
+  scope?: AccessRoleScope
+  keyword?: string
+  parentId?: number
+  page?: number
+  limit?: number
+  order?: "asc" | "desc"
+}
+
 export interface CreateAccessRolePayload {
   name: string
   scope: AccessRoleScope

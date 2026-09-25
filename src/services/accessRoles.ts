@@ -1,5 +1,4 @@
-import { apiClient } from "@/lib/api"
-import { API_V1 } from "@/lib/config"
+import { mockStore } from "@/mocks/store"
 import type {
   AccessRoleResponse,
   CreateAccessRolePayload,
@@ -10,8 +9,6 @@ import type {
   UpdateAccessRolePayload,
   UserAccessRoleResponse,
 } from "@/types"
-
-const url = (path = "") => `${API_V1}/access-roles${path}`
 
 export interface AccessRoleQueryParams {
   scope?: "GLOBAL" | "PROJECT"
@@ -24,43 +21,94 @@ export interface AccessRoleQueryParams {
 
 export const AccessRolesAPI = {
   /** GET /api/access-roles */
-  getAll: (params: AccessRoleQueryParams = {}) =>
-    apiClient.get<ListResponse<AccessRoleResponse>>(url(), {
-      params: { limit: 100, ...params },
-    }),
+  getAll: async (
+    params: AccessRoleQueryParams = {},
+  ): Promise<ListResponse<AccessRoleResponse>> => {
+    return mockStore.getAccessRoles(params)
+  },
 
   /** GET /api/access-roles/{id} */
-  getOne: (id: number) =>
-    apiClient.get<ItemResponse<AccessRoleResponse>>(url(`/${id}`)),
+  getOne: async (id: number): Promise<ItemResponse<AccessRoleResponse>> => {
+    const r = await mockStore.getAccessRole(id)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: r,
+    }
+  },
 
   /** POST /api/access-roles */
-  createOne: (data: CreateAccessRolePayload) =>
-    apiClient.post<ItemResponse<AccessRoleResponse>>(url(), data),
+  createOne: async (
+    data: CreateAccessRolePayload,
+  ): Promise<ItemResponse<AccessRoleResponse>> => {
+    const created = await mockStore.createAccessRole(data)
+    return {
+      code: 0,
+      message: "Tạo vai trò thành công",
+      result: created,
+    }
+  },
 
   /** PATCH /api/access-roles/{id} */
-  updateOne: (id: number, data: UpdateAccessRolePayload) =>
-    apiClient.patch<ItemResponse<AccessRoleResponse>>(url(`/${id}`), data),
+  updateOne: async (
+    id: number,
+    data: UpdateAccessRolePayload,
+  ): Promise<ItemResponse<AccessRoleResponse>> => {
+    const updated = await mockStore.updateAccessRole(id, data)
+    return {
+      code: 0,
+      message: "Cập nhật vai trò thành công",
+      result: updated,
+    }
+  },
 
   /** DELETE /api/access-roles/{id} */
-  deleteOne: (id: number) =>
-    apiClient.delete<ItemResponse<MessageResponse>>(url(`/${id}`)),
+  deleteOne: async (id: number): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.deleteAccessRole(id)
+    return {
+      code: 0,
+      message: "Xóa vai trò thành công",
+      result: { message: "Xóa vai trò thành công" },
+    }
+  },
 
   /** GET /api/permissions */
-  getPermissions: (params: { scope?: string; groupName?: string } = {}) =>
-    apiClient.get<ListResponse<PermissionResponse>>(`${API_V1}/permissions`, {
-      params,
-    }),
+  getPermissions: async (
+    params: { scope?: string; groupName?: string } = {},
+  ): Promise<ListResponse<PermissionResponse>> => {
+    return mockStore.getPermissions(params)
+  },
 
   /** GET /api/users/{id}/access-roles */
-  getUserAccessRoles: (userId: number) =>
-    apiClient.get<ListResponse<UserAccessRoleResponse>>(
-      `${API_V1}/users/${userId}/access-roles`,
-    ),
+  getUserAccessRoles: async (
+    userId: number,
+  ): Promise<ListResponse<UserAccessRoleResponse>> => {
+    const roles = await mockStore.getUserAccessRoles(userId)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: roles,
+      meta: {
+        page: 1,
+        size: roles.length,
+        totalElements: roles.length,
+        totalPages: 1,
+        hasNext: false,
+        hasPrevious: false,
+      },
+    }
+  },
 
   /** PUT /api/users/{id}/access-roles */
-  updateUserAccessRoles: (userId: number, accessRoleIds: number[]) =>
-    apiClient.put<ItemResponse<MessageResponse>>(
-      `${API_V1}/users/${userId}/access-roles`,
-      { accessRoleIds },
-    ),
+  updateUserAccessRoles: async (
+    userId: number,
+    accessRoleIds: number[],
+  ): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.updateUserAccessRoles(userId, accessRoleIds)
+    return {
+      code: 0,
+      message: "Cập nhật vai trò người dùng thành công",
+      result: { message: "Cập nhật vai trò người dùng thành công" },
+    }
+  },
 }

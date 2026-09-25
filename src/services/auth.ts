@@ -1,29 +1,49 @@
-﻿import { apiClient } from "@/lib/api"
-import { API_V1 } from "@/lib/config"
+import { mockStore } from "@/mocks/store"
 import type {
   ChangePasswordRequest,
   ItemResponse,
   LocalLoginRequest,
   MessageResponse,
   UserMeResponse,
-  UserResponse,
 } from "@/types"
 
 export const AuthAPI = {
-  loginLocal: (data: LocalLoginRequest) =>
-    apiClient.post<ItemResponse<UserResponse>>(
-      `${API_V1}/auth/login/local`,
-      data,
-    ),
+  loginLocal: async (
+    data: LocalLoginRequest,
+  ): Promise<ItemResponse<UserMeResponse>> => {
+    const user = await mockStore.login(data.email)
+    return {
+      code: 0,
+      message: "Đăng nhập thành công",
+      result: user,
+    }
+  },
 
-  getMe: () => apiClient.get<ItemResponse<UserMeResponse>>(`${API_V1}/auth/me`),
+  getMe: async (): Promise<ItemResponse<UserMeResponse>> => {
+    const user = await mockStore.getMe()
+    return {
+      code: 0,
+      message: "Thành công",
+      result: user,
+    }
+  },
 
-  logout: () =>
-    apiClient.post<ItemResponse<MessageResponse>>(`${API_V1}/auth/logout`),
+  logout: async (): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.logout()
+    return {
+      code: 0,
+      message: "Đăng xuất thành công",
+      result: { message: "Đăng xuất thành công" },
+    }
+  },
 
-  changePassword: (data: ChangePasswordRequest) =>
-    apiClient.post<ItemResponse<MessageResponse>>(
-      `${API_V1}/auth/change-password`,
-      data,
-    ),
+  changePassword: async (
+    _data: ChangePasswordRequest,
+  ): Promise<ItemResponse<MessageResponse>> => {
+    return {
+      code: 0,
+      message: "Đổi mật khẩu thành công",
+      result: { message: "Đổi mật khẩu thành công" },
+    }
+  },
 }

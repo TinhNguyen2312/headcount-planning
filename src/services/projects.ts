@@ -1,5 +1,4 @@
-import { apiClient } from "@/lib/api"
-import { API_V1 } from "@/lib/config"
+import { mockStore } from "@/mocks/store"
 import type {
   IQueryProjects,
   ItemResponse,
@@ -13,33 +12,63 @@ import type {
   ZoneUpdate,
 } from "@/types"
 
-const url = (path = "") => `${API_V1}/projects${path}`
-
 export const ProjectsAPI = {
   /** GET /api/projects */
-  getAll: (params: IQueryProjects = {}) =>
-    apiClient.get<ListResponse<ProjectResponse>>(url(), { params }),
+  getAll: async (
+    params: IQueryProjects = {},
+  ): Promise<ListResponse<ProjectResponse>> => {
+    return mockStore.getProjects(params)
+  },
 
   /** GET /api/projects/{id} */
-  getOne: (id: number) =>
-    apiClient.get<ItemResponse<ProjectResponse>>(url(`/${id}`)),
+  getOne: async (id: number): Promise<ItemResponse<ProjectResponse>> => {
+    const proj = await mockStore.getProject(id)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: proj,
+    }
+  },
 
   /** POST /api/projects */
-  createOne: (data: ProjectCreate) =>
-    apiClient.post<ItemResponse<ProjectResponse>>(url(), data),
+  createOne: async (
+    data: ProjectCreate,
+  ): Promise<ItemResponse<ProjectResponse>> => {
+    const created = await mockStore.createProject(data)
+    return {
+      code: 0,
+      message: "Tạo dự án thành công",
+      result: created,
+    }
+  },
 
-  /** PUT /api/projects/{id} */
-  updateOne: (id: number, data: ProjectUpdate) =>
-    apiClient.patch<ItemResponse<ProjectResponse>>(url(`/${id}`), data),
+  /** PATCH /api/projects/{id} */
+  updateOne: async (
+    id: number,
+    data: ProjectUpdate,
+  ): Promise<ItemResponse<ProjectResponse>> => {
+    const updated = await mockStore.updateProject(id, data)
+    return {
+      code: 0,
+      message: "Cập nhật dự án thành công",
+      result: updated,
+    }
+  },
 
   /** DELETE /api/projects/{id} */
-  deleteOne: (id: number) =>
-    apiClient.delete<ItemResponse<MessageResponse>>(url(`/${id}`)),
+  deleteOne: async (id: number): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.deleteProject(id)
+    return {
+      code: 0,
+      message: "Xóa dự án thành công",
+      result: { message: "Xóa dự án thành công" },
+    }
+  },
 }
 
 export const ZonesAPI = {
   /** GET /api/zones */
-  getAll: (
+  getAll: async (
     params: {
       keyword?: string
       projectId?: number
@@ -48,24 +77,50 @@ export const ZonesAPI = {
       sortBy?: string
       order?: string
     } = {},
-  ) =>
-    apiClient.get<ListResponse<ZoneResponse>>(`${API_V1}/zones`, {
-      params,
-    }),
+  ): Promise<ListResponse<ZoneResponse>> => {
+    return mockStore.getZones(params)
+  },
 
   /** GET /api/zones/{id} */
-  getOne: (id: number) =>
-    apiClient.get<ItemResponse<ZoneResponse>>(`${API_V1}/zones/${id}`),
+  getOne: async (id: number): Promise<ItemResponse<ZoneResponse>> => {
+    const zone = await mockStore.getZone(id)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: zone,
+    }
+  },
 
   /** POST /api/zones */
-  createOne: (data: ZoneCreate) =>
-    apiClient.post<ItemResponse<ZoneResponse>>(`${API_V1}/zones`, data),
+  createOne: async (data: ZoneCreate): Promise<ItemResponse<ZoneResponse>> => {
+    const created = await mockStore.createZone(data)
+    return {
+      code: 0,
+      message: "Tạo phân khu thành công",
+      result: created,
+    }
+  },
 
-  /** PUT /api/zones/{id} */
-  updateOne: (id: number, data: ZoneUpdate) =>
-    apiClient.patch<ItemResponse<ZoneResponse>>(`${API_V1}/zones/${id}`, data),
+  /** PATCH /api/zones/{id} */
+  updateOne: async (
+    id: number,
+    data: ZoneUpdate,
+  ): Promise<ItemResponse<ZoneResponse>> => {
+    const updated = await mockStore.updateZone(id, data)
+    return {
+      code: 0,
+      message: "Cập nhật phân khu thành công",
+      result: updated,
+    }
+  },
 
   /** DELETE /api/zones/{id} */
-  deleteOne: (id: number) =>
-    apiClient.delete<ItemResponse<MessageResponse>>(`${API_V1}/zones/${id}`),
+  deleteOne: async (id: number): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.deleteZone(id)
+    return {
+      code: 0,
+      message: "Xóa phân khu thành công",
+      result: { message: "Xóa phân khu thành công" },
+    }
+  },
 }

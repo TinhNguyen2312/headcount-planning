@@ -1,5 +1,4 @@
-import { apiClient } from "@/lib/api"
-import { API_V1 } from "@/lib/config"
+import { mockStore } from "@/mocks/store"
 import type {
   HeadcountProjectCreatePayload,
   HeadcountProjectQueryParams,
@@ -9,8 +8,6 @@ import type {
   ListResponse,
   MessageResponse,
 } from "@/types"
-
-const BASE_URL = `${API_V1}/headcount-projects`
 
 export interface AvailableProjectItem {
   id: number
@@ -26,33 +23,63 @@ export interface AvailableProjectItem {
 
 export const HeadcountProjectsAPI = {
   /** GET /api/headcount-projects */
-  getAll: (params?: HeadcountProjectQueryParams) =>
-    apiClient.get<ListResponse<HeadcountProjectResponse>>(BASE_URL, {
-      params,
-    }),
+  getAll: async (
+    params?: HeadcountProjectQueryParams,
+  ): Promise<ListResponse<HeadcountProjectResponse>> => {
+    return mockStore.getHeadcountProjects(params)
+  },
 
   /** GET /api/headcount-projects/{id} */
-  getOne: (id: number) =>
-    apiClient.get<ItemResponse<HeadcountProjectResponse>>(`${BASE_URL}/${id}`),
+  getOne: async (
+    id: number,
+  ): Promise<ItemResponse<HeadcountProjectResponse>> => {
+    const hp = await mockStore.getHeadcountProject(id)
+    return {
+      code: 0,
+      message: "Thành công",
+      result: hp,
+    }
+  },
 
   /** GET /api/headcount-projects/available-projects */
-  getAvailableProjects: () =>
-    apiClient.get<ListResponse<AvailableProjectItem>>(
-      `${BASE_URL}/available-projects`,
-    ),
+  getAvailableProjects: async (): Promise<
+    ListResponse<AvailableProjectItem>
+  > => {
+    return mockStore.getAvailableProjects()
+  },
 
   /** POST /api/headcount-projects */
-  create: (data: HeadcountProjectCreatePayload) =>
-    apiClient.post<ItemResponse<HeadcountProjectResponse>>(BASE_URL, data),
+  create: async (
+    data: HeadcountProjectCreatePayload,
+  ): Promise<ItemResponse<HeadcountProjectResponse>> => {
+    const created = await mockStore.createHeadcountProject(data)
+    return {
+      code: 0,
+      message: "Thêm dự án chạy định biên thành công",
+      result: created,
+    }
+  },
 
   /** PATCH /api/headcount-projects/{id} */
-  update: (id: number, data: HeadcountProjectUpdatePayload) =>
-    apiClient.patch<ItemResponse<HeadcountProjectResponse>>(
-      `${BASE_URL}/${id}`,
-      data,
-    ),
+  update: async (
+    id: number,
+    data: HeadcountProjectUpdatePayload,
+  ): Promise<ItemResponse<HeadcountProjectResponse>> => {
+    const updated = await mockStore.updateHeadcountProject(id, data)
+    return {
+      code: 0,
+      message: "Cập nhật dự án chạy định biên thành công",
+      result: updated,
+    }
+  },
 
   /** DELETE /api/headcount-projects/{id} */
-  delete: (id: number) =>
-    apiClient.delete<ItemResponse<MessageResponse>>(`${BASE_URL}/${id}`),
+  delete: async (id: number): Promise<ItemResponse<MessageResponse>> => {
+    await mockStore.deleteHeadcountProject(id)
+    return {
+      code: 0,
+      message: "Xóa dự án chạy định biên thành công",
+      result: { message: "Xóa dự án chạy định biên thành công" },
+    }
+  },
 }

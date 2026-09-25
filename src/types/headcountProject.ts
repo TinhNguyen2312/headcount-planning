@@ -10,6 +10,18 @@ export interface HeadcountProjectResponse {
   project: ProjectResponse
 }
 
+export interface AvailableProjectItem {
+  id: number
+  code: string | null
+  name: string
+  address?: string | null
+  status: string
+  regionId?: number | null
+  regionName?: string | null
+  sectorId?: number | null
+  sectorName?: string | null
+}
+
 export interface HeadcountProjectCreatePayload {
   projectId: number
   isActive?: boolean
