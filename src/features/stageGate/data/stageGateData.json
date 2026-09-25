@@ -1,0 +1,2395 @@
+{
+  "dmd_competencies_count": 23,
+  "dmd_competencies": [
+    {
+      "code": "1.1",
+      "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+      "name": "Lập kế hoạch và điều phối toàn bộ quá trình thiết kế theo MTL được duyệt"
+    },
+    {
+      "code": "1.2",
+      "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+      "name": "Theo dõi, cập nhật và điều chỉnh tiến độ triển khai thiết kế định kỳ"
+    },
+    {
+      "code": "1.3",
+      "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+      "name": "Tầm soát rủi ro chậm tiến độ thiết kế"
+    },
+    {
+      "code": "1.4",
+      "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+      "name": "Cảnh báo rủi ro chậm tiến độ thiết kế và đề xuất phương án xử lý kịp thời."
+    },
+    {
+      "code": "1.5",
+      "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+      "name": "Hoàn thành hồ sơ thiết kế theo MTL được duyệt. Đảm bảo tất cả tài liệu phát hành đúng hạn."
+    },
+    {
+      "code": "2.1",
+      "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+      "name": "Cung cấp thông tin cho các Phòng Ban chuyên môn lập ngân sách thiết kế (khi có yêu cầu)"
+    },
+    {
+      "code": "2.2",
+      "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+      "name": "Phối hợp với Phòng Ban chuyên môn để đánh giá năng lực và lựa chọn tư vấn thiết kế phù hợp với yêu cầu thiết kế, ngân sách và tính khả thi trong công tác thiết kế cho từng dự án"
+    },
+    {
+      "code": "2.3",
+      "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+      "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình"
+    },
+    {
+      "code": "2.4",
+      "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+      "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt."
+    },
+    {
+      "code": "2.5",
+      "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+      "name": "Thực hiện công tác quản lý chất lượng và hiệu quả thiết kế đáp ứng mục tiêu kinh doanh của Tập đoàn"
+    },
+    {
+      "code": "2.6",
+      "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+      "name": "Theo dõi & kiểm soát sự thay đổi trong toàn bộ quá trình thiết kế."
+    },
+    {
+      "code": "2.7",
+      "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+      "name": "Kiểm tra sự phù hợp của hồ sơ thiết kế & phương án được thống nhất triển khai với quy định pháp luật, tiêu chuẩn kỹ thuật, tuân thủ quy trình, quy định chuẩn hóa thiết kế của tập đoàn."
+    },
+    {
+      "code": "2.8",
+      "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+      "name": "Thực hiện giám sát tác giả cùng Tư vấn thiết kế để đảm bảo chất lượng thi công đạt yêu cầu hồ sơ thiết kế."
+    },
+    {
+      "code": "2.9",
+      "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+      "name": "Phối hợp bộ phận quản lý thi công để giải quyết kịp thời các vấn đề liên quan thiết kế."
+    },
+    {
+      "code": "2.10",
+      "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+      "name": "Tham gia nghiệm thu đánh giá chất lượng, an toàn công trình khi có yêu cầu"
+    },
+    {
+      "code": "3.1",
+      "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+      "name": "Tham mưu, phối hợp và cung cấp hồ sơ thiết kế đề xuất cho GMS.DMD nhằm cải tiến hệ thống chuẩn hóa thiết kế (tiêu chuẩn, thư viện, giải pháp và vật liệu sử dụng,...) đáp ứng mục tiêu đảm bảo tính đồng bộ thiết kế cho toàn Tập đoàn"
+    },
+    {
+      "code": "3.2",
+      "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+      "name": "Tham mưu GMS.DMD triển khai công tác số hóa dữ liệu thiết kế, xây dựng - cập nhật hệ thống quy trình vận hành chuẩn (SOP) nhằm tối ưu hiệu suất, nâng cao khả năng kiểm soát và minh bạch trong quá trình quản lý thiết kế."
+    },
+    {
+      "code": "3.3",
+      "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+      "name": "Tham vấn/ đệ trình cho Ban lãnh đạo trong việc lựa chọn giải pháp thiết kế, công nghệ tiên tiến và vật liệu xây dựng phù hợp nhằm nâng cao hiệu quả đầu tư, chất lượng công trình và tối ưu chi phí."
+    },
+    {
+      "code": "4.1",
+      "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+      "name": "Thực hiện lưu trữ hồ sơ Bản cứng theo quy định"
+    },
+    {
+      "code": "4.2",
+      "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+      "name": "Thực hiện lưu trữ hồ sơ File mềm trên Novagen/ACC theo quy định"
+    },
+    {
+      "code": "2.5.1",
+      "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+      "name": "Kiểm tra, xác nhận hồ sơ Thanh toán đợt (Thành phần hồ sơ, khối lượng thực hiện…) đúng, đủ theo thực tế thực hiện"
+    },
+    {
+      "code": "2.5.2",
+      "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+      "name": "Kiểm tra, xác nhận hồ sơ Quyết toán đúng, đủ (Thành phần hồ sơ, khối lượng thực hiện…) theo thực tế thực hiện"
+    },
+    {
+      "code": "2.5.3",
+      "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+      "name": "Kiểm tra, xác nhận hồ sơ Phát sinh đúng, đủ theo yêu cầu (PYC Phát sinh, GTPS, Đầu mục phát sinh…)"
+    }
+  ],
+  "stages": [
+    {
+      "stage_code": "STAGE_1",
+      "sop_stt": "1.1",
+      "stage_name": "Thiết kế Ý tưởng Quy hoạch (Concept Master Plan)",
+      "official_form": "NVLG-DMD-SOP09.F03",
+      "docx_section": "6.1",
+      "description": "Nghiên cứu hiện trạng, lập đồ án ý tưởng quy hoạch sơ bộ & chi tiết cơ cấu phân lô, chỉ tiêu sử dụng đất trình BOM phê duyệt.",
+      "total_workflow_steps": 17,
+      "total_dmd_matrix_steps": 0,
+      "workflow_steps": [
+        {
+          "stt": "1",
+          "step_name": "Chuyển PYC/NVTK và cung cấp thông tin.",
+          "info_provider": "PMD",
+          "performer": "PMD",
+          "duration": "-",
+          "notes_and_forms": "PMD chuyển PYC/NVTK được duyệt và cung cấp thông tin cho DMD triển khai."
+        },
+        {
+          "stt": "2",
+          "step_name": "Tiếp nhận thông tin, kiểm tra rà soát.",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "01 ngày",
+          "notes_and_forms": "DMD tiếp nhận thông tin, kiểm tra rà soát làm rõ các thông tin trong PYC với PMD (nếu có). Yêu cầu PMD cung cấp thông tin gồm: - Chủ trương, định hướng phát triển dự án, các hồ sơ liên quan được sở ban ngành cung cấp. - Ranh giới khu vực nghiên cứu.  - Quy hoạch các cấp được duyệt.  - Hiện trạng khu vực, hiện trạng kiến trúc cảnh quan, hiện trạng sử dụng đất, hình ảnh, video. - Các yêu cầu khác từ sở ban ngành.  - Các thông tin phục vụ triển khai thiết kế ý tưởng Quy hoạch (nếu có)"
+        },
+        {
+          "stt": "3",
+          "step_name": "Đề xuất/ quản lý, thiết kế quy hoạch sơ bộ.",
+          "info_provider": "DMD",
+          "performer": "DMD IDD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "Trường hợp IDD phụ trách triển khai thiết kế, DMD có trách nhiệm quản lý tương tự khi TVTK thực hiện. DMD đề xuất định hướng các phương án ý tưởng quy hoạch. DMD quản lý thiết kế quy hoạch sơ bộ về tuân thủ quy định, tiến độ, chất lượng và góp ý, so sánh các phương án,…"
+        },
+        {
+          "stt": "4",
+          "step_name": "Điều phối, lấy ý kiến phòng ban chuyên môn.",
+          "info_provider": "Các PBCM",
+          "performer": "PMD DMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "DMD tổng hợp hồ sơ trình PMD. PMD điều phối, lấy ý kiến phòng ban chuyên môn PLP và INC/SAC. PLP và INC/SAC xem xét và cho ý kiến. PMD tổng hợp ý kiến ý kiến PBCM chuyển DMD."
+        },
+        {
+          "stt": "4.1",
+          "step_name": "Xem xét",
+          "info_provider": "PMD",
+          "performer": "PLP",
+          "duration": "02 ngày",
+          "notes_and_forms": "PLP xem xét và góp ý đối với phương án ý tưởng quy hoạch về hiện trạng pháp lý dự án, tính khả thi pháp lý của phương án, sự phù hợp quy hoạch cấp trên,…"
+        },
+        {
+          "stt": "4.2",
+          "step_name": "Xem xét",
+          "info_provider": "PMD",
+          "performer": "INC/SAC",
+          "duration": "02 ngày",
+          "notes_and_forms": "INC xem xét và góp ý về sự phù hợp chiến lược đầu tư, hiệu quả đầu tư sơ bộ,… SAC xem xét và góp ý về sự phù hợp với nhu cầu thị trường, doanh thu tiềm năng, lợi thế cạnh tranh,…"
+        },
+        {
+          "stt": "5",
+          "step_name": "Tổng hợp hồ sơ và trình duyệt bước 1 theo AM.",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "01 ngày",
+          "notes_and_forms": "DMD tổng hợp hồ sơ trình phê duyệt bước 1 theo AM."
+        },
+        {
+          "stt": "6",
+          "step_name": "Phê duyệt bước 1.",
+          "info_provider": "DMD",
+          "performer": "Theo AM",
+          "duration": "8h/cấp",
+          "notes_and_forms": "Trình phê duyệt bước 1: Thiết kế ý tưởng sơ bộ theo AM. - \tDuyệt: thực hiện bước 7. - \tKhông duyệt: quay lại bước 4."
+        },
+        {
+          "stt": "7",
+          "step_name": "Lập PYC và điều phối công việc.",
+          "info_provider": "Theo AM",
+          "performer": "PMD",
+          "duration": "01 ngày",
+          "notes_and_forms": "PMD lập PYC triển khai thiết kế ý tưởng quy hoạch – Bước 2 và điều phối công việc."
+        },
+        {
+          "stt": "8",
+          "step_name": "Lựa chọn TVTK theo QT NVLG-BMD-SOP01 (nếu có) hoặc theo QT NVLG-IDD-SOP03",
+          "info_provider": "PMD",
+          "performer": "PTC",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PTC lựa chọn TVTK (nếu có) theo QT đấu thầu triển khai dự án (NVLG-BMD-SOP01) hoặc theo QT thiết kế ý tưởng nội bộ (NVLG-IDD-SOP03)."
+        },
+        {
+          "stt": "9",
+          "step_name": "Quản lý/ đề xuất ý tưởng thiết kế quy hoạch TMB (SDĐ, Phân lô,…).",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "-",
+          "notes_and_forms": "DMD đề xuất đề xuất ý tưởng thiết kế quy hoạch TMB (SDĐ, Phân lô,…). DMD quản lý thiết kế quy hoạch sơ bộ về tuân thủ quy định, tiến độ, chất lượng và góp ý, so sánh các phương án,… DMD quản lý công việc của TVTK theo hợp đồng."
+        },
+        {
+          "stt": "10",
+          "step_name": "Tổng hợp hồ sơ, phối hợp PLP xin ý kiến CQNN.",
+          "info_provider": "DMD",
+          "performer": "PMD PLP",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PMD tổng hợp hồ sơ phối hợp PLP xin ý kiến CQNN. PMD tổng hợp hồ sơ gửi INC/SAC. -   Đồng ý: PMD tổng hợp hồ sơ chuyển DMD. -   Điều chỉnh: PMD tổng hợp ý kiến gửi DMD cập nhật hồ sơ."
+        },
+        {
+          "stt": "10.1",
+          "step_name": "Tổng hợp ý kiến của CQNN",
+          "info_provider": "PMD",
+          "performer": "PLP",
+          "duration": "02 ngày",
+          "notes_and_forms": "PLP tổng hợp ý kiến của CQNN. -   Đồng ý: PMD tổng hợp hồ sơ chuyển DMD. -   Điều chỉnh: PMD tổng hợp ý kiến gửi DMD cập nhật hồ sơ."
+        },
+        {
+          "stt": "10.2",
+          "step_name": "Xem xét",
+          "info_provider": "PMD",
+          "performer": "INC/SAC",
+          "duration": "02 ngày",
+          "notes_and_forms": "INC xem xét và góp ý về sự phù hợp chiến lược đầu tư, hiệu quả đầu tư sơ bộ,… SAC xem xét và góp ý về sự phù hợp với nhu cầu thị trường, doanh thu tiềm năng, lợi thế cạnh tranh,…"
+        },
+        {
+          "stt": "11",
+          "step_name": "Tổng hợp hồ sơ và trình duyệt bước 2 theo AM.",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "01 ngày",
+          "notes_and_forms": "DMD tổng hợp hồ sơ trình phê duyệt bước 2 theo AM."
+        },
+        {
+          "stt": "12",
+          "step_name": "Phê duyệt bước 2.",
+          "info_provider": "DMD",
+          "performer": "Theo AM",
+          "duration": "8h/cấp",
+          "notes_and_forms": "Trình phê duyệt phương án Thiết kế ý tưởng quy hoạch theo AM. Duyệt: thực hiện bước 13. Không duyệt: quay lại bước 10."
+        },
+        {
+          "stt": "13",
+          "step_name": "Lưu hồ sơ và điều phối chuyển giai đoạn.",
+          "info_provider": "Theo AM",
+          "performer": "PMD",
+          "duration": "-",
+          "notes_and_forms": "PMD lưu trữ các hồ sơ liên quan tuân thủ Quy định kiểm soát hồ sơ (NVLG-RPC-REG02) và Quy định lưu trữ theo 9 đầu mục NOVAGEN (NVG-ODD-REG05). Phát hành và điều phối thực hiện giai đoạn tiếp theo."
+        }
+      ],
+      "dmd_matrix_steps": []
+    },
+    {
+      "stage_code": "STAGE_2",
+      "sop_stt": "1.2",
+      "stage_name": "Thiết kế Quy hoạch Chi tiết 1/500 (Detailed Master Plan)",
+      "official_form": "NVLG-DMD-SOP09.F04",
+      "docx_section": "6.2",
+      "description": "Triển khai đồ án quy hoạch 1/500 hoàn thiện, phối hợp PLP xin ý kiến CQNN và nộp hồ sơ phê duyệt đồ án chính thức.",
+      "total_workflow_steps": 17,
+      "total_dmd_matrix_steps": 5,
+      "workflow_steps": [
+        {
+          "stt": "1",
+          "step_name": "Chuyển PYC/NVTK và cung cấp thông tin.",
+          "info_provider": "PMD",
+          "performer": "PMD",
+          "duration": "-",
+          "notes_and_forms": "PMD chuyển PYC/NVTK được duyệt và cung cấp thông tin cho DMD triển khai."
+        },
+        {
+          "stt": "2",
+          "step_name": "Tiếp nhận thông tin,  kiểm tra, rà soát",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "02 ngày",
+          "notes_and_forms": "DMD tiếp nhận thông tin, kiểm tra rà soát làm rõ các thông tin trong PYC với PMD (nếu có). DMD tiếp nhận thông tin, dữ liệu, rà soát sự phù hợp của phương án ý tưởng so với QC/TC thiết kế."
+        },
+        {
+          "stt": "3",
+          "step_name": "Điều phối, lấy ý kiến phòng ban chuyên môn.",
+          "info_provider": "DMD",
+          "performer": "PMD PLP INC/SAC",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PMD điều phối, lấy ý kiến phòng ban chuyên môn PLP và INC/SAC. PLP và INC/SAC xem xét và cho ý kiến. PMD tổng hợp ý kiến các PBCM. Sau khi thống nhất ý kiến PBCM, PMD chuyển thông tin -   PTC/QSB chọn TVTK -   DMD quản lý TVTK và kiểm soát hồ sơ QHCT"
+        },
+        {
+          "stt": "3.1",
+          "step_name": "Xem xét",
+          "info_provider": "PMD",
+          "performer": "PLP",
+          "duration": "02 ngày",
+          "notes_and_forms": "PLP xem xét và góp ý về hiện trạng pháp lý dự án, tính khả thi pháp lý của phương án, sự phù hợp quy hoạch cấp trên,…  Nếu QHCT triển khai tiếp của hồ sơ TKYT Quy hoạch: không thực hiện bước này"
+        },
+        {
+          "stt": "3.2",
+          "step_name": "Xem xét",
+          "info_provider": "PMD",
+          "performer": "INC/SAC",
+          "duration": "02 ngày",
+          "notes_and_forms": "INC xem xét và góp ý về sự phù hợp chiến lược đầu tư, hiệu quả đầu tư sơ bộ,… SAC xem xét và góp ý về sự phù hợp với nhu cầu thị trường, doanh thu tiềm năng, lợi thế cạnh tranh,… Nếu QHCT triển khai tiếp của hồ sơ TKYT Quy hoạch: không thực hiện bước này"
+        },
+        {
+          "stt": "4",
+          "step_name": "Lựa chọn TVTK theo QT NVLG-BMD-SOP01 (nếu có)",
+          "info_provider": "PMD",
+          "performer": "PTC",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PTC tiếp nhận thông tin từ PMD, thực hiện lựa chọn tư vấn thiết kế theo QT Đấu thầu triển khai dự án (NVLG-BMD-SOP01)."
+        },
+        {
+          "stt": "5",
+          "step_name": "Quản lý và kiểm soát hồ sơ QHCT",
+          "info_provider": "PMD QSB",
+          "performer": "DMD",
+          "duration": "01 ngày",
+          "notes_and_forms": "DMD kiểm soát hồ sơ hoàn thiện của TVTK. -   DMD định hướng thiết kế quy hoạch trên cơ sở NVTK được duyệt. -  DMD quản lý thiết kế quy hoạch tuân thủ quy định, tiến độ, chất lượng,…"
+        },
+        {
+          "stt": "6",
+          "step_name": "Tổng hợp hồ sơ, phối hợp PLP xin ý kiến CQNN.",
+          "info_provider": "DMD",
+          "performer": "PMD PLP",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PMD tổng hợp hồ sơ phối hợp PLP xin ý kiến CQNN. PMD tổng hợp hồ sơ gửi INC/SAC. -   Đồng ý: PMD tổng hợp hồ sơ chuyển DMD. -   Điều chỉnh: PMD tổng hợp ý kiến gửi DMD cập nhật hồ sơ."
+        },
+        {
+          "stt": "6.1",
+          "step_name": "Tổng hợp ý kiến của CQNN",
+          "info_provider": "PMD",
+          "performer": "PLP",
+          "duration": "02 ngày",
+          "notes_and_forms": "PLP tổng hợp ý kiến của CQNN. -   Đồng ý: PMD tổng hợp hồ sơ chuyển DMD. -   Điều chỉnh: PMD tổng hợp ý kiến gửi DMD cập nhật hồ sơ."
+        },
+        {
+          "stt": "6.2",
+          "step_name": "Xem xét",
+          "info_provider": "PMD",
+          "performer": "INC/SAC",
+          "duration": "02 ngày",
+          "notes_and_forms": "INC xem xét và góp ý về sự phù hợp chiến lược đầu tư, hiệu quả đầu tư sơ bộ,… SAC xem xét và góp ý về sự phù hợp với nhu cầu thị trường, doanh thu tiềm năng, lợi thế cạnh tranh,…"
+        },
+        {
+          "stt": "7",
+          "step_name": "Tổng hợp hồ sơ và ngân sách trình duyệt nội bộ",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "01 ngày",
+          "notes_and_forms": "DMD tổng hợp hồ sơ hoàn thiện của TVTK và ngân sách trình phê duyệt nội bộ."
+        },
+        {
+          "stt": "8",
+          "step_name": "Kiểm tra ngân sách theo QT NVLG-QSB-SOP01",
+          "info_provider": "DMD",
+          "performer": "QSB",
+          "duration": "Theo MTL",
+          "notes_and_forms": "DMD gửi thông tin cho QSB để tính ngân sách. QSB kiểm tra ngân sách theo QT Lập khái toán chi phí xây dựng, ngân sách xây dựng (NVLG-QSB-SOP01)."
+        },
+        {
+          "stt": "9",
+          "step_name": "Xem xét và điều phối DMD trình duyệt.",
+          "info_provider": "DMD",
+          "performer": "PMD",
+          "duration": "01 ngày",
+          "notes_and_forms": "PMD xem xét hồ sơ thiết kế, ngân sách và điều phối DMD trình duyệt. -   Đồng ý: trình duyệt nội bộ theo AM. -   Không đồng ý: quay lại bước 5."
+        },
+        {
+          "stt": "10",
+          "step_name": "Phê duyệt.",
+          "info_provider": "PMD",
+          "performer": "Theo AM",
+          "duration": "8h/cấp",
+          "notes_and_forms": "Trình phê duyệt phương án Thiết kế ý tưởng quy hoạch theo AM. -   Duyệt: thực hiện bước 11. -   Không duyệt: quay lại bước 6."
+        },
+        {
+          "stt": "11",
+          "step_name": "Tổng hợp hồ sơ và trình CQNN phê duyệt.",
+          "info_provider": "Theo AM",
+          "performer": "PLP",
+          "duration": "01 ngày",
+          "notes_and_forms": "PLP tổng hợp hồ sơ trình phê duyệt CQNN."
+        },
+        {
+          "stt": "12",
+          "step_name": "Nhận kết quả từ CQNN.",
+          "info_provider": "PLP",
+          "performer": "PMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PMD nhận hồ sơ và kết quả của CQNN từ PLP. -   CQNN phê duyệt: thực hiện bước 13. -   CQNN không phê duyệt: quay lại bước 5."
+        },
+        {
+          "stt": "13",
+          "step_name": "Lưu hồ sơ và điều phối chuyển giai đoạn",
+          "info_provider": "PMD",
+          "performer": "PMD",
+          "duration": "-",
+          "notes_and_forms": "PMD tổng hợp hồ sơ phê duyệt và lưu trữ các hồ sơ liên quan tuân thủ Quy định kiểm soát hồ sơ (NVLG-RPC-REG02) và Quy định lưu trữ theo 9 đầu mục NOVAGEN (NVG-ODD-REG05). Phát hành và điều phối triển khai thực hiện giai đoạn tiếp theo."
+        }
+      ],
+      "dmd_matrix_steps": [
+        {
+          "section": "1 - PMD Chuyển PYC/NVTK và cung cấp thông tin.",
+          "stt": "1.2.2",
+          "name": "Phối hợp PTC Lựa chọn TVTK theo QT NVLG-BMD-SOP01 (nếu có) hoặc theo QT NVLG-IDD-SOP03",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.2",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Phối hợp với Phòng Ban chuyên môn để đánh giá năng lực và lựa chọn tư vấn thiết kế phù hợp với yêu cầu thiết kế, ngân sách và tính khả thi trong công tác thiết kế cho từng dự án",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1 - PMD Chuyển PYC/NVTK và cung cấp thông tin.",
+          "stt": "1.2.3",
+          "name": "Quản lý và kiểm soát hồ sơ QHCT",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.2",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Theo dõi, cập nhật và điều chỉnh tiến độ triển khai thiết kế định kỳ",
+              "mark": "☑"
+            },
+            {
+              "code": "1.3",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Tầm soát rủi ro chậm tiến độ thiết kế",
+              "mark": "☑"
+            },
+            {
+              "code": "1.4",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Cảnh báo rủi ro chậm tiến độ thiết kế và đề xuất phương án xử lý kịp thời.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện công tác quản lý chất lượng và hiệu quả thiết kế đáp ứng mục tiêu kinh doanh của Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "2.6",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Theo dõi & kiểm soát sự thay đổi trong toàn bộ quá trình thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.7",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Kiểm tra sự phù hợp của hồ sơ thiết kế & phương án được thống nhất triển khai với quy định pháp luật, tiêu chuẩn kỹ thuật, tuân thủ quy trình, quy định chuẩn hóa thiết kế của tập đoàn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1 - PMD Chuyển PYC/NVTK và cung cấp thông tin.",
+          "stt": "1.2.4",
+          "name": "Phối hợp QSB Kiểm tra ngân sách theo QT NVLG-QSB-SOP01",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1 - PMD Chuyển PYC/NVTK và cung cấp thông tin.",
+          "stt": "1.2.5",
+          "name": "Tổng hợp hồ sơ và ngân sách trình duyệt nội bộ",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.5",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Hoàn thành hồ sơ thiết kế theo MTL được duyệt. Đảm bảo tất cả tài liệu phát hành đúng hạn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1 - PMD Chuyển PYC/NVTK và cung cấp thông tin.",
+          "stt": "1.2.6",
+          "name": "Lưu hồ sơ và điều phối chuyển giai đoạn.",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.2",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Phối hợp với Phòng Ban chuyên môn để đánh giá năng lực và lựa chọn tư vấn thiết kế phù hợp với yêu cầu thiết kế, ngân sách và tính khả thi trong công tác thiết kế cho từng dự án",
+              "mark": "☑"
+            },
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "4.1",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ Bản cứng theo quy định",
+              "mark": "☑"
+            },
+            {
+              "code": "4.2",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ File mềm trên Novagen/ACC theo quy định",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.1",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Thanh toán đợt (Thành phần hồ sơ, khối lượng thực hiện…) đúng, đủ theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.2",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Quyết toán đúng, đủ (Thành phần hồ sơ, khối lượng thực hiện…) theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.3",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Phát sinh đúng, đủ theo yêu cầu (PYC Phát sinh, GTPS, Đầu mục phát sinh…)",
+              "mark": "☑"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stage_code": "STAGE_3",
+      "sop_stt": "1.3",
+      "stage_name": "Thiết kế Ý tưởng Công trình (Architecture Concept - TKYT)",
+      "official_form": "NVLG-DMD-SOP09.F01",
+      "docx_section": "6.3",
+      "description": "Lựa chọn TVTK, triển khai ý tưởng kiến trúc mẫu nhà, cảnh quan, tiện ích, phối hợp QSB tính khái toán ngân sách.",
+      "total_workflow_steps": 11,
+      "total_dmd_matrix_steps": 6,
+      "workflow_steps": [
+        {
+          "stt": "1",
+          "step_name": "Điều phối quá trình lựa chọn TVTK",
+          "info_provider": "PMD",
+          "performer": "PMD",
+          "duration": "-",
+          "notes_and_forms": "PMD kiểm soát việc áp dụng thư viện mẫu (nếu có) trong NVTK. PMD cung cấp NVTK được phê duyệt cho PTC và gởi PYC (NVLG-DMD-SOP09.F10) cho DMD triển khai công việc TKYT theo MTL."
+        },
+        {
+          "stt": "2.1",
+          "step_name": "Đánh giá năng lực TVTK",
+          "info_provider": "PMD PTC",
+          "performer": "DMD",
+          "duration": "-",
+          "notes_and_forms": "DMD đánh giá năng lực TVTK theo QT đấu thầu triển khai dự án (NVLG-BMD-SOP01) và Checklist lựa chọn TVTK."
+        },
+        {
+          "stt": "2.2",
+          "step_name": "Lựa chọn TVTK theo QT NVLG-BMD-SOP01 (nếu có)",
+          "info_provider": "DMD PMD",
+          "performer": "PTC",
+          "duration": "-",
+          "notes_and_forms": "Chỉ thực hiện bước này đối với những dự án có yêu cầu thuê TVTK ý tưởng. PTC thực hiện chọn TVTK theo QT đấu thầu triển khai dự án (NVLG-BMD-SOP01). PMD điều phối quá trình lựa chọn TVTK đảm bảo MTL. PTC gửi thông báo trúng thầu, hợp đồng thiết kế, email giới thiệu TVTK với DMD và PMD triển khai công việc."
+        },
+        {
+          "stt": "3",
+          "step_name": "Quản lý TVTK triển khai TKYT",
+          "info_provider": "PTC",
+          "performer": "DMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "Trong trường hợp IDD phụ trách triển khai thiết kế, DMD có trách nhiệm quản lý tương tự khi TVTK triển khai: -   DMD tổ chức họp kick off, phê duyệt tiến độ của TVTK đệ trình, theo dõi tiến độ triển khai công việc đảm bảo tiến độ dự án.  -   DMD quản lý công việc của TVTK theo hợp đồng -   DMD cung cấp TKYT cho QSB tính khái toán. DMD kiểm tra thư viện chuẩn hóa, đảm bảo thiết kế ý tưởng phù hợp thư viện trước khi trình duyệt: -  Thiết kế đã có trong thư viện chuẩn hóa: Chuyển giai đoạn TKCS. -  Thiết kế chưa có trong thư viện chuẩn hóa: Đề xuất chuẩn hóa và phối hợp GMS thực hiện chuẩn hóa theo Quy trình chuẩn hóa thiết kế (NVLG-GMS.DMD-SOP03) trước khi trình duyệt TKYT."
+        },
+        {
+          "stt": "4.1",
+          "step_name": "Điều phối, lấy ý kiến phòng ban chuyên môn.",
+          "info_provider": "DMD",
+          "performer": "PMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "Đối với TKYT mẫu nhà, ý tưởng hạng mục/ công trình phục vụ công tác bán hàng, ý tưởng quy hoạch, ý tưởng tổng mặt bằng phân lô, Cảnh quan/ HTKT, PMD có trách nhiệm gởi cho các phòng ban chuyên môn để xem xét, lấy ý kiến."
+        },
+        {
+          "stt": "4.2",
+          "step_name": "Lập khái toán theo QT NVLG-QSB-SOP01",
+          "info_provider": "DMD",
+          "performer": "QSB",
+          "duration": "Theo MTL",
+          "notes_and_forms": "DMD cung cấp hồ sơ TKYT để QSB tính khái toán theo QT Lập khái toán chi phí xây dựng, ngân sách xây dựng (NVLG-QSB-SOP01) PMD cung cấp kế hoạch TKYT cho QSB."
+        },
+        {
+          "stt": "5",
+          "step_name": "Tổng hợp TKYT khái toán trình phê duyệt",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "DMD tổng hợp phương án TKYT của tư vấn và khái toán của QSB trình phê duyệt nội bộ."
+        },
+        {
+          "stt": "6",
+          "step_name": "Xem xét",
+          "info_provider": "DMD",
+          "performer": "PMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "PMD xem xét hồ sơ do DMD trình. -  Đồng ý: thực hiện bước 7. -  Không đồng ý: quay lại bước 3."
+        },
+        {
+          "stt": "7",
+          "step_name": "Tổng hợp hồ sơ  trình duyệt theo AM",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "DMD tổng hợp hồ sơ trình duyệt theo AM."
+        },
+        {
+          "stt": "8",
+          "step_name": "Phê duyệt",
+          "info_provider": "DMD",
+          "performer": "Theo AM",
+          "duration": "8h/cấp",
+          "notes_and_forms": "Trình phê duyệt theo AM. Duyệt: thực hiện bước 9. Không duyệt: quay lại bước 3."
+        },
+        {
+          "stt": "9",
+          "step_name": "Lưu hồ sơ và điều phối chuyển giai đoạn",
+          "info_provider": "Theo AM",
+          "performer": "PMD",
+          "duration": "-",
+          "notes_and_forms": "PMD lưu trữ các hồ sơ liên quan tuân thủ Quy định kiểm soát hồ sơ (NVLG-RPC-REG02) và Quy định lưu trữ theo 9 đầu mục NOVAGEN (NVG-ODD-REG05). PMD điều phối công việc giai đoạn tiếp theo."
+        }
+      ],
+      "dmd_matrix_steps": [
+        {
+          "section": "1.3 - Thiết ý tưởng công trình",
+          "stt": "1.3.1",
+          "name": "Tiếp nhận thông tin, kiểm tra rà soát NVTK",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.1",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Lập kế hoạch và điều phối toàn bộ quá trình thiết kế theo MTL được duyệt",
+              "mark": "☑"
+            },
+            {
+              "code": "2.1",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp thông tin cho các Phòng Ban chuyên môn lập ngân sách thiết kế (khi có yêu cầu)",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.3 - Thiết ý tưởng công trình",
+          "stt": "1.3.2",
+          "name": "Phối hợp PTC Lựa chọn TVTK theo QT NVLG-BMD-SOP01 (nếu có) hoặc theo QT NVLG-IDD-SOP03",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.2",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Phối hợp với Phòng Ban chuyên môn để đánh giá năng lực và lựa chọn tư vấn thiết kế phù hợp với yêu cầu thiết kế, ngân sách và tính khả thi trong công tác thiết kế cho từng dự án",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.3 - Thiết ý tưởng công trình",
+          "stt": "1.3.3",
+          "name": "Quản lý TVTK triển khai TKYT",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.2",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Theo dõi, cập nhật và điều chỉnh tiến độ triển khai thiết kế định kỳ",
+              "mark": "☑"
+            },
+            {
+              "code": "1.3",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Tầm soát rủi ro chậm tiến độ thiết kế",
+              "mark": "☑"
+            },
+            {
+              "code": "1.4",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Cảnh báo rủi ro chậm tiến độ thiết kế và đề xuất phương án xử lý kịp thời.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện công tác quản lý chất lượng và hiệu quả thiết kế đáp ứng mục tiêu kinh doanh của Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "2.6",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Theo dõi & kiểm soát sự thay đổi trong toàn bộ quá trình thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.7",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Kiểm tra sự phù hợp của hồ sơ thiết kế & phương án được thống nhất triển khai với quy định pháp luật, tiêu chuẩn kỹ thuật, tuân thủ quy trình, quy định chuẩn hóa thiết kế của tập đoàn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.3 - Thiết ý tưởng công trình",
+          "stt": "1.3.4",
+          "name": "Phối hợp QSB Lập khái toán theo QT NVLG-QSB-SOP01",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.3 - Thiết ý tưởng công trình",
+          "stt": "1.3.5",
+          "name": "Tổng hợp TKYT khái toán trình phê duyệt",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.5",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Hoàn thành hồ sơ thiết kế theo MTL được duyệt. Đảm bảo tất cả tài liệu phát hành đúng hạn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.3 - Thiết ý tưởng công trình",
+          "stt": "1.3.6",
+          "name": "Lưu hồ sơ và điều phối chuyển giai đoạn.",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "3.1",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham mưu, phối hợp và cung cấp hồ sơ thiết kế đề xuất cho GMS.DMD nhằm cải tiến hệ thống chuẩn hóa thiết kế (tiêu chuẩn, thư viện, giải pháp và vật liệu sử dụng,...) đáp ứng mục tiêu đảm bảo tính đồng bộ thiết kế cho toàn Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "3.2",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham mưu GMS.DMD triển khai công tác số hóa dữ liệu thiết kế, xây dựng - cập nhật hệ thống quy trình vận hành chuẩn (SOP) nhằm tối ưu hiệu suất, nâng cao khả năng kiểm soát và minh bạch trong quá trình quản lý thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "3.3",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham vấn/ đệ trình cho Ban lãnh đạo trong việc lựa chọn giải pháp thiết kế, công nghệ tiên tiến và vật liệu xây dựng phù hợp nhằm nâng cao hiệu quả đầu tư, chất lượng công trình và tối ưu chi phí.",
+              "mark": "☑"
+            },
+            {
+              "code": "4.1",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ Bản cứng theo quy định",
+              "mark": "☑"
+            },
+            {
+              "code": "4.2",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ File mềm trên Novagen/ACC theo quy định",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.1",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Thanh toán đợt (Thành phần hồ sơ, khối lượng thực hiện…) đúng, đủ theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.2",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Quyết toán đúng, đủ (Thành phần hồ sơ, khối lượng thực hiện…) theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.3",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Phát sinh đúng, đủ theo yêu cầu (PYC Phát sinh, GTPS, Đầu mục phát sinh…)",
+              "mark": "☑"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stage_code": "STAGE_4",
+      "sop_stt": "1.4",
+      "stage_name": "Thiết kế Cơ sở (Basic Design - TKCS)",
+      "official_form": "NVLG-DMD-SOP09.F05",
+      "docx_section": "6.4",
+      "description": "Lập hồ sơ thiết kế cơ sở phục vụ Báo cáo Nghiên cứu Khả thi (BCNCKT), CQA thẩm định chi phí/chất lượng và nộp CQNN thẩm định.",
+      "total_workflow_steps": 12,
+      "total_dmd_matrix_steps": 5,
+      "workflow_steps": [
+        {
+          "stt": "1",
+          "step_name": "Điều phối lựa chọn TVTK và TVTT",
+          "info_provider": "DMD",
+          "performer": "PMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "PMD chuyển PYC/NVTK được duyệt  và cung cấp thông tin cho PTC & DMD triển khai công tác lựa chọn TVTK và TVTT.  (Đối với hạng mục công trình/dự án đã có AOP/MTL được phê duyệt thì thực hiện theo kế hoạch không cần PYC) PMD điều phối quá trình lựa chọn TVTK."
+        },
+        {
+          "stt": "1.1",
+          "step_name": "Cung cấp PVCV cho các hạng mục trong hợp đồng thiết kế",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "Cung cấp phạm vi công việc các hạng mục công việc trong hợp đồng thiết kế theo yêu cầu từ PMD."
+        },
+        {
+          "stt": "2",
+          "step_name": "Lựa chọn TVTK và TVTT theo QT NVLG-BMD-SOP01",
+          "info_provider": "DMD PMD",
+          "performer": "PTC",
+          "duration": "-",
+          "notes_and_forms": "PTC tiếp nhận thông tin từ PMD, thực hiện lựa chọn tư vấn thiết kế. theo QT Đấu thầu triển khai dự án (NVLG-BMD-SOP01)."
+        },
+        {
+          "stt": "2.1",
+          "step_name": "Phối hợp PTC đánh giá năng lực và lựa chọn TVTK/ TVTT.",
+          "info_provider": "PTC",
+          "performer": "DMD",
+          "duration": "-",
+          "notes_and_forms": "DMD phối hợp PTC đánh giá năng lực và lựa chọn TVTK/TVTT theo Biểu mẫu NVGL-BMD-SOP01.F1.24a."
+        },
+        {
+          "stt": "3",
+          "step_name": "Quản lý TVTK và TVTT triển khai TKCS.",
+          "info_provider": "PTC PMD",
+          "performer": "DMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "Sau khi nhận thông báo trúng thầu và email giới thiệu TVTK/TVTT từ PTC, DMD thực hiện công việc quản lý TVTK/TVTT để triển khai TKCS: -  Tổ chức Kick off với TVTK/TVTT để bắt đầu triển khai công việc. -  Quản lý  tiến độ, chất lượng, hiệu quả công việc TKCS. -  Điều phối TVTK giải trình/ điều chỉnh hồ sơ theo ý kiến TVTT. -  Phối hợp xử lý các vấn đề liên quan đến pháp lý trong quá trình triển khai thiết kế. -  DMD có trách nhiệm kiểm tra: Tiêu chuẩn thiết kế; thiết kế điển hình; chuẩn hóa vật tư trang thiết bị áp dụng trong hồ sơ thiết kế theo quy định."
+        },
+        {
+          "stt": "4",
+          "step_name": "Xem xét.",
+          "info_provider": "QSB DMD",
+          "performer": "PMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "PMD xem xét hồ sơ thiết kế và điều phối DMD trình duyệt. -   Đồng ý: Thực hiện bước 5, gởi GMS/CQA xem xét. -   Không đồng ý: Quay lại bước 3."
+        },
+        {
+          "stt": "5",
+          "step_name": "Kiểm tra.",
+          "info_provider": "PMD",
+          "performer": "GMS CQA",
+          "duration": "3 ngày",
+          "notes_and_forms": "GMS: Kiểm tra hồ sơ TKCS theo Quy trình Kiểm soát thiết kế (NVLG-GMS.DMD-SOP02) CQA: Thẩm định chi phí, chất lượng của hồ sơ TKCS. -   Đồng ý: Xác nhận hồ sơ, chuyển PMD thực hiện bước 7. -   Không đồng ý: Quay lại bước 3."
+        },
+        {
+          "stt": "6",
+          "step_name": "Điều phối DMD trình duyệt theo AM.",
+          "info_provider": "GMS CQA",
+          "performer": "PMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "PMD điều phối DMD trình duyệt theo AM."
+        },
+        {
+          "stt": "7",
+          "step_name": "Phê duyệt.",
+          "info_provider": "PMD",
+          "performer": "Theo AM",
+          "duration": "8h/cấp",
+          "notes_and_forms": "Duyệt: Chuyển đến bước 8. Không duyệt: quay lại bước 4."
+        },
+        {
+          "stt": "8",
+          "step_name": "Đóng dấu pháp nhân dự án.",
+          "info_provider": "Theo AM",
+          "performer": "PMD",
+          "duration": "2 ngày",
+          "notes_and_forms": "PMD điều phối đóng dấu pháp nhân chủ đầu tư trước khi chuyển PLP trình nộp hồ sơ cho CQNN."
+        },
+        {
+          "stt": "9",
+          "step_name": "Tổng hợp hồ sơ pháp lý & Hồ sơ Thiết kế. Trình nộp thẩm định BCNCKT.",
+          "info_provider": "PMD",
+          "performer": "PLP",
+          "duration": "Theo TĐHĐ phù hợp MTL được duyệt",
+          "notes_and_forms": "PLP tiếp nhận hồ sơ thiết kế từ PMD, tổng hợp hồ sơ thiết kế và hồ sơ pháp lý trình duyệt CQNN thẩm định BCNCKT. - Duyệt: Chuyển đến bước 10. - Không duyệt: Quay về bước 4. DMD làm rõ các ý kiến yêu cầu cập nhật điều chỉnh của CQNN, điều phối TVTK điều chỉnh hồ sơ."
+        },
+        {
+          "stt": "10",
+          "step_name": "Tiếp nhận thông tin, lưu hồ sơ và điều phối chuyển giai đoạn",
+          "info_provider": "PLP",
+          "performer": "PMD",
+          "duration": "-",
+          "notes_and_forms": "Sau khi CQNN trả kết quả, PLP chuyển kết quả thẩm định cho PMD. PMD tiếp nhận thông tin và triển khai thực hiện các bước thiết kế tiếp theo. PMD lưu trữ các hồ sơ liên quan tuân thủ Quy định kiểm soát hồ sơ (NVLG-RPC-REG02) và Quy định lưu trữ theo 9 đầu mục NOVAGEN (NVG-ODD-REG05)."
+        }
+      ],
+      "dmd_matrix_steps": [
+        {
+          "section": "1.4 - Thiết kế cơ sở",
+          "stt": "1.4.1",
+          "name": "Cung cấp PVCV cho các hạng mục trong hợp đồng thiết kế",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.1",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Lập kế hoạch và điều phối toàn bộ quá trình thiết kế theo MTL được duyệt",
+              "mark": "☑"
+            },
+            {
+              "code": "2.1",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp thông tin cho các Phòng Ban chuyên môn lập ngân sách thiết kế (khi có yêu cầu)",
+              "mark": "☑"
+            },
+            {
+              "code": "2.2",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Phối hợp với Phòng Ban chuyên môn để đánh giá năng lực và lựa chọn tư vấn thiết kế phù hợp với yêu cầu thiết kế, ngân sách và tính khả thi trong công tác thiết kế cho từng dự án",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.4 - Thiết kế cơ sở",
+          "stt": "1.4.2",
+          "name": "Phối hợp PTC đánh giá năng lực và lựa chọn TVTK/TVTT theo Biểu mẫu NVGL-BMD-SOP01.F1.24a.",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.4 - Thiết kế cơ sở",
+          "stt": "1.4.3",
+          "name": "Quản lý TVTK và TVTT triển khai TKCS.",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.2",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Theo dõi, cập nhật và điều chỉnh tiến độ triển khai thiết kế định kỳ",
+              "mark": "☑"
+            },
+            {
+              "code": "1.3",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Tầm soát rủi ro chậm tiến độ thiết kế",
+              "mark": "☑"
+            },
+            {
+              "code": "1.4",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Cảnh báo rủi ro chậm tiến độ thiết kế và đề xuất phương án xử lý kịp thời.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện công tác quản lý chất lượng và hiệu quả thiết kế đáp ứng mục tiêu kinh doanh của Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "2.6",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Theo dõi & kiểm soát sự thay đổi trong toàn bộ quá trình thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.7",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Kiểm tra sự phù hợp của hồ sơ thiết kế & phương án được thống nhất triển khai với quy định pháp luật, tiêu chuẩn kỹ thuật, tuân thủ quy trình, quy định chuẩn hóa thiết kế của tập đoàn.",
+              "mark": "☑"
+            },
+            {
+              "code": "4.2",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ File mềm trên Novagen/ACC theo quy định",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.4 - Thiết kế cơ sở",
+          "stt": "1.4.4",
+          "name": "Điều phối trình duyệt theo AM",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.5",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Hoàn thành hồ sơ thiết kế theo MTL được duyệt. Đảm bảo tất cả tài liệu phát hành đúng hạn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.4 - Thiết kế cơ sở",
+          "stt": "1.4.5",
+          "name": "Lưu hồ sơ và điều phối chuyển giai đoạn.",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "3.1",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham mưu, phối hợp và cung cấp hồ sơ thiết kế đề xuất cho GMS.DMD nhằm cải tiến hệ thống chuẩn hóa thiết kế (tiêu chuẩn, thư viện, giải pháp và vật liệu sử dụng,...) đáp ứng mục tiêu đảm bảo tính đồng bộ thiết kế cho toàn Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "3.2",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham mưu GMS.DMD triển khai công tác số hóa dữ liệu thiết kế, xây dựng - cập nhật hệ thống quy trình vận hành chuẩn (SOP) nhằm tối ưu hiệu suất, nâng cao khả năng kiểm soát và minh bạch trong quá trình quản lý thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "3.3",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham vấn/ đệ trình cho Ban lãnh đạo trong việc lựa chọn giải pháp thiết kế, công nghệ tiên tiến và vật liệu xây dựng phù hợp nhằm nâng cao hiệu quả đầu tư, chất lượng công trình và tối ưu chi phí.",
+              "mark": "☑"
+            },
+            {
+              "code": "4.1",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ Bản cứng theo quy định",
+              "mark": "☑"
+            },
+            {
+              "code": "4.2",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ File mềm trên Novagen/ACC theo quy định",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.1",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Thanh toán đợt (Thành phần hồ sơ, khối lượng thực hiện…) đúng, đủ theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.2",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Quyết toán đúng, đủ (Thành phần hồ sơ, khối lượng thực hiện…) theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.3",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Phát sinh đúng, đủ theo yêu cầu (PYC Phát sinh, GTPS, Đầu mục phát sinh…)",
+              "mark": "☑"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stage_code": "STAGE_5",
+      "sop_stt": "1.5",
+      "stage_name": "Thiết kế Bản vẽ Thi công & PCCC (TKBVTC 2 bước)",
+      "official_form": "NVLG-DMD-SOP09.F07",
+      "docx_section": "6.5",
+      "description": "Áp dụng cho công trình thiết kế 2 bước: Hoàn thiện TKBVTC, thẩm duyệt PCCC, phối hợp QSB bóc BOQ và bàn giao sang PCD thi công.",
+      "total_workflow_steps": 15,
+      "total_dmd_matrix_steps": 7,
+      "workflow_steps": [
+        {
+          "stt": "1",
+          "step_name": "Điều phối triển khai thiết kế theo MTL",
+          "info_provider": "PLP",
+          "performer": "PMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PMD tiếp nhận thông tin và điều phối quá trình triển khai thiết kế Tiến độ thống nhất phù hợp với MTL được duyệt."
+        },
+        {
+          "stt": "2",
+          "step_name": "Quản lý  TVTK & TVTT triển khai hồ sơ TKBVTC & PCCC",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PMD điều phối PBCM và cung cấp phạm vi công việc, hợp đồng TVTK/TVTT và các thông tin liên quan khác để DMD thực hiện công tác quản lý thiết kế. DMD quản lý TVTK và TVTT để hoàn thiện hồ sơ TKBVKT và hồ sơ PCCC theo hợp đồng. -   Tổ chức Kick off với TVTK/TVTT để bắt đầu triển khai công việc. -   Quản lý  tiến độ, chất lượng, hiệu quả công việc TKBVTC và PCCC. -   Điều phối TVTK giải trình/ điều chỉnh hồ sơ theo ý kiến TVTT. -   Phối hợp xử lý các vấn đề liên quan thiết kế trong quá trình triển khai (nếu có). -   DMD có trách nhiệm kiểm tra: Tiêu chuẩn thiết kế; thiết kế điển hình; chuẩn hóa vật tư trang thiết bị áp dụng trong hồ sơ thiết kế theo quy định. Tiến độ theo tiến độ hợp đồng phù hợp với MTL được duyệt."
+        },
+        {
+          "stt": "2.1",
+          "step_name": "Tổng hợp hồ sơ TKBVTC và PCCC chuyển PMD xem xét.",
+          "info_provider": "DMD",
+          "performer": "DMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "Sau khi hoàn thiện hồ sơ TKBVTC và PCCC, DMD tổng hợp hồ sơ TKBVTC và PCCC chuyển PMD trình duyệt."
+        },
+        {
+          "stt": "3",
+          "step_name": "Xem xét",
+          "info_provider": "DMD",
+          "performer": "PMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "PMD xem xét hồ sơ TKBVTC và PCCC, điều phối DMD trình duyệt. -   Đồng ý: Thực hiện bước 4, gởi GMS/CQA xem xét. -   Không đồng ý: Quay lại bước 2."
+        },
+        {
+          "stt": "4",
+          "step_name": "Kiểm tra",
+          "info_provider": "PMD",
+          "performer": "GMS/ CQA",
+          "duration": "3 ngày",
+          "notes_and_forms": "GMS: Kiểm tra hồ sơ TKBVTC và PCCC theo Quy trình Kiểm soát thiết kế (NVLG-GMS.DMD-SOP02) CQA: Thẩm định chi phí, chất lượng của hồ sơ TKBVTC và PCCC. -   Đồng ý: Xác nhận hồ sơ, chuyển PMD thực hiện bước 5. -   Không đồng ý: Quay lại bước 3."
+        },
+        {
+          "stt": "5",
+          "step_name": "PMD điều phối DMD trình duyệt theo AM.",
+          "info_provider": "GMS CQA",
+          "performer": "PMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "PMD điều phối DMD trình duyệt theo AM."
+        },
+        {
+          "stt": "6",
+          "step_name": "Phê duyệt",
+          "info_provider": "PMD",
+          "performer": "Theo AM",
+          "duration": "8h/cấp",
+          "notes_and_forms": "Duyệt: Chuyển đến bước 7. Không duyệt: quay lại bước 3."
+        },
+        {
+          "stt": "7",
+          "step_name": "Phát hành hồ sơ phục vụ lập BOQ và các thủ tục pháp lý, PCCC",
+          "info_provider": "Theo AM",
+          "performer": "PMD",
+          "duration": "2 ngày",
+          "notes_and_forms": "PMD điều phối đóng dấu pháp nhân chủ đầu tư trước khi chuyển QSB, DMD, PLP triển khai công tác liên quan"
+        },
+        {
+          "stt": "7.1",
+          "step_name": "Lập hoặc kiểm tra BOQ theo QT NVLG-QSB-SOP01.",
+          "info_provider": "PMD",
+          "performer": "QSB",
+          "duration": "-",
+          "notes_and_forms": "PMD gửi thông tin cho QSB để lập BOQ hoặc kiểm tra BOQ do tư vấn cung cấp. QSB lập BOQ theo QT Lập khái toán chi phí xây dựng, ngân sách xây dựng (NVLG-QSB-SOP01) hoặc kiểm tra BOQ do tư vấn cung cấp. DMD phối hợp cung cấp/ làm rõ thông tin thiết kế (nếu được yêu cầu)"
+        },
+        {
+          "stt": "7.2",
+          "step_name": "Phối hợp QSB về BOQ Phối hợp PLP về pháp lý",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "DMD phối hợp cung cấp/ làm rõ thông tin thiết kế cho QSB lập/kiểm tra BOQ (nếu được yêu cầu) DMD phối hợp cung cấp/ làm rõ thông tin thiết kế cho PLP thực hiện các thủ tục pháp lý, PCCC (nếu được yêu cầu)"
+        },
+        {
+          "stt": "7.3",
+          "step_name": "Tổng hợp hồ sơ trình thẩm duyệt PCCC và các thủ tục pháp lý",
+          "info_provider": "PMD",
+          "performer": "PLP DMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PLP tổng hợp hồ sơ trình thẩm duyệt PCCC và các thủ tục pháp lý liên quan. DMD phối hợp cung cấp/ làm rõ thông tin thiết kế cho PLP thực hiện các thủ tục pháp lý, PCCC (nếu được yêu cầu)"
+        },
+        {
+          "stt": "8",
+          "step_name": "Điều phối phát hành hồ sơ phục vụ Đấu thầu - Thi công.",
+          "info_provider": "QSB PLP",
+          "performer": "PMD DMD",
+          "duration": "2 ngày",
+          "notes_and_forms": "PMD tổng hợp hồ sơ pháp lý từ PLP và BOQ từ QSB, điều phối DMD  phát hành hồ sơ phục vụ công tác Đấu thầu – Thi công cho các PBCM."
+        },
+        {
+          "stt": "8.1",
+          "step_name": "Nhận hồ sơ thiết kế & BOQ triển khai đấu thầu theo QT NVLG-BMD-SOP01",
+          "info_provider": "PMD",
+          "performer": "PTC",
+          "duration": "-",
+          "notes_and_forms": "PTC nhận hồ sơ thiết kế và BOQ, triển khai công tác đấu thầu. Thời gian thực hiện theo QT Đấu thầu triển khai dự án (NVLG-BMD-SOP01)."
+        },
+        {
+          "stt": "8.2",
+          "step_name": "Nhận hồ sơ thiết kế triển khai thi công.",
+          "info_provider": "PMD",
+          "performer": "PCD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PCD nhận hồ sơ thiết kế triển khai thi công. PCD gửi RFI yêu cầu làm rõ thông tin, cập nhật điều chỉnh thiết kế theo thực tế thi công (nếu có) đến phòng DMD."
+        },
+        {
+          "stt": "9",
+          "step_name": "Lưu hồ sơ, nghiệm thu và điều phối công việc tiếp theo.",
+          "info_provider": "PMD",
+          "performer": "PMD DMD",
+          "duration": "-",
+          "notes_and_forms": "PMD lưu trữ các hồ sơ liên quan tuân thủ Quy định kiểm soát hồ sơ (NVLG-RPC-REG02) và Quy định lưu trữ theo 9 đầu mục NOVAGEN (NVG-ODD-REG05). DMD nghiệm thu hồ sơ thiết kế PMD điều phối công việc tiếp theo."
+        }
+      ],
+      "dmd_matrix_steps": [
+        {
+          "section": "1.5 - Thiết kế Bản vẽ thi công (2 bước)",
+          "stt": "1.5.1",
+          "name": "Quản lý  TVTK & TVTT triển khai hồ sơ TKBVTC & PCCC",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.1",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Lập kế hoạch và điều phối toàn bộ quá trình thiết kế theo MTL được duyệt",
+              "mark": "☑"
+            },
+            {
+              "code": "1.2",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Theo dõi, cập nhật và điều chỉnh tiến độ triển khai thiết kế định kỳ",
+              "mark": "☑"
+            },
+            {
+              "code": "1.3",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Tầm soát rủi ro chậm tiến độ thiết kế",
+              "mark": "☑"
+            },
+            {
+              "code": "1.4",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Cảnh báo rủi ro chậm tiến độ thiết kế và đề xuất phương án xử lý kịp thời.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện công tác quản lý chất lượng và hiệu quả thiết kế đáp ứng mục tiêu kinh doanh của Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "2.6",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Theo dõi & kiểm soát sự thay đổi trong toàn bộ quá trình thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.7",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Kiểm tra sự phù hợp của hồ sơ thiết kế & phương án được thống nhất triển khai với quy định pháp luật, tiêu chuẩn kỹ thuật, tuân thủ quy trình, quy định chuẩn hóa thiết kế của tập đoàn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.5 - Thiết kế Bản vẽ thi công (2 bước)",
+          "stt": "1.5.2",
+          "name": "Tổng hợp hồ sơ TKBVTC và PCCC chuyển PMD xem xét.",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.5",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Hoàn thành hồ sơ thiết kế theo MTL được duyệt. Đảm bảo tất cả tài liệu phát hành đúng hạn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.5 - Thiết kế Bản vẽ thi công (2 bước)",
+          "stt": "1.5.3",
+          "name": "Điều phối trình duyệt theo AM",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.5",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Hoàn thành hồ sơ thiết kế theo MTL được duyệt. Đảm bảo tất cả tài liệu phát hành đúng hạn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.5 - Thiết kế Bản vẽ thi công (2 bước)",
+          "stt": "1.5.4",
+          "name": "Phối hợp QSB về BOQ\nPhối hợp PLP về pháp lý",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện công tác quản lý chất lượng và hiệu quả thiết kế đáp ứng mục tiêu kinh doanh của Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "2.6",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Theo dõi & kiểm soát sự thay đổi trong toàn bộ quá trình thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.7",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Kiểm tra sự phù hợp của hồ sơ thiết kế & phương án được thống nhất triển khai với quy định pháp luật, tiêu chuẩn kỹ thuật, tuân thủ quy trình, quy định chuẩn hóa thiết kế của tập đoàn.",
+              "mark": "☑"
+            },
+            {
+              "code": "4.2",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ File mềm trên Novagen/ACC theo quy định",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.5 - Thiết kế Bản vẽ thi công (2 bước)",
+          "stt": "1.5.5",
+          "name": "Phối hợp PTC triển khai đấu thầu theo QT NVLG-BMD-SOP01",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.5 - Thiết kế Bản vẽ thi công (2 bước)",
+          "stt": "1.5.6",
+          "name": "Phối hợp PCD triển khai thi công xây lắp",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện công tác quản lý chất lượng và hiệu quả thiết kế đáp ứng mục tiêu kinh doanh của Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "2.6",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Theo dõi & kiểm soát sự thay đổi trong toàn bộ quá trình thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.8",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện giám sát tác giả cùng Tư vấn thiết kế để đảm bảo chất lượng thi công đạt yêu cầu hồ sơ thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.9",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Phối hợp bộ phận quản lý thi công để giải quyết kịp thời các vấn đề liên quan thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.10",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Tham gia nghiệm thu đánh giá chất lượng, an toàn công trình khi có yêu cầu",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.5 - Thiết kế Bản vẽ thi công (2 bước)",
+          "stt": "1.5.7",
+          "name": "Lưu hồ sơ, nghiệm thu và điều phối công việc tiếp theo.",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "2.8",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện giám sát tác giả cùng Tư vấn thiết kế để đảm bảo chất lượng thi công đạt yêu cầu hồ sơ thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.9",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Phối hợp bộ phận quản lý thi công để giải quyết kịp thời các vấn đề liên quan thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.10",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Tham gia nghiệm thu đánh giá chất lượng, an toàn công trình khi có yêu cầu",
+              "mark": "☑"
+            },
+            {
+              "code": "3.1",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham mưu, phối hợp và cung cấp hồ sơ thiết kế đề xuất cho GMS.DMD nhằm cải tiến hệ thống chuẩn hóa thiết kế (tiêu chuẩn, thư viện, giải pháp và vật liệu sử dụng,...) đáp ứng mục tiêu đảm bảo tính đồng bộ thiết kế cho toàn Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "3.2",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham mưu GMS.DMD triển khai công tác số hóa dữ liệu thiết kế, xây dựng - cập nhật hệ thống quy trình vận hành chuẩn (SOP) nhằm tối ưu hiệu suất, nâng cao khả năng kiểm soát và minh bạch trong quá trình quản lý thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "3.3",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham vấn/ đệ trình cho Ban lãnh đạo trong việc lựa chọn giải pháp thiết kế, công nghệ tiên tiến và vật liệu xây dựng phù hợp nhằm nâng cao hiệu quả đầu tư, chất lượng công trình và tối ưu chi phí.",
+              "mark": "☑"
+            },
+            {
+              "code": "4.1",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ Bản cứng theo quy định",
+              "mark": "☑"
+            },
+            {
+              "code": "4.2",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ File mềm trên Novagen/ACC theo quy định",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.1",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Thanh toán đợt (Thành phần hồ sơ, khối lượng thực hiện…) đúng, đủ theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.2",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Quyết toán đúng, đủ (Thành phần hồ sơ, khối lượng thực hiện…) theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.3",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Phát sinh đúng, đủ theo yêu cầu (PYC Phát sinh, GTPS, Đầu mục phát sinh…)",
+              "mark": "☑"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stage_code": "STAGE_6",
+      "sop_stt": "1.6",
+      "stage_name": "Thiết kế Kỹ thuật (Technical Design - TKKT 3 bước)",
+      "official_form": "NVLG-DMD-SOP09.F06",
+      "docx_section": "6.6",
+      "description": "Áp dụng cho công trình thiết kế 3 bước: Hoàn thiện hồ sơ TKKT chi tiết, CQA thẩm định và phát hành hồ sơ phục vụ lập BOQ đấu thầu.",
+      "total_workflow_steps": 14,
+      "total_dmd_matrix_steps": 6,
+      "workflow_steps": [
+        {
+          "stt": "1",
+          "step_name": "Điều phối triển khai thiết kế theo MTL",
+          "info_provider": "PLP",
+          "performer": "PMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PMD tiếp nhận thông tin và điều phối quá trình triển khai thiết kế Tiến độ thống nhất phù hợp với MTL được duyệt."
+        },
+        {
+          "stt": "2",
+          "step_name": "Quản lý TVTK & TVTT triển khai hồ sơ TKKT",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PMD điều phối PBCM và cung cấp phạm vi công việc, hợp đồng TVTK/TVTT và các thông tin liên quan khác để DMD thực hiện công tác quản lý thiết kế. DMD quản lý TVTK và TVTT để hoàn thiện hồ sơ TKKT: -   Tổ chức Kick off với TVTK/TVTT để bắt đầu triển khai công việc. -   Quản lý  tiến độ, chất lượng, hiệu quả công việc TKKT. -   Điều phối TVTK giải trình/ điều chỉnh hồ sơ theo ý kiến TVTT. -   Phối hợp xử lý các vấn đề liên quan thiết kế trong quá trình triển khai (nếu có). -   DMD có trách nhiệm kiểm tra: Tiêu chuẩn thiết kế; thiết kế điển hình; chuẩn hóa vật tư trang thiết bị áp dụng trong hồ sơ thiết kế theo quy định. Tiến độ theo tiến độ hợp đồng phù hợp với MTL được duyệt."
+        },
+        {
+          "stt": "2.1",
+          "step_name": "Tổng hợp hồ sơ TKKT chuyển PMD xem xét.",
+          "info_provider": "DMD",
+          "performer": "DMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "Sau khi hoàn thiện hồ sơ TKKT, DMD tổng hợp hồ sơ chuyển PMD trình duyệt."
+        },
+        {
+          "stt": "3",
+          "step_name": "Xem xét",
+          "info_provider": "DMD",
+          "performer": "PMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "PMD xem xét hồ sơ TKKT, điều phối DMD trình duyệt. -   Đồng ý: Thực hiện bước 4, gởi GMS/CQA xem xét. -   Không đồng ý: Quay lại bước 2."
+        },
+        {
+          "stt": "4",
+          "step_name": "Kiểm tra",
+          "info_provider": "PMD",
+          "performer": "GMS/ CQA",
+          "duration": "3 ngày",
+          "notes_and_forms": "GMS: Kiểm tra hồ sơ TKKT theo Quy trình Kiểm soát thiết kế (NVLG-GMS.DMD-SOP02) CQA: Thẩm định chi phí, chất lượng của hồ sơ TKKT. -   Đồng ý: Xác nhận hồ sơ, chuyển PMD thực hiện bước 5. -   Không đồng ý: Quay lại bước 3."
+        },
+        {
+          "stt": "5",
+          "step_name": "Điều phối DMD trình duyệt theo AM",
+          "info_provider": "GMS CQA",
+          "performer": "PMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "PMD điều phối DMD trình phê duyệt theo AM."
+        },
+        {
+          "stt": "6",
+          "step_name": "Phê duyệt",
+          "info_provider": "PMD",
+          "performer": "Theo AM",
+          "duration": "8h/cấp",
+          "notes_and_forms": "Duyệt: Chuyển đến bước 7. Không duyệt: quay lại bước 3."
+        },
+        {
+          "stt": "7",
+          "step_name": "Phát hành hồ sơ phục vụ lập BOQ và các thủ tục pháp lý, PCCC",
+          "info_provider": "Theo AM",
+          "performer": "PMD",
+          "duration": "2 ngày",
+          "notes_and_forms": "PMD điều phối đóng dấu pháp nhân chủ đầu tư trước khi chuyển QSB, DMD, PLP triển khai công tác liên quan"
+        },
+        {
+          "stt": "7.1",
+          "step_name": "Lập hoặc kiểm tra BOQ theo QT NVLG-QSB-SOP01",
+          "info_provider": "PMD",
+          "performer": "QSB",
+          "duration": "-",
+          "notes_and_forms": "PMD gửi thông tin cho QSB để lập BOQ hoặc kiểm tra BOQ do tư vấn cung cấp. QSB lập BOQ theo QT Lập khái toán chi phí xây dựng, ngân sách xây dựng (NVLG-QSB-SOP01) hoặc kiểm tra BOQ do tư vấn cung cấp. DMD phối hợp cung cấp/ làm rõ thông tin thiết kế (nếu được yêu cầu)"
+        },
+        {
+          "stt": "7.2",
+          "step_name": "Phối hợp QSB về BOQ Phối hợp PLP về pháp lý",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "DMD phối hợp cung cấp/ làm rõ thông tin thiết kế cho QSB lập/kiểm tra BOQ (nếu được yêu cầu) DMD phối hợp cung cấp/ làm rõ thông tin thiết kế cho PLP thực hiện các thủ tục pháp lý, PCCC (nếu được yêu cầu)"
+        },
+        {
+          "stt": "7.3",
+          "step_name": "Tổng hợp hồ sơ trình thẩm duyệt PCCC và các thủ tục pháp lý",
+          "info_provider": "PMD",
+          "performer": "PLP",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PLP tổng hợp hồ sơ trình thẩm duyệt PCCC và các thủ tục pháp lý liên quan. DMD phối hợp cung cấp/ làm rõ thông tin thiết kế cho PLP thực hiện các thủ tục pháp lý, PCCC (nếu được yêu cầu)"
+        },
+        {
+          "stt": "8",
+          "step_name": "Điều phối phát hành hồ sơ phục vụ công tác đấu thầu.",
+          "info_provider": "QSB PLP",
+          "performer": "PMD DMD",
+          "duration": "2 ngày",
+          "notes_and_forms": "PMD tổng hợp hồ sơ thiết kế, BOQ, điều phối DMD phát hành hồ sơ phục vụ công tác đấu thầu cho các PBCM."
+        },
+        {
+          "stt": "8.1",
+          "step_name": "Nhận hồ sơ thiết kế & BOQ triển khai đấu thầu theo QT NVLG-BMD-SOP01",
+          "info_provider": "PMD",
+          "performer": "PTC",
+          "duration": "-",
+          "notes_and_forms": "PTC nhận hồ sơ thiết kế và BOQ, triển khai công tác đấu thầu. Thời gian thực hiện theo QT Đấu thầu triển khai dự án (NVLG-BMD-SOP01)."
+        },
+        {
+          "stt": "9",
+          "step_name": "PMD lưu hồ sơ, nghiệm thu và điều phối công việc tiếp theo.",
+          "info_provider": "PMD",
+          "performer": "PMD DMD",
+          "duration": "-",
+          "notes_and_forms": "PMD lưu trữ các hồ sơ liên quan tuân thủ Quy định kiểm soát hồ sơ (NVLG-RPC-REG02) và Quy định lưu trữ theo 9 đầu mục NOVAGEN (NVG-ODD-REG05). DMD nghiệm thu hồ sơ thiết kế PMD điều phối công việc tiếp theo."
+        }
+      ],
+      "dmd_matrix_steps": [
+        {
+          "section": "1.6 - Thiết kế Kỹ thuật (3 bước)",
+          "stt": "1.6.1",
+          "name": "Quản lý TVTK & TVTT triển khai hồ sơ TKKT",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.1",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Lập kế hoạch và điều phối toàn bộ quá trình thiết kế theo MTL được duyệt",
+              "mark": "☑"
+            },
+            {
+              "code": "1.2",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Theo dõi, cập nhật và điều chỉnh tiến độ triển khai thiết kế định kỳ",
+              "mark": "☑"
+            },
+            {
+              "code": "1.3",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Tầm soát rủi ro chậm tiến độ thiết kế",
+              "mark": "☑"
+            },
+            {
+              "code": "1.4",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Cảnh báo rủi ro chậm tiến độ thiết kế và đề xuất phương án xử lý kịp thời.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện công tác quản lý chất lượng và hiệu quả thiết kế đáp ứng mục tiêu kinh doanh của Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "2.6",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Theo dõi & kiểm soát sự thay đổi trong toàn bộ quá trình thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.7",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Kiểm tra sự phù hợp của hồ sơ thiết kế & phương án được thống nhất triển khai với quy định pháp luật, tiêu chuẩn kỹ thuật, tuân thủ quy trình, quy định chuẩn hóa thiết kế của tập đoàn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.6 - Thiết kế Kỹ thuật (3 bước)",
+          "stt": "1.6.2",
+          "name": "Tổng hợp hồ sơ TKKT chuyển PMD xem xét.",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.5",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Hoàn thành hồ sơ thiết kế theo MTL được duyệt. Đảm bảo tất cả tài liệu phát hành đúng hạn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.6 - Thiết kế Kỹ thuật (3 bước)",
+          "stt": "1.6.3",
+          "name": "Điều phối trình duyệt theo AM",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.5",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Hoàn thành hồ sơ thiết kế theo MTL được duyệt. Đảm bảo tất cả tài liệu phát hành đúng hạn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.6 - Thiết kế Kỹ thuật (3 bước)",
+          "stt": "1.6.4",
+          "name": "Phối hợp QSB về BOQ\nPhối hợp PLP về pháp lý",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện công tác quản lý chất lượng và hiệu quả thiết kế đáp ứng mục tiêu kinh doanh của Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "2.6",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Theo dõi & kiểm soát sự thay đổi trong toàn bộ quá trình thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.7",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Kiểm tra sự phù hợp của hồ sơ thiết kế & phương án được thống nhất triển khai với quy định pháp luật, tiêu chuẩn kỹ thuật, tuân thủ quy trình, quy định chuẩn hóa thiết kế của tập đoàn.",
+              "mark": "☑"
+            },
+            {
+              "code": "4.2",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ File mềm trên Novagen/ACC theo quy định",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.6 - Thiết kế Kỹ thuật (3 bước)",
+          "stt": "1.6.5",
+          "name": "Phối hợp PTC triển khai đấu thầu theo QT NVLG-BMD-SOP01",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.6 - Thiết kế Kỹ thuật (3 bước)",
+          "stt": "1.6.6",
+          "name": "Lưu hồ sơ, nghiệm thu và điều phối công việc tiếp theo.",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "2.8",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện giám sát tác giả cùng Tư vấn thiết kế để đảm bảo chất lượng thi công đạt yêu cầu hồ sơ thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.9",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Phối hợp bộ phận quản lý thi công để giải quyết kịp thời các vấn đề liên quan thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.10",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Tham gia nghiệm thu đánh giá chất lượng, an toàn công trình khi có yêu cầu",
+              "mark": "☑"
+            },
+            {
+              "code": "3.1",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham mưu, phối hợp và cung cấp hồ sơ thiết kế đề xuất cho GMS.DMD nhằm cải tiến hệ thống chuẩn hóa thiết kế (tiêu chuẩn, thư viện, giải pháp và vật liệu sử dụng,...) đáp ứng mục tiêu đảm bảo tính đồng bộ thiết kế cho toàn Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "3.2",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham mưu GMS.DMD triển khai công tác số hóa dữ liệu thiết kế, xây dựng - cập nhật hệ thống quy trình vận hành chuẩn (SOP) nhằm tối ưu hiệu suất, nâng cao khả năng kiểm soát và minh bạch trong quá trình quản lý thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "3.3",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham vấn/ đệ trình cho Ban lãnh đạo trong việc lựa chọn giải pháp thiết kế, công nghệ tiên tiến và vật liệu xây dựng phù hợp nhằm nâng cao hiệu quả đầu tư, chất lượng công trình và tối ưu chi phí.",
+              "mark": "☑"
+            },
+            {
+              "code": "4.1",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ Bản cứng theo quy định",
+              "mark": "☑"
+            },
+            {
+              "code": "4.2",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ File mềm trên Novagen/ACC theo quy định",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.1",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Thanh toán đợt (Thành phần hồ sơ, khối lượng thực hiện…) đúng, đủ theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.2",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Quyết toán đúng, đủ (Thành phần hồ sơ, khối lượng thực hiện…) theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.3",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Phát sinh đúng, đủ theo yêu cầu (PYC Phát sinh, GTPS, Đầu mục phát sinh…)",
+              "mark": "☑"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stage_code": "STAGE_7",
+      "sop_stt": "1.7",
+      "stage_name": "Thiết kế Bản vẽ Thi công (TKBVTC 3 bước)",
+      "official_form": "NVLG-DMD-SOP09.F07",
+      "docx_section": "6.7",
+      "description": "Triển khai chi tiết bản vẽ thi công phục vụ lắp đặt ngoài hiện trường, phối hợp PCD thi công và giám sát tác giả.",
+      "total_workflow_steps": 14,
+      "total_dmd_matrix_steps": 7,
+      "workflow_steps": [
+        {
+          "stt": "1",
+          "step_name": "Điều phối triển khai thiết kế theo MTL",
+          "info_provider": "PLP",
+          "performer": "PMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PMD tiếp nhận thông tin và điều phối quá trình triển khai thiết kế Tiến độ thống nhất phù hợp với MTL được duyệt."
+        },
+        {
+          "stt": "2",
+          "step_name": "Quản lý  TVTK & TVTT triển khai hồ sơ TKBVTC",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PMD điều phối PBCM và cung cấp phạm vi công việc, hợp đồng TVTK/TVTT và các thông tin liên quan khác để DMD thực hiện công tác quản lý thiết kế. DMD quản lý TVTK và TVTT để hoàn thiện hồ sơ TKBVTC: -   Tổ chức Kick off với TVTK/TVTT để bắt đầu triển khai công việc. -   Quản lý  tiến độ, chất lượng, hiệu quả công việc TKBVTC. -   Điều phối TVTK giải trình/ điều chỉnh hồ sơ theo ý kiến TVTT. -   Phối hợp xử lý các vấn đề liên quan thiết kế trong quá trình triển khai (nếu có). -   DMD có trách nhiệm kiểm tra: Tiêu chuẩn thiết kế; thiết kế điển hình; chuẩn hóa vật tư trang thiết bị áp dụng trong hồ sơ thiết kế theo quy định. Tiến độ theo tiến độ hợp đồng phù hợp với MTL được duyệt."
+        },
+        {
+          "stt": "2.1",
+          "step_name": "Tổng hợp hồ sơ TKBVTC chuyển PMD xem xét",
+          "info_provider": "DMD",
+          "performer": "DMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "Sau khi hoàn thiện hồ sơ TKBVTC, DMD tổng hợp hồ sơ TKBVTC chuyển PMD trình duyệt."
+        },
+        {
+          "stt": "3",
+          "step_name": "Xem xét",
+          "info_provider": "DMD",
+          "performer": "PMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "PMD xem xét hồ sơ TKBVTC, điều phối DMD trình duyệt. -   Đồng ý: Thực hiện bước 4, gởi GMS/CQA xem xét. -   Không đồng ý: Quay lại bước 2."
+        },
+        {
+          "stt": "4",
+          "step_name": "Kiểm tra",
+          "info_provider": "PMD",
+          "performer": "GMS/ CQA",
+          "duration": "3 ngày",
+          "notes_and_forms": "GMS: Kiểm tra hồ sơ TKBVTC theo Quy trình Kiểm soát thiết kế (NVLG-GMS.DMD-SOP02) CQA: Thẩm định chi phí, chất lượng của hồ sơ TKBVTC. -   Đồng ý: Xác nhận hồ sơ, chuyển PMD thực hiện bước 5. -   Không đồng ý: Quay lại bước 3."
+        },
+        {
+          "stt": "5",
+          "step_name": "Điều phối DMD Trình duyệt theo AM",
+          "info_provider": "GMS CQA",
+          "performer": "PMD",
+          "duration": "1 ngày",
+          "notes_and_forms": "PMD điều phối DMD trình phê duyệt theo AM."
+        },
+        {
+          "stt": "6",
+          "step_name": "Phê duyệt",
+          "info_provider": "PMD",
+          "performer": "Theo AM",
+          "duration": "8h/cấp",
+          "notes_and_forms": "Duyệt: Chuyển đến bước 7. Không duyệt: quay lại bước 3."
+        },
+        {
+          "stt": "7",
+          "step_name": "Phát hành hồ sơ phục vụ lập BOQ",
+          "info_provider": "Theo AM",
+          "performer": "PMD",
+          "duration": "2 ngày",
+          "notes_and_forms": "PMD điều phối đóng dấu pháp nhân chủ đầu tư trước khi chuyển QSB, DMD triển khai công tác liên quan"
+        },
+        {
+          "stt": "7.1",
+          "step_name": "QSB đối chiếu BOQ (đã lập tại bước TKKT) theo QT NVLG-QSB-SOP01",
+          "info_provider": "PMD",
+          "performer": "QSB",
+          "duration": "-",
+          "notes_and_forms": "PMD gửi thông tin cho QSB để kiểm tra, đối chiếu với BOQ đã lập tại bước TKKT theo QT Lập khái toán chi phí xây dựng, ngân sách xây dựng (NVLG-QSB-SOP01). DMD phối hợp cung cấp/ làm rõ thông tin thiết kế (nếu được yêu cầu)"
+        },
+        {
+          "stt": "7.2",
+          "step_name": "Phối hợp QSB về BOQ",
+          "info_provider": "PMD",
+          "performer": "DMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "DMD phối hợp cung cấp/ làm rõ thông tin thiết kế cho QSB kiểm tra, đối chiếu BOQ (nếu được yêu cầu)"
+        },
+        {
+          "stt": "8",
+          "step_name": "Điều phối phát hành hồ sơ phục vụ Đấu thầu – Thi công.",
+          "info_provider": "QSB PLP",
+          "performer": "PMD DMD",
+          "duration": "2 ngày",
+          "notes_and_forms": "PMD điều phối DMD phát hành hồ sơ phục vụ công tác Đấu thầu – Thi công cho các PBCM."
+        },
+        {
+          "stt": "8.1",
+          "step_name": "Nhận hồ sơ thiết kế & BOQ, cập nhật khối lượng (nếu có) theo QT NVLG-BMD-SOP01",
+          "info_provider": "PMD",
+          "performer": "PTC",
+          "duration": "-",
+          "notes_and_forms": "PTC nhận hồ sơ thiết kế và BOQ, Cập nhật khối lượng (nếu có) theo QT Đấu thầu triển khai dự án (NVLG-BMD-SOP01)."
+        },
+        {
+          "stt": "8.2",
+          "step_name": "Nhận hồ sơ thiết kế triển khai thi công.",
+          "info_provider": "PMD",
+          "performer": "PCD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "PCD nhận hồ sơ thiết kế triển khai thi công. PCD gửi RFI yêu cầu làm rõ thông tin, cập nhật điều chỉnh thiết kế theo thực tế thi công (nếu có) đến phòng DMD."
+        },
+        {
+          "stt": "9",
+          "step_name": "PMD lưu hồ sơ, nghiệm thu và điều phối công việc tiếp theo.",
+          "info_provider": "PMD",
+          "performer": "PMD DMD",
+          "duration": "-",
+          "notes_and_forms": "PMD lưu trữ các hồ sơ liên quan tuân thủ Quy định kiểm soát hồ sơ (NVLG-RPC-REG02) và Quy định lưu trữ theo 9 đầu mục NOVAGEN (NVG-ODD-REG05). DMD nghiệm thu hồ sơ thiết kế. PMD điều phối công việc tiếp theo."
+        }
+      ],
+      "dmd_matrix_steps": [
+        {
+          "section": "1.7 - Thiết kế Bản vẽ thi công (3 bước)",
+          "stt": "1.7.1",
+          "name": "Quản lý  TVTK & TVTT triển khai hồ sơ TKBVTC & PCCC",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.1",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Lập kế hoạch và điều phối toàn bộ quá trình thiết kế theo MTL được duyệt",
+              "mark": "☑"
+            },
+            {
+              "code": "1.2",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Theo dõi, cập nhật và điều chỉnh tiến độ triển khai thiết kế định kỳ",
+              "mark": "☑"
+            },
+            {
+              "code": "1.3",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Tầm soát rủi ro chậm tiến độ thiết kế",
+              "mark": "☑"
+            },
+            {
+              "code": "1.4",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Cảnh báo rủi ro chậm tiến độ thiết kế và đề xuất phương án xử lý kịp thời.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện công tác quản lý chất lượng và hiệu quả thiết kế đáp ứng mục tiêu kinh doanh của Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "2.6",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Theo dõi & kiểm soát sự thay đổi trong toàn bộ quá trình thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.7",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Kiểm tra sự phù hợp của hồ sơ thiết kế & phương án được thống nhất triển khai với quy định pháp luật, tiêu chuẩn kỹ thuật, tuân thủ quy trình, quy định chuẩn hóa thiết kế của tập đoàn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.7 - Thiết kế Bản vẽ thi công (3 bước)",
+          "stt": "1.7.2",
+          "name": "Tổng hợp hồ sơ TKBVTC và PCCC chuyển PMD xem xét.",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.5",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Hoàn thành hồ sơ thiết kế theo MTL được duyệt. Đảm bảo tất cả tài liệu phát hành đúng hạn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.7 - Thiết kế Bản vẽ thi công (3 bước)",
+          "stt": "1.7.3",
+          "name": "Điều phối trình duyệt theo AM",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.5",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Hoàn thành hồ sơ thiết kế theo MTL được duyệt. Đảm bảo tất cả tài liệu phát hành đúng hạn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.7 - Thiết kế Bản vẽ thi công (3 bước)",
+          "stt": "1.7.4",
+          "name": "Phối hợp QSB về BOQ\nPhối hợp PLP về pháp lý",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện công tác quản lý chất lượng và hiệu quả thiết kế đáp ứng mục tiêu kinh doanh của Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "2.6",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Theo dõi & kiểm soát sự thay đổi trong toàn bộ quá trình thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.7",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Kiểm tra sự phù hợp của hồ sơ thiết kế & phương án được thống nhất triển khai với quy định pháp luật, tiêu chuẩn kỹ thuật, tuân thủ quy trình, quy định chuẩn hóa thiết kế của tập đoàn.",
+              "mark": "☑"
+            },
+            {
+              "code": "4.2",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ File mềm trên Novagen/ACC theo quy định",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.7 - Thiết kế Bản vẽ thi công (3 bước)",
+          "stt": "1.7.5",
+          "name": "Phối hợp PTC triển khai đấu thầu theo QT NVLG-BMD-SOP01",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.7 - Thiết kế Bản vẽ thi công (3 bước)",
+          "stt": "1.7.6",
+          "name": "Phối hợp PCD triển khai thi công xây lắp",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện công tác quản lý chất lượng và hiệu quả thiết kế đáp ứng mục tiêu kinh doanh của Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "2.6",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Theo dõi & kiểm soát sự thay đổi trong toàn bộ quá trình thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.8",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện giám sát tác giả cùng Tư vấn thiết kế để đảm bảo chất lượng thi công đạt yêu cầu hồ sơ thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.9",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Phối hợp bộ phận quản lý thi công để giải quyết kịp thời các vấn đề liên quan thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.10",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Tham gia nghiệm thu đánh giá chất lượng, an toàn công trình khi có yêu cầu",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "1.7 - Thiết kế Bản vẽ thi công (3 bước)",
+          "stt": "1.7.7",
+          "name": "Lưu hồ sơ, nghiệm thu và điều phối công việc tiếp theo.",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            },
+            {
+              "code": "2.8",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện giám sát tác giả cùng Tư vấn thiết kế để đảm bảo chất lượng thi công đạt yêu cầu hồ sơ thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.9",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Phối hợp bộ phận quản lý thi công để giải quyết kịp thời các vấn đề liên quan thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.10",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Tham gia nghiệm thu đánh giá chất lượng, an toàn công trình khi có yêu cầu",
+              "mark": "☑"
+            },
+            {
+              "code": "3.1",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham mưu, phối hợp và cung cấp hồ sơ thiết kế đề xuất cho GMS.DMD nhằm cải tiến hệ thống chuẩn hóa thiết kế (tiêu chuẩn, thư viện, giải pháp và vật liệu sử dụng,...) đáp ứng mục tiêu đảm bảo tính đồng bộ thiết kế cho toàn Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "3.2",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham mưu GMS.DMD triển khai công tác số hóa dữ liệu thiết kế, xây dựng - cập nhật hệ thống quy trình vận hành chuẩn (SOP) nhằm tối ưu hiệu suất, nâng cao khả năng kiểm soát và minh bạch trong quá trình quản lý thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "3.3",
+              "group": "3. Nghiệp vụ 3: \nTham mưu cho Bộ phận Tổ chức Hệ thống Thiết kế (GMS.DMD) để cập nhật chuẩn hóa thiết kế theo thực tế triển khai",
+              "name": "Tham vấn/ đệ trình cho Ban lãnh đạo trong việc lựa chọn giải pháp thiết kế, công nghệ tiên tiến và vật liệu xây dựng phù hợp nhằm nâng cao hiệu quả đầu tư, chất lượng công trình và tối ưu chi phí.",
+              "mark": "☑"
+            },
+            {
+              "code": "4.1",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ Bản cứng theo quy định",
+              "mark": "☑"
+            },
+            {
+              "code": "4.2",
+              "group": "4. Nghiệp vụ 4:\nQuản lý lưu trữ hồ sơ dự án theo quy định",
+              "name": "Thực hiện lưu trữ hồ sơ File mềm trên Novagen/ACC theo quy định",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.1",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Thanh toán đợt (Thành phần hồ sơ, khối lượng thực hiện…) đúng, đủ theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.2",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Quyết toán đúng, đủ (Thành phần hồ sơ, khối lượng thực hiện…) theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.3",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Phát sinh đúng, đủ theo yêu cầu (PYC Phát sinh, GTPS, Đầu mục phát sinh…)",
+              "mark": "☑"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stage_code": "SOP05",
+      "sop_stt": "2.0",
+      "stage_name": "Phát hành Bản vẽ phục vụ TTSP & Bán hàng (NVLG-DMD-SOP05)",
+      "official_form": "NVLG-DMD-SOP05.F01",
+      "docx_section": "NVLG-DMD-SOP05",
+      "description": "Lập, phê duyệt và phát hành bộ bản vẽ mặt bằng căn hộ, phân lô bán hàng phục vụ tiếp thị sản phẩm và công tác bán hàng.",
+      "total_workflow_steps": 3,
+      "total_dmd_matrix_steps": 3,
+      "workflow_steps": [
+        {
+          "stt": "2.1",
+          "step_name": "Lập và trình duyệt bộ bản vẽ phục vụ TTSP/CTBH",
+          "info_provider": "DMD",
+          "performer": "DMD",
+          "duration": "Theo MTL",
+          "notes_and_forms": "Lập bộ bản vẽ căn hộ, phối cảnh, trình duyệt nội bộ."
+        },
+        {
+          "stt": "2.2",
+          "step_name": "Phát hành bộ bản vẽ phục vụ TTSP/CTBH",
+          "info_provider": "DMD",
+          "performer": "PMD / SAC",
+          "duration": "01 ngày",
+          "notes_and_forms": "Phát hành chính thức sang Ban Kinh doanh (SAC)."
+        },
+        {
+          "stt": "2.3",
+          "step_name": "Lưu hồ sơ",
+          "info_provider": "DMD",
+          "performer": "DMD",
+          "duration": "-",
+          "notes_and_forms": "Lưu trữ hồ sơ bản cứng và file mềm theo quy định."
+        }
+      ],
+      "dmd_matrix_steps": [
+        {
+          "section": "2 - QUY TRÌNH PHÁT HÀNH BẢN VẼ PHỤC VỤ TTSP VÀ CTBH\n(NVLG-DMD-SOP05)",
+          "stt": "2.1",
+          "name": "Lập và trình duyệt bộ bản vẽ phục vụ TTSP/CTBH",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "1.5",
+              "group": "1. Nghiệp vụ 1: \n`Lập kế hoạch và triển khai thiết kế đảm bảo tiến độ MTL được duyệt",
+              "name": "Hoàn thành hồ sơ thiết kế theo MTL được duyệt. Đảm bảo tất cả tài liệu phát hành đúng hạn.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.4",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Đảm bảo tất cả các tài liệu thiết kế được ban hành từ phòng DMD nằm trong ngân sách đã được duyệt.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Thực hiện công tác quản lý chất lượng và hiệu quả thiết kế đáp ứng mục tiêu kinh doanh của Tập đoàn",
+              "mark": "☑"
+            },
+            {
+              "code": "2.6",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Theo dõi & kiểm soát sự thay đổi trong toàn bộ quá trình thiết kế.",
+              "mark": "☑"
+            },
+            {
+              "code": "2.7",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Kiểm tra sự phù hợp của hồ sơ thiết kế & phương án được thống nhất triển khai với quy định pháp luật, tiêu chuẩn kỹ thuật, tuân thủ quy trình, quy định chuẩn hóa thiết kế của tập đoàn.",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "2 - QUY TRÌNH PHÁT HÀNH BẢN VẼ PHỤC VỤ TTSP VÀ CTBH\n(NVLG-DMD-SOP05)",
+          "stt": "2.2",
+          "name": "Phát hành bộ bản vẽ phục vụ TTSP/CTBH",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.3",
+              "group": "2. Nghiệp vụ 2:\nQuản lý điều phối thiết kế và phối hợp liên phòng ban đảm bảo chất lượng theo ngân sách được phê duyệt",
+              "name": "Cung cấp hồ sơ thiết kế phục vụ các công tác pháp lý, bán hàng, đấu thầu, thi công, mua sắm… theo quy trình",
+              "mark": "☑"
+            }
+          ]
+        },
+        {
+          "section": "2 - QUY TRÌNH PHÁT HÀNH BẢN VẼ PHỤC VỤ TTSP VÀ CTBH\n(NVLG-DMD-SOP05)",
+          "stt": "2.3",
+          "name": "Lưu hồ sơ",
+          "weight": null,
+          "ticked_nv": [
+            {
+              "code": "2.5.1",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Thanh toán đợt (Thành phần hồ sơ, khối lượng thực hiện…) đúng, đủ theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.2",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Quyết toán đúng, đủ (Thành phần hồ sơ, khối lượng thực hiện…) theo thực tế thực hiện",
+              "mark": "☑"
+            },
+            {
+              "code": "2.5.3",
+              "group": "5. Nghiệp vụ 5:\nQuản lý thực hiện hợp đồng, phát sinh, thanh quyết toán",
+              "name": "Kiểm tra, xác nhận hồ sơ Phát sinh đúng, đủ theo yêu cầu (PYC Phát sinh, GTPS, Đầu mục phát sinh…)",
+              "mark": "☑"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

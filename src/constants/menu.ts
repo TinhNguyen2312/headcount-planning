@@ -1,14 +1,17 @@
 import {
+  AlertTriangle,
   BarChart3,
   BookOpenCheck,
   Building2,
   Calendar,
+  CheckCircle2,
   CheckSquare,
   Clock,
   Compass,
   FileCheck,
   FileCheck2,
   FileSpreadsheet,
+  FileText,
   FolderCheck,
   Inbox,
   Layers,
@@ -16,6 +19,7 @@ import {
   ListChecks,
   type LucideIcon,
   MapPin,
+  Network,
   Scale,
   Settings2,
   ShieldCheck,
@@ -160,6 +164,14 @@ export const TIMELINE_MENU_ITEMS: MenuItemConfig[] = [
     category: "Thẩm định",
   },
   {
+    key: "timeline-switch-dmd",
+    icon: Layers,
+    label: "Quản lý Thiết kế (DMD)",
+    path: "/dmd",
+    position: "bottom",
+    category: "Điều hướng",
+  },
+  {
     key: "timeline-switch-checker",
     icon: FileCheck,
     label: "Thẩm định Bản vẽ AI",
@@ -239,10 +251,102 @@ export const DRAWING_CHECKER_MENU_ITEMS: MenuItemConfig[] = [
     category: "Cá nhân",
   },
   {
+    key: "checker-switch-dmd",
+    icon: Layers,
+    label: "Sang Quản lý Thiết kế DMD",
+    path: "/dmd",
+    position: "bottom",
+    category: "Điều hướng",
+  },
+  {
     key: "checker-switch-timeline",
     icon: Clock,
     label: "Sang Master Timeline",
     path: "/timeline",
+    position: "bottom",
+    category: "Điều hướng",
+  },
+]
+
+/* Menu cho Phân hệ Quản lý Thiết kế (DMD - SOP09) */
+export const DMD_MENU_ITEMS: MenuItemConfig[] = [
+  {
+    key: "dmd-stage-gate",
+    icon: Layers,
+    label: "Cổng Stage-Gate (G1–G7)",
+    path: "/dmd?tab=timeline",
+    category: "Quy trình SOP09",
+  },
+  {
+    key: "dmd-competencies",
+    icon: Network,
+    label: "Khung Nghiệp Vụ (5–23 NV)",
+    path: "/dmd?tab=competencies",
+    category: "Quy trình SOP09",
+  },
+  {
+    key: "dmd-deliverables",
+    icon: FileText,
+    label: "Hồ Sơ & Bản Vẽ (AFC)",
+    path: "/dmd?tab=deliverables",
+    category: "Quy trình SOP09",
+  },
+  {
+    key: "dmd-cross-review",
+    icon: Users,
+    label: "Ma Trận Phối Hợp (SOP09)",
+    path: "/dmd?tab=cross-review",
+    category: "Quy trình SOP09",
+  },
+  {
+    key: "dmd-rfi",
+    icon: AlertTriangle,
+    label: "Xử Lý RFI & Thay Đổi (F02)",
+    path: "/dmd?tab=rfi-change",
+    category: "Tác nghiệp & Kỹ thuật",
+  },
+  {
+    key: "dmd-contracts",
+    icon: Compass,
+    label: "Hợp Đồng & TVTK (2.5)",
+    path: "/dmd?tab=consultants",
+    category: "Tác nghiệp & Kỹ thuật",
+  },
+  {
+    key: "dmd-kpi",
+    icon: CheckCircle2,
+    label: "Kế Hoạch Tuần & KPI (3.1)",
+    path: "/dmd?tab=kpi-work",
+    category: "Tác nghiệp & Kỹ thuật",
+  },
+  {
+    key: "dmd-standards",
+    icon: FileCheck,
+    label: "Thư Viện SPEC & SOP03/08",
+    path: "/dmd?tab=standards",
+    category: "Tác nghiệp & Kỹ thuật",
+  },
+  {
+    key: "dmd-switch-timeline",
+    icon: Clock,
+    label: "Sang Master Timeline",
+    path: "/timeline",
+    position: "bottom",
+    category: "Điều hướng",
+  },
+  {
+    key: "dmd-switch-checker",
+    icon: FileCheck2,
+    label: "Sang Thẩm định Bản vẽ AI",
+    path: "/drawing-checker",
+    position: "bottom",
+    category: "Điều hướng",
+  },
+  {
+    key: "dmd-switch-headcount",
+    icon: Building2,
+    label: "Sang Định biên Nhân sự",
+    path: "/projects",
     position: "bottom",
     category: "Điều hướng",
   },
@@ -274,6 +378,17 @@ export const findActiveMenuItem = (
     })
     if (active) return active
     return items.find((item) => item.key === "timeline-director" || item.key === "timeline-workspace")
+  }
+
+  if (pathname.startsWith("/dmd")) {
+    const active = items.find((item) => {
+      if (item.path.includes("?") && searchQuery) {
+        return item.path.includes(searchQuery)
+      }
+      return false
+    })
+    if (active) return active
+    return items[0]
   }
 
   if (pathname.startsWith("/drawing-checker")) {

@@ -75,23 +75,29 @@ function TimelinePageContent() {
           <div className="flex-1 flex flex-col items-center justify-center p-8 bg-card text-center">
             <div className="max-w-xl space-y-4 p-8 rounded-xl border border-border bg-background shadow-xs">
               <div className="size-16 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 flex items-center justify-center mx-auto">
-                <FileCheck className="size-8" />
+                <Layers className="size-8 text-[#2db34b]" />
               </div>
               <h2 className="text-xl font-bold text-foreground">
-                Quản lý Hồ sơ Thiết kế & Thẩm định Bản vẽ AI
+                Ban Quản lý Thiết kế (DMD) & Thẩm định Bản vẽ AI
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Hồ sơ thiết kế cơ sở và bản vẽ thi công thuộc Mốc T2 (Thiết kế 1/500) và Mốc T3 (Hồ sơ xin GPXD)
-                được thẩm định tự động thông qua Hệ thống AI Soát xét Bản vẽ Kiến trúc (CHTK).
+                Quản lý cổng kiểm soát Stage-Gate G1–G7, 23 nghiệp vụ 7 bộ môn, hồ sơ phát hành AFC và thẩm định tự động bản vẽ kiến trúc bằng AI trước khi xin Giấy phép Xây dựng (GPXD).
               </p>
-              <div className="flex items-center justify-center gap-3 pt-2">
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                 <Button
                   type="primary"
+                  icon={<Layers className="size-4" />}
+                  className="bg-[#2db34b] hover:!bg-[#2db34b]/90 font-semibold text-xs"
+                  onClick={() => router.push("/dmd")}
+                >
+                  Mở Cổng Quản lý Thiết kế DMD (SOP09)
+                </Button>
+                <Button
                   icon={<FileCheck className="size-4" />}
-                  className="bg-primary hover:!bg-primary/90 font-semibold text-xs"
+                  className="font-semibold text-xs"
                   onClick={() => router.push("/drawing-checker")}
                 >
-                  Mở Thẩm định Bản vẽ AI (Drawing Checker)
+                  Thẩm định Bản vẽ AI (CHTK)
                 </Button>
                 <Button onClick={() => setView("workspace")} className="text-xs">
                   Xem WBS Thiết kế

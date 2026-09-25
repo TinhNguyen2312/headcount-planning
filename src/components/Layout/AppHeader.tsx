@@ -12,6 +12,7 @@ import {
 import {
   Clock,
   FileCheck,
+  Layers,
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
@@ -50,8 +51,9 @@ export const AppHeader = ({
   const router = useRouter()
   const pathname = usePathname() || ""
   const isTimeline = pathname.startsWith("/timeline")
+  const isDmd = pathname.startsWith("/dmd")
   const isDrawingChecker = pathname.startsWith("/drawing-checker")
-  const isHeadcount = !isTimeline && !isDrawingChecker
+  const isHeadcount = !isTimeline && !isDmd && !isDrawingChecker
 
   const { loginMutation } = useAuth()
 
@@ -149,7 +151,7 @@ export const AppHeader = ({
         <Breadcrumb className="hidden xl:block text-xs" items={breadcrumbItems} />
       </div>
 
-      {/* Center: Executive Tri-Module Switcher */}
+      {/* Center: Executive Quad-Module Switcher */}
       <div className="flex items-center rounded-lg bg-muted/80 p-0.5 border border-border/80 shadow-xs">
         <button
           type="button"
@@ -163,6 +165,19 @@ export const AppHeader = ({
         >
           <Clock className="size-3.5" />
           <span>Master Timeline</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => router.push("/dmd")}
+          className={cn(
+            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer",
+            isDmd
+              ? "bg-[#2db34b] text-white shadow-xs"
+              : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+          )}
+        >
+          <Layers className="size-3.5" />
+          <span>Quản lý Thiết kế (DMD)</span>
         </button>
         <button
           type="button"
