@@ -118,15 +118,32 @@ export interface ProjectResponse {
   status: ProjectStatus
   startDate: string | null
   endDate: string | null
-  projectType: ProjectType
+  projectType?: ProjectType
   projectTypes?: ProjectType[]
   createdAt: string
   zonesCount?: number
   membersCount?: number
-  projectAdmins?: Array<{ userId: number; fullName: string; roleName: string }>
+  projectAdmins?: Array<{
+    userId: number
+    fullName: string
+    roleName?: string
+    phone?: string
+    email?: string
+    perNumber?: string
+  }>
   zones?: ZoneResponse[]
   thumbnail: string
   accProjectId?: string | null
+  boundaryGeojson?: GeoJSONPolygon | null
+}
+
+export interface GeoJSONPolygon {
+  type: "Polygon"
+  coordinates: [number, number][][]
+}
+
+export interface UpdateBoundaryRequest {
+  boundaryGeojson: GeoJSONPolygon | null
 }
 
 export interface ProjectCreate {
@@ -153,6 +170,11 @@ export interface ZoneResponse {
   code: string | null
   startTime: string
   endTime: string
+  breakStartTime?: string | null
+  breakEndTime?: string | null
+  violationWarningSeconds?: number | null
+  violationEscalationSeconds?: number | null
+  boundaryGeojson?: GeoJSONPolygon
   createdBy: number
   createdAt: string
   updatedAt: string
@@ -260,4 +282,51 @@ export interface EditProjectMemberDiffActions {
   }[]
   toRemoveAssignmentIds: number[]
   toAddAssignments: UserProjectRoleCreate[]
+}
+
+export interface ProjectMemberReplacementResponse {
+  userId: number
+  userFullName?: string | null
+  from?: string | null
+  to?: string | null
+}
+export type ProjectMemberReplacement = ProjectMemberReplacementResponse
+
+export interface ProjectMemberZoneResponse {
+  userProjectRoleId: number
+  zoneId: number | null
+  zoneName: string | null
+  isAllZones?: boolean
+  effectiveFrom?: string | null
+  effectiveTo?: string | null
+  status: UserProjectRoleStatus
+  replacement?: ProjectMemberReplacementResponse | null
+}
+export type ProjectMemberZoneAssignment = ProjectMemberZoneResponse
+
+export interface ProjectMemberRoleResponse {
+  roleId: number
+  roleName: string
+  projectRole: ProjectRole
+  isPrimary: boolean
+  zones: ProjectMemberZoneResponse[]
+}
+export type ProjectMemberRole = ProjectMemberRoleResponse
+
+export interface ProjectMemberResponse {
+  userId: number
+  perNumber?: string | null
+  userFullName: string
+  email?: string | null
+  phone?: string | null
+  departmentName?: string | null
+  status: string
+  roles: ProjectMemberRoleResponse[]
+}
+
+export interface ProjectMemberQueryParams extends IBaseQuery {
+  zoneId?: number
+  roleId?: number
+  projectRole?: ProjectRole
+  status?: string
 }

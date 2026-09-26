@@ -20,3 +20,16 @@ export function buildTree<T extends { id: number; parentId?: number | null }>(
 
   return roots
 }
+
+export type TreeNode<T> = T & {
+  children?: TreeNode<T>[] | null
+}
+
+export function flattenTree<T>(tree: TreeNode<T>[]): T[] {
+  return tree.flatMap(({ children, ...node }) => [
+    node as T,
+    ...(children && children.length > 0
+      ? flattenTree(children as TreeNode<T>[])
+      : []),
+  ])
+}

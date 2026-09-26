@@ -5,8 +5,11 @@ import type {
   ListResponse,
   MessageResponse,
   ProjectCreate,
+  ProjectMemberQueryParams,
+  ProjectMemberResponse,
   ProjectResponse,
   ProjectUpdate,
+  UpdateBoundaryRequest,
   ZoneCreate,
   ZoneResponse,
   ZoneUpdate,
@@ -52,6 +55,42 @@ export const ProjectsAPI = {
       code: 0,
       message: "Cập nhật dự án thành công",
       result: updated,
+    }
+  },
+
+  /** PATCH /api/projects/{id}/boundary */
+  updateBoundary: async (
+    id: number,
+    data: UpdateBoundaryRequest,
+  ): Promise<ItemResponse<ProjectResponse>> => {
+    const proj = await mockStore.getProject(id)
+    if (proj) {
+      proj.boundaryGeojson = data.boundaryGeojson
+    }
+    return {
+      code: 0,
+      message: "Cập nhật ranh giới thành công",
+      result: proj!,
+    }
+  },
+
+  /** GET /api/projects/{projectId}/members */
+  getMembers: async (
+    _projectId: number,
+    _params: ProjectMemberQueryParams = {},
+  ): Promise<ListResponse<ProjectMemberResponse>> => {
+    return {
+      code: 0,
+      message: "Thành công",
+      result: [],
+      meta: {
+        page: 1,
+        size: 20,
+        totalElements: 0,
+        totalPages: 0,
+        hasNext: false,
+        hasPrevious: false,
+      },
     }
   },
 

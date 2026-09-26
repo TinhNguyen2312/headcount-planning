@@ -93,6 +93,15 @@ export interface UserStatusUpdate {
   status: UserStatus
 }
 
+export interface UserStatistics {
+  totalUsers: number
+  activeUsers: number
+  inactiveUsers: number
+  lockedUsers: number
+  unassignedUsers: number
+  totalUnassignedUsers: number
+}
+
 export interface IQueryUsers extends IBaseQuery {
   fullName?: string
   keyword?: string

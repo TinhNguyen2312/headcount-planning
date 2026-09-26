@@ -10,6 +10,7 @@ import {
   TIMELINE_MENU_ITEMS,
   DRAWING_CHECKER_MENU_ITEMS,
   DMD_MENU_ITEMS,
+  PCD_MENU_ITEMS,
   type MenuItemConfig,
   type UserNavigationContext,
 } from "@/constants/menu"
@@ -26,6 +27,7 @@ export const useLayout = () => {
 
   const isTimeline = pathname.startsWith("/timeline")
   const isDmd = pathname.startsWith("/dmd")
+  const isPcd = pathname.startsWith("/pcd")
   const isDrawingChecker = pathname.startsWith("/drawing-checker")
 
   const projectId = user?.currentProject?.id
@@ -44,9 +46,10 @@ export const useLayout = () => {
   const rawMenuItems = useMemo(() => {
     if (isTimeline) return TIMELINE_MENU_ITEMS
     if (isDmd) return DMD_MENU_ITEMS
+    if (isPcd) return PCD_MENU_ITEMS
     if (isDrawingChecker) return DRAWING_CHECKER_MENU_ITEMS
     return HEADCOUNT_MENU_ITEMS
-  }, [isTimeline, isDmd, isDrawingChecker])
+  }, [isTimeline, isDmd, isPcd, isDrawingChecker])
 
   const visibleItems = useMemo(
     () => filterMenuItemsByRole(rawMenuItems, currentRole),
@@ -58,7 +61,7 @@ export const useLayout = () => {
       const match = visibleItems.find((item) => item.path.includes(`tab=${mtlView}`))
       return match || visibleItems[0]
     }
-    if (isDmd) {
+    if (isDmd || isPcd) {
       if (typeof window !== "undefined") {
         const search = window.location.search
         if (search) {
@@ -69,7 +72,7 @@ export const useLayout = () => {
       return visibleItems[0]
     }
     return findActiveMenuItem(visibleItems, pathname)
-  }, [isTimeline, isDmd, visibleItems, mtlView, pathname])
+  }, [isTimeline, isDmd, isPcd, visibleItems, mtlView, pathname])
 
   const handleNavigate = useCallback(
     (item: MenuItemConfig) => {

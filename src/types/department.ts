@@ -29,6 +29,7 @@ export interface DepartmentResponse {
   level?: number
   parentId?: number | null
   status?: string // 'ACTIVE' | 'INACTIVE'
+  isActive?: boolean
   description?: string | null
   startDate?: string | null
   endDate?: string | null

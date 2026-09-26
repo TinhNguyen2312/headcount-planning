@@ -9,10 +9,37 @@ import {
   TEXT_EXTENSIONS,
   VIDEO_EXTENSIONS,
 } from "@/constants/fileAdapter"
+import type {
+  ChecklistInstanceItemResponse,
+  ChecklistInstanceItemTreeNodeResponse,
+  Requirement,
+  SlaUrgency,
+  TaskInstanceStageStatus,
+} from "@/types"
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs))
 }
+
+const SLA_WARNING_WINDOW_MS = 60 * 60 * 1000
+
+export const getSlaUrgency = (
+  slaDeadline: string | null,
+  now: Date = new Date(),
+): SlaUrgency => {
+  if (!slaDeadline) return "ON_TRACK"
+  const remainingMs = new Date(slaDeadline).getTime() - now.getTime()
+  if (remainingMs <= 0) return "OVERDUE"
+  if (remainingMs <= SLA_WARNING_WINDOW_MS) return "WARNING"
+  return "ON_TRACK"
+}
+
+export const isEvidenceLocked = (
+  stageStatus: TaskInstanceStageStatus,
+): boolean =>
+  stageStatus === "IN_REVIEW" ||
+  stageStatus === "APPROVED" ||
+  stageStatus === "COMPLETED"
 
 export const isWebUrl = (url?: string | null): boolean => {
   if (!url) return false
@@ -135,6 +162,42 @@ export const detectMediaType = (
     return "LINK"
   }
   return "IMAGE"
+}
+
+export const parseRequirements = (requirements?: string[]): Requirement[] => {
+  if (!Array.isArray(requirements)) return []
+  return requirements
+    .filter(
+      (url): url is string => typeof url === "string" && url.trim().length > 0,
+    )
+    .map((url) => {
+      const trimmed = url.trim()
+      return {
+        type: detectMediaType(trimmed),
+        url: trimmed,
+      }
+    })
+}
+
+export const buildChecklistItemTree = (
+  items: ChecklistInstanceItemResponse[],
+): ChecklistInstanceItemTreeNodeResponse[] => {
+  const nodeById = new Map<number, ChecklistInstanceItemTreeNodeResponse>()
+  items.forEach((item) => {
+    nodeById.set(item.id, { ...item, children: [] })
+  })
+
+  const roots: ChecklistInstanceItemTreeNodeResponse[] = []
+  nodeById.forEach((node) => {
+    const parent =
+      node.parentId != null ? nodeById.get(node.parentId) : undefined
+    if (parent) {
+      parent.children.push(node)
+    } else {
+      roots.push(node)
+    }
+  })
+  return roots
 }
 
 export const parseTaskMetadata = <T = Record<string, any>>(

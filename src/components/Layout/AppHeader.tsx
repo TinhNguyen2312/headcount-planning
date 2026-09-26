@@ -12,6 +12,7 @@ import {
 import {
   Clock,
   FileCheck,
+  HardHat,
   Layers,
   LogOut,
   PanelLeftClose,
@@ -52,8 +53,9 @@ export const AppHeader = ({
   const pathname = usePathname() || ""
   const isTimeline = pathname.startsWith("/timeline")
   const isDmd = pathname.startsWith("/dmd")
+  const isPcd = pathname.startsWith("/pcd")
   const isDrawingChecker = pathname.startsWith("/drawing-checker")
-  const isHeadcount = !isTimeline && !isDmd && !isDrawingChecker
+  const isHeadcount = !isTimeline && !isDmd && !isPcd && !isDrawingChecker
 
   const { loginMutation } = useAuth()
 
@@ -151,13 +153,13 @@ export const AppHeader = ({
         <Breadcrumb className="hidden xl:block text-xs" items={breadcrumbItems} />
       </div>
 
-      {/* Center: Executive Quad-Module Switcher */}
-      <div className="flex items-center rounded-lg bg-muted/80 p-0.5 border border-border/80 shadow-xs">
+      {/* Center: Executive Penta-Module Switcher */}
+      <div className="flex items-center rounded-lg bg-muted/80 p-0.5 border border-border/80 shadow-xs overflow-x-auto max-w-full">
         <button
           type="button"
           onClick={() => router.push("/timeline")}
           className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer",
+            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer whitespace-nowrap",
             isTimeline
               ? "bg-[#2db34b] text-white shadow-xs"
               : "text-muted-foreground hover:text-foreground hover:bg-background/60"
@@ -170,7 +172,7 @@ export const AppHeader = ({
           type="button"
           onClick={() => router.push("/dmd")}
           className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer",
+            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer whitespace-nowrap",
             isDmd
               ? "bg-[#2db34b] text-white shadow-xs"
               : "text-muted-foreground hover:text-foreground hover:bg-background/60"
@@ -181,9 +183,22 @@ export const AppHeader = ({
         </button>
         <button
           type="button"
+          onClick={() => router.push("/pcd")}
+          className={cn(
+            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer whitespace-nowrap",
+            isPcd
+              ? "bg-[#2db34b] text-white shadow-xs"
+              : "text-muted-foreground hover:text-foreground hover:bg-background/60"
+          )}
+        >
+          <HardHat className="size-3.5" />
+          <span>Quản lý Thi công (PCD)</span>
+        </button>
+        <button
+          type="button"
           onClick={() => router.push("/drawing-checker")}
           className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer",
+            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer whitespace-nowrap",
             isDrawingChecker
               ? "bg-[#2db34b] text-white shadow-xs"
               : "text-muted-foreground hover:text-foreground hover:bg-background/60"
@@ -196,7 +211,7 @@ export const AppHeader = ({
           type="button"
           onClick={() => router.push("/projects")}
           className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer",
+            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer whitespace-nowrap",
             isHeadcount
               ? "bg-[#2db34b] text-white shadow-xs"
               : "text-muted-foreground hover:text-foreground hover:bg-background/60"

@@ -1,3 +1,20 @@
+import type { ProjectRole } from "./auth"
+
+export type RoleDisplayType = "MANAGER" | "SUPERVISOR" | "GROUP_ITEM"
+
+export interface RoleMetadata {
+  groupUser?: boolean
+  groupKey?: string
+  orderInGroup?: number
+  groupTitle?: string
+  displayType?: RoleDisplayType
+  branchKey?: string
+  branchTitle?: string
+  columnOrder?: number
+  projectRole?: ProjectRole | null
+  [key: string]: unknown
+}
+
 export type PlanningMethod = "BY_SECTOR" | "BY_REGION" | "BY_PROJECT"
 
 export const PLANNING_METHOD_OPTIONS: {
@@ -38,6 +55,8 @@ export interface RoleResponse {
   departmentMetadata?: unknown
   planningMethod?: PlanningMethod | null
   description: string | null
+  positions?: string[]
+  metadata?: RoleMetadata | null
   isActive?: boolean
   createdBy?: number
   createdAt: string

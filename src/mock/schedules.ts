@@ -1,0 +1,100 @@
+import type { ScheduleMatrixResponse, ScheduleResponse } from "@/types"
+
+export const MOCK_SCHEDULES: ScheduleResponse[] = [
+  {
+    id: 1,
+    projectId: 1,
+    zoneId: 1,
+    taskItemId: 111,
+    roleId: 8,
+    workDate: "2026-03-25",
+    assignedUserId: 7,
+    checklistId: 2,
+    status: "ACTIVE",
+    createdAt: "2026-03-01T08:00:00Z",
+  },
+  {
+    id: 2,
+    projectId: 1,
+    zoneId: 1,
+    taskItemId: 112,
+    roleId: 8,
+    workDate: "2026-03-25",
+    assignedUserId: 7,
+    checklistId: 2,
+    status: "ACTIVE",
+    createdAt: "2026-03-01T08:00:00Z",
+  },
+  {
+    id: 3,
+    projectId: 1,
+    zoneId: 1,
+    taskItemId: 211,
+    roleId: 11,
+    workDate: "2026-03-25",
+    assignedUserId: 10,
+    checklistId: 1,
+    status: "ACTIVE",
+    createdAt: "2026-03-01T08:00:00Z",
+  },
+  {
+    id: 4,
+    projectId: 1,
+    zoneId: 2,
+    taskItemId: 311,
+    roleId: 9,
+    workDate: "2026-03-25",
+    assignedUserId: 8,
+    checklistId: 5,
+    status: "ACTIVE",
+    createdAt: "2026-03-01T08:00:00Z",
+  },
+]
+
+export const MOCK_SCHEDULE_MATRIX: ScheduleMatrixResponse = {
+  projectId: 1,
+  taskGroupId: 1,
+  taskGroupName: "Công tác Quản lý Chất lượng Xây dựng",
+  taskItemId: 111,
+  taskItemTitle: "Kiểm tra nghiệm thu Cốt thép sàn dầm trước khi đổ bê tông",
+  zoneId: 1,
+  zoneName: "Phân khu 1 - Florida",
+  roleId: 8,
+  roleName: "KSCC Giám sát Xây dựng",
+  roles: [
+    {
+      roleId: 8,
+      roleName: "KSCC Giám sát Xây dựng",
+    },
+  ],
+  hasWarning: false,
+  warningMessage: null,
+  scheduledDates: [
+    {
+      scheduleId: 1,
+      workDate: "2026-03-25",
+      assigned: [
+        {
+          id: 7,
+          name: "Nguyễn Văn Hùng",
+          roleId: 8,
+          scheduleId: 1,
+          checklistId: 2,
+          checklistName: "Checklist Kiểm tra Cốt thép & Cốp pha trước khi đổ Bê tông",
+        },
+      ],
+      checklistId: 2,
+      checklistName: "Checklist Kiểm tra Cốt thép & Cốp pha trước khi đổ Bê tông",
+    },
+  ],
+  availableUsers: [
+    {
+      id: 7,
+      userId: 7,
+      fullName: "Nguyễn Văn Hùng",
+      perNumber: "NVL-005001",
+      roleId: 8,
+      roleName: "KSCC Giám sát Xây dựng",
+    },
+  ],
+}

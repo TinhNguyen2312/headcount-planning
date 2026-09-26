@@ -4,25 +4,32 @@ import {
   BookOpenCheck,
   Building2,
   Calendar,
+  CalendarDays,
   CheckCircle2,
   CheckSquare,
   Clock,
   Compass,
+  Database,
   FileCheck,
   FileCheck2,
   FileSpreadsheet,
   FileText,
   FolderCheck,
+  HardHat,
   Inbox,
   Layers,
   LayoutDashboard,
+  LineChart,
   ListChecks,
   type LucideIcon,
   MapPin,
   Network,
+  PlusSquare,
   Scale,
   Settings2,
   ShieldCheck,
+  TableProperties,
+  UserCheck,
   Users,
 } from "lucide-react"
 import type { AppRole } from "@/types"
@@ -327,6 +334,14 @@ export const DMD_MENU_ITEMS: MenuItemConfig[] = [
     category: "Tác nghiệp & Kỹ thuật",
   },
   {
+    key: "dmd-switch-pcd",
+    icon: HardHat,
+    label: "Sang Quản lý Thi công PCD",
+    path: "/pcd",
+    position: "bottom",
+    category: "Điều hướng",
+  },
+  {
     key: "dmd-switch-timeline",
     icon: Clock,
     label: "Sang Master Timeline",
@@ -344,6 +359,105 @@ export const DMD_MENU_ITEMS: MenuItemConfig[] = [
   },
   {
     key: "dmd-switch-headcount",
+    icon: Building2,
+    label: "Sang Định biên Nhân sự",
+    path: "/projects",
+    position: "bottom",
+    category: "Điều hướng",
+  },
+]
+
+/* Menu cho Phân hệ Quản lý Thi công Hiện trường (PCD - SOP07) */
+export const PCD_MENU_ITEMS: MenuItemConfig[] = [
+  {
+    key: "pcd-dashboard",
+    icon: LineChart,
+    label: "Tổng quan Thi công",
+    path: "/pcd?tab=dashboard",
+    category: "Hiện trường PCD",
+  },
+  {
+    key: "pcd-my-tasks",
+    icon: CheckSquare,
+    label: "Công việc Hiện trường",
+    path: "/pcd?tab=my-tasks",
+    category: "Hiện trường PCD",
+  },
+  {
+    key: "pcd-subordinates",
+    icon: UserCheck,
+    label: "Việc Cấp dưới",
+    path: "/pcd?tab=subordinates",
+    category: "Hiện trường PCD",
+  },
+  {
+    key: "pcd-adhoc",
+    icon: PlusSquare,
+    label: "Giao việc Đột xuất",
+    path: "/pcd?tab=adhoc",
+    category: "Tác nghiệp Nhanh",
+  },
+  {
+    key: "pcd-schedules",
+    icon: CalendarDays,
+    label: "Lịch trực & Ca Công trường",
+    path: "/pcd?tab=schedules",
+    category: "Lịch trình & Nhân sự",
+  },
+  {
+    key: "pcd-checklists",
+    icon: FileCheck,
+    label: "Biểu Mẫu & Nghiệm Thu",
+    path: "/pcd?tab=checklists",
+    category: "Chất lượng & Tiêu chuẩn",
+  },
+  {
+    key: "pcd-business-matrix",
+    icon: TableProperties,
+    label: "Ma Trận Nghiệp Vụ",
+    path: "/pcd?tab=business-matrix",
+    category: "Chất lượng & Tiêu chuẩn",
+  },
+  {
+    key: "pcd-tracking",
+    icon: MapPin,
+    label: "Bản Đồ Lộ Trình GPS",
+    path: "/pcd?tab=tracking",
+    category: "Giám sát Thực địa",
+  },
+  {
+    key: "pcd-acc",
+    icon: Database,
+    label: "Đồng Bộ ACC Cloud",
+    path: "/pcd?tab=acc",
+    category: "Hệ thống & BIM",
+  },
+  {
+    key: "pcd-switch-timeline",
+    icon: Clock,
+    label: "Sang Master Timeline",
+    path: "/timeline",
+    position: "bottom",
+    category: "Điều hướng",
+  },
+  {
+    key: "pcd-switch-dmd",
+    icon: Layers,
+    label: "Sang Quản lý Thiết kế DMD",
+    path: "/dmd",
+    position: "bottom",
+    category: "Điều hướng",
+  },
+  {
+    key: "pcd-switch-checker",
+    icon: FileCheck2,
+    label: "Sang Thẩm định Bản vẽ AI",
+    path: "/drawing-checker",
+    position: "bottom",
+    category: "Điều hướng",
+  },
+  {
+    key: "pcd-switch-headcount",
     icon: Building2,
     label: "Sang Định biên Nhân sự",
     path: "/projects",
@@ -381,6 +495,17 @@ export const findActiveMenuItem = (
   }
 
   if (pathname.startsWith("/dmd")) {
+    const active = items.find((item) => {
+      if (item.path.includes("?") && searchQuery) {
+        return item.path.includes(searchQuery)
+      }
+      return false
+    })
+    if (active) return active
+    return items[0]
+  }
+
+  if (pathname.startsWith("/pcd")) {
     const active = items.find((item) => {
       if (item.path.includes("?") && searchQuery) {
         return item.path.includes(searchQuery)

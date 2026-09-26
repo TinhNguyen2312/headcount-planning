@@ -5,11 +5,15 @@ import type {
   IQueryProjects,
   ItemResponse,
   ListResponse,
+  ProjectMemberQueryParams,
+  ProjectMemberResponse,
   ProjectResponse,
   ProjectRole,
+  UpdateBoundaryRequest,
   UserProjectRoleDetailResponse,
   UserProjectRoleResponse,
   UserProjectRoleUpdate,
+  ZoneResponse,
 } from "@/types"
 import {
   type AllPagesConfig,
@@ -55,6 +59,11 @@ export const projectQueries = {
       queryKey: [...projectQueries.details(), id],
       queryFn: () => ProjectsAPI.getOne(id),
     }),
+  zones: (projectId: number) =>
+    queryOptions({
+      queryKey: [...projectQueries.all(), projectId, "zones"] as const,
+      queryFn: () => ZonesAPI.getAll({ projectId }),
+    }),
   users: (
     projectId: number,
     params?: {
@@ -75,6 +84,16 @@ export const projectQueries = {
           limit: params?.limit ?? 500,
           ...params,
         }),
+    }),
+  members: (projectId: number, params?: ProjectMemberQueryParams) =>
+    queryOptions({
+      queryKey: [
+        ...projectQueries.all(),
+        projectId,
+        "members",
+        params,
+      ] as const,
+      queryFn: () => ProjectsAPI.getMembers(projectId, params),
     }),
 
   useSuspenseList: <TSelected = ProjectResponse[]>(
@@ -124,7 +143,14 @@ export const projectQueries = {
       enabled: !!id && options?.enabled !== false,
       ...options,
     }),
-
+  useZones: <TSelected = ZoneResponse[]>(
+    projectId?: number,
+    options?: QueryOptionsHelper<ListResponse<ZoneResponse>, TSelected>,
+  ) =>
+    useListQuery(projectQueries.zones(projectId!), {
+      enabled: !!projectId && options?.enabled !== false,
+      ...options,
+    }),
   useUsers: <TSelected = UserProjectRoleDetailResponse[]>(
     projectId?: number,
     params?: {
@@ -141,6 +167,15 @@ export const projectQueries = {
     >,
   ) =>
     useListQuery(projectQueries.users(projectId!, params), {
+      enabled: !!projectId && options?.enabled !== false,
+      ...options,
+    }),
+  useMembers: <TSelected = ProjectMemberResponse[]>(
+    projectId?: number,
+    params?: ProjectMemberQueryParams,
+    options?: QueryOptionsHelper<ListResponse<ProjectMemberResponse>, TSelected>,
+  ) =>
+    useListQuery(projectQueries.members(projectId!, params), {
       enabled: !!projectId && options?.enabled !== false,
       ...options,
     }),
@@ -233,27 +268,4 @@ export const zoneQueries = {
     }),
 }
 
-export interface UserProjectRoleListParams {
-  userId?: number
-  projectId?: number
-  zoneId?: number
-  status?: string
-  keyword?: string
-  page?: number
-  limit?: number
-  roleId?: number
-}
-
-export const userProjectRoleQueries = {
-  all: () => ["user-project-roles"] as const,
-  lists: () => [...userProjectRoleQueries.all(), "list"] as const,
-  list: (params?: UserProjectRoleListParams) =>
-    queryOptions({
-      queryKey: [...userProjectRoleQueries.lists(), params],
-      queryFn: () => UserProjectRolesAPI.getAll(params),
-    }),
-  useList: (
-    params?: UserProjectRoleListParams,
-    options?: { enabled?: boolean },
-  ) => useListQuery(userProjectRoleQueries.list(params), options),
-}
+export { userProjectRoleQueries } from "./userProjectRoles"
